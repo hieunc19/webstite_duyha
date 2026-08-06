@@ -1,0 +1,54 @@
+#===================================================================
+# Node & Frontend Dependencies & Builds
+#===================================================================
+node_modules/
+client/node_modules/
+client/dist/
+dist/
+dist-ssr/
+*.local
+
+#===================================================================
+# Environment & Secrets
+#===================================================================
+.env
+.env.*
+!.env.example
+client/.env
+client/.env.*
+
+#===================================================================
+# Logs & Debugging
+#===================================================================
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+#===================================================================
+# IDE, Editors & OS Files
+#===================================================================
+.vscode/
+!.vscode/extensions.json
+.idea/
+.vs/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+
+#===================================================================
+# AI Agent Configurations & Workspaces
+#===================================================================
+.agent/
+.agents/
+.gemini/
+ERRORS.md
+GEMINI.md
+scratch/

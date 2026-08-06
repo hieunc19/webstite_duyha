@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class TdpOfficial extends Model
+{
+    protected $fillable = [
+        'tdp_name',
+        'bi_thu_name',
+        'bi_thu_phone',
+        'to_truong_name',
+        'to_truong_phone',
+        'cskv_name',
+        'cskv_phone',
+        'mat_tan_name',
+        'mat_tan_phone',
+        'nguoi_cao_tuoi',
+        'nguoi_cao_tuoi_phone',
+        'phu_nu',
+        'phu_nu_phone',
+        'nong_dan',
+        'nong_dan_phone',
+        'ccb',
+        'ccb_phone',
+        'doan_thanh_nien',
+        'doan_thanh_nien_phone',
+    ];
+
+    protected static function booted()
+    {
+        static::saved(function () {
+            @exec('php ' . base_path('dump_to_json.php') . ' > /dev/null 2>&1 &');
+        });
+        static::deleted(function () {
+            @exec('php ' . base_path('dump_to_json.php') . ' > /dev/null 2>&1 &');
+        });
+    }
+}

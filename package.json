@@ -1,0 +1,13 @@
+{
+  "name": "philanthropy-map-root",
+  "private": true,
+  "scripts": {
+    "dev:client": "cd client && npm run dev",
+    "dev:admin": "cd admin-laravel && php artisan serve --port=8005",
+    "dev:all": "concurrently \"npm run dev:client\" \"npm run dev:admin\"",
+    "build:client": "cd client && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

@@ -1,0 +1,88 @@
+[
+    {
+        "id": 1,
+        "section_code": "header_navbar",
+        "name": "Thanh Header & Menu Điều hướng",
+        "custom_title": "CỔNG TRA CỨU THÔNG TIN",
+        "custom_subtitle": "PHƯỜNG DUY HÀ — TỈNH NINH BÌNH",
+        "is_visible": true,
+        "sort_order": 0,
+        "settings": {
+            "site_logo": "\/logo.jpg",
+            "nav_home_label": "Trang chủ",
+            "nav_home_show": true,
+            "nav_meritorious_label": "Gia đình có công",
+            "nav_meritorious_show": true,
+            "nav_map_label": "Bản đồ Duy Hà",
+            "nav_map_show": true,
+            "admin_btn_label": "Quản trị",
+            "admin_btn_show": true
+        }
+    },
+    {
+        "id": 2,
+        "section_code": "hero_banner",
+        "name": "Banner Hero & Tìm kiếm",
+        "custom_title": "CỔNG TRA CỨU THÔNG TIN PHƯỜNG DUY HÀ",
+        "custom_subtitle": "",
+        "is_visible": true,
+        "sort_order": 1,
+        "settings": {
+            "logo_doan_url": "\/logo-doan.png",
+            "logo_thanh_nien_url": "\/logo-thanh-nien.jpg"
+        }
+    },
+    {
+        "id": 3,
+        "section_code": "stats_cards",
+        "name": "Chỉ số Thống kê Địa bàn",
+        "custom_title": "Chỉ số thống kê địa bàn",
+        "custom_subtitle": "Tổng quan quy mô tổ dân phố, hộ gia đình, nhân khẩu và diện tích",
+        "is_visible": true,
+        "sort_order": 2,
+        "settings": null
+    },
+    {
+        "id": 4,
+        "section_code": "agencies_grid",
+        "name": "Cơ quan Hành chính & Công trình",
+        "custom_title": "Danh sách cơ quan hành chính",
+        "custom_subtitle": "Tra cứu vị trí, thông tin liên hệ và hình ảnh 360° các trụ sở cơ quan công quyền",
+        "is_visible": true,
+        "sort_order": 3,
+        "settings": null
+    },
+    {
+        "id": 5,
+        "section_code": "tdp_merger",
+        "name": "Bảng Sáp nhập Tổ dân phố",
+        "custom_title": "Thông tin sáp nhập tổ dân phố",
+        "custom_subtitle": "Phương án sắp xếp, tinh gọn các tổ dân phố thuộc Phường Duy Hà",
+        "is_visible": true,
+        "sort_order": 4,
+        "settings": {
+            "old_table_title": "TRƯỚC SÁP NHẬP (16 TỔ DÂN PHỐ CỦ)",
+            "new_table_title": "SAU SÁP NHẬP (10 TỔ DÂN PHỐ MỚI)"
+        }
+    },
+    {
+        "id": 6,
+        "section_code": "officials_directory",
+        "name": "Danh bạ Cán bộ & CSKV",
+        "custom_title": "Danh bạ Cán bộ & CSKV phụ trách địa bàn",
+        "custom_subtitle": "Danh sách cán bộ chuyên trách và cảnh sát khu vực phụ trách từng tổ dân phố",
+        "is_visible": true,
+        "sort_order": 5,
+        "settings": null
+    },
+    {
+        "id": 7,
+        "section_code": "meritorious_families",
+        "name": "Gia đình có công & Sự kiện",
+        "custom_title": "Hoạt động Đền ơn đáp nghĩa & Gia đình có công",
+        "custom_subtitle": "Tôn vinh Bà mẹ Việt Nam Anh hùng, gia đình chính sách và các sự kiện truyền thống",
+        "is_visible": true,
+        "sort_order": 6,
+        "settings": null
+    }
+]

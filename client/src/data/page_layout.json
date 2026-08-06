@@ -1,0 +1,68 @@
+[
+    {
+        "id": 1,
+        "section_id": "hero_banner",
+        "name": "Hero Banner & Thời tiết",
+        "is_visible": true,
+        "sort_order": 1,
+        "type": "system",
+        "content": {
+            "description": "Khối Banner hình ảnh header và thông tin thời tiết Phường Duy Hà"
+        }
+    },
+    {
+        "id": 2,
+        "section_id": "stats_cards",
+        "name": "4 Thẻ Số liệu Thống kê",
+        "is_visible": true,
+        "sort_order": 2,
+        "type": "system",
+        "content": {
+            "description": "4 Thẻ thông tin tổng số TDP, hộ gia đình, nhân khẩu, diện tích"
+        }
+    },
+    {
+        "id": 3,
+        "section_id": "places_grid",
+        "name": "Danh sách Cơ quan Hành chính & Tìm kiếm",
+        "is_visible": true,
+        "sort_order": 3,
+        "type": "system",
+        "content": {
+            "description": "Danh sách cơ quan công an, y tế, trường học, UBND phường"
+        }
+    },
+    {
+        "id": 4,
+        "section_id": "tdp_merger",
+        "name": "Bảng Sáp nhập Tổ dân phố",
+        "is_visible": true,
+        "sort_order": 4,
+        "type": "system",
+        "content": {
+            "description": "Bảng thông tin 16 TDP cũ sáp nhập thành 10 TDP mới"
+        }
+    },
+    {
+        "id": 5,
+        "section_id": "officials_grid",
+        "name": "Danh bạ Cán bộ & CSKV phụ trách",
+        "is_visible": true,
+        "sort_order": 5,
+        "type": "system",
+        "content": {
+            "description": "Danh sách lãnh đạo và cán bộ công an khu vực phụ trách địa bàn"
+        }
+    },
+    {
+        "id": 6,
+        "section_id": "meritorious_families",
+        "name": "Gia đình Có công Tiêu biểu",
+        "is_visible": true,
+        "sort_order": 6,
+        "type": "system",
+        "content": {
+            "description": "Danh sách gia đình chính sách, bà mẹ VNAH, thương bệnh binh"
+        }
+    }
+]

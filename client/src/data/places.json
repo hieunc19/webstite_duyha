@@ -1,0 +1,38 @@
+[
+    {
+        "id": 1,
+        "name": "UBND Phường Duy Hà",
+        "category": "government",
+        "status": "active",
+        "address": "163 Đinh Công Tráng, thôn Trung, Duy Hà, Ninh Bình, Việt Nam",
+        "lat": 20.647924,
+        "lng": 105.914728,
+        "image": "places\/01KYK9NZCXSQHKEKPEP1J21VKE.jpg",
+        "administrative_unit_id": null,
+        "description": "Trụ sở làm việc chính thức của Ủy ban nhân dân và Hội đồng nhân dân phường Duy Hà, nơi tiếp nhận và giải quyết các thủ tục hành chính, dịch vụ công cộng cho người dân trên địa bàn."
+    },
+    {
+        "id": 2,
+        "name": "Trụ sở Công an Phường Duy Hà",
+        "category": "police",
+        "status": "active",
+        "address": "Thôn Trung, Duy Hà, Ninh Bình, Việt Nam",
+        "lat": 20.647706,
+        "lng": 105.91443,
+        "image": "places\/01KYK9Q8YR9BDZB98VTBQ5JQXW.jpg",
+        "administrative_unit_id": null,
+        "description": "Cơ quan công an cấp cơ sở thực hiện chức năng bảo vệ an ninh quốc gia, giữ gìn trật tự an toàn xã hội, quản lý cư trú và hỗ trợ phòng chống tội phạm trên địa bàn phường Duy Hà."
+    },
+    {
+        "id": 6,
+        "name": "Ủy Ban MTTQ Việt Nam Phường Duy Hà",
+        "category": "government",
+        "status": "active",
+        "address": null,
+        "lat": 20.647055,
+        "lng": 105.900467,
+        "image": "places\/01KYPG5FXF3KZT5BT3HV44WESC.jpg",
+        "administrative_unit_id": null,
+        "description": null
+    }
+]

@@ -1,0 +1,200 @@
+[
+  {
+    "name": "Bình Lục, Ninh Bình, Việt Nam",
+    "osm_id": 19539232,
+    "osm_type": "relation",
+    "display_name": "Huyện Bình Lục, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Bình Mỹ, Ninh Bình, Việt Nam",
+    "osm_id": 19539231,
+    "osm_type": "relation",
+    "display_name": "Xã Bình Mỹ, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Bình An, Ninh Bình, Việt Nam",
+    "osm_id": 19539234,
+    "osm_type": "relation",
+    "display_name": "Xã Bình An, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Bình Giang, Ninh Bình, Việt Nam",
+    "osm_id": 19539233,
+    "osm_type": "relation",
+    "display_name": "Xã Bình Giang, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Bình Sơn, Ninh Bình, Việt Nam",
+    "osm_id": 19539230,
+    "osm_type": "relation",
+    "display_name": "Xã Bình Sơn, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Liêm Hà, Ninh Bình, Việt Nam",
+    "osm_id": 19539198,
+    "osm_type": "relation",
+    "display_name": "Xã Liêm Hà, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Tân Thanh, Ninh Bình, Việt Nam",
+    "osm_id": 19539163,
+    "osm_type": "node",
+    "display_name": "Tân Thành, Ninh Nhất, Phường Hoa Lư, Tỉnh Ninh Bình, 08212, Việt Nam"
+  },
+  {
+    "name": "Thanh Bình, Ninh Bình, Việt Nam",
+    "osm_id": 19539161,
+    "osm_type": "node",
+    "display_name": "Thanh Binh, 31, Đường Lương Văn Tuỵ, Vân Giang, Phường Hoa Lư, Tỉnh Ninh Bình, 08212, Việt Nam"
+  },
+  {
+    "name": "Thanh Lâm, Ninh Bình, Việt Nam",
+    "osm_id": 19539160,
+    "osm_type": "relation",
+    "display_name": "Xã Thanh Lâm, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Thanh Liêm, Ninh Bình, Việt Nam",
+    "osm_id": 19539159,
+    "osm_type": "relation",
+    "display_name": "Huyện Thanh Liêm, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Lý Nhân, Ninh Bình, Việt Nam",
+    "osm_id": 19539195,
+    "osm_type": "relation",
+    "display_name": "Huyện Lý Nhân, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Nam Xang, Ninh Bình, Việt Nam",
+    "osm_id": 19539184,
+    "osm_type": "relation",
+    "display_name": "Xã Nam Xang, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Bắc Lý, Ninh Bình, Việt Nam",
+    "osm_id": 19539235,
+    "osm_type": "relation",
+    "display_name": "Xã Bắc Lý, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Vĩnh Trụ, Ninh Bình, Việt Nam",
+    "osm_id": 19539151,
+    "osm_type": "relation",
+    "display_name": "Xã Vĩnh Trụ, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Trần Thương, Ninh Bình, Việt Nam",
+    "osm_id": 19539155,
+    "osm_type": "relation",
+    "display_name": "Xã Trần Thương, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Nhân Hà, Ninh Bình, Việt Nam",
+    "osm_id": 19539179,
+    "osm_type": "relation",
+    "display_name": "Xã Nhân Hà, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Nam Lý, Ninh Bình, Việt Nam",
+    "osm_id": 19539188,
+    "osm_type": "relation",
+    "display_name": "Xã Nam Lý, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Duy Tiên, Ninh Bình, Việt Nam",
+    "osm_id": 19539218,
+    "osm_type": "relation",
+    "display_name": "Thị xã Duy Tiên, Tỉnh Ninh Bình, 03513, Việt Nam"
+  },
+  {
+    "name": "Duy Tân, Ninh Bình, Việt Nam",
+    "osm_id": 19539219,
+    "osm_type": "relation",
+    "display_name": "Phường Duy Tân, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Đồng Văn, Ninh Bình, Việt Nam",
+    "osm_id": 19539221,
+    "osm_type": "node",
+    "display_name": "Đồng Văn, Đường Đinh Tiên Hoàng, Phường Đồng Văn, Tỉnh Ninh Bình, 03513, Việt Nam"
+  },
+  {
+    "name": "Duy Hà, Ninh Bình, Việt Nam",
+    "osm_id": 19539220,
+    "osm_type": "relation",
+    "display_name": "Phường Duy Hà, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Tiên Sơn, Ninh Bình, Việt Nam",
+    "osm_id": 19539156,
+    "osm_type": "relation",
+    "display_name": "Phường Tiên Sơn, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Lê Hồ, Ninh Bình, Việt Nam",
+    "osm_id": 19539199,
+    "osm_type": "relation",
+    "display_name": "Phường Lê Hồ, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Nguyễn Úy, Ninh Bình, Việt Nam",
+    "osm_id": 19539180,
+    "osm_type": "relation",
+    "display_name": "Phường Nguyễn Úy, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Lý Thường Kiệt, Ninh Bình, Việt Nam",
+    "osm_id": 19539194,
+    "osm_type": "relation",
+    "display_name": "Phường Lý Thường Kiệt, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Kim Thanh, Ninh Bình, Việt Nam",
+    "osm_id": 19539200,
+    "osm_type": "relation",
+    "display_name": "Phường Kim Thanh, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Tam Chúc, Ninh Bình, Việt Nam",
+    "osm_id": 19539166,
+    "osm_type": "relation",
+    "display_name": "Phường Tam Chúc, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Kim Bảng, Ninh Bình, Việt Nam",
+    "osm_id": 19539201,
+    "osm_type": "relation",
+    "display_name": "Thị xã Kim Bảng, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Hà Nam, Ninh Bình, Việt Nam",
+    "osm_id": 19539210,
+    "osm_type": "relation",
+    "display_name": "Tỉnh Hà Nam, Tỉnh Ninh Bình, 03513, Việt Nam"
+  },
+  {
+    "name": "Phù Vân, Ninh Bình, Việt Nam",
+    "osm_id": 19539171,
+    "osm_type": "relation",
+    "display_name": "Phường Phù Vân, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Châu Sơn, Ninh Bình, Việt Nam",
+    "osm_id": 19539228,
+    "osm_type": "relation",
+    "display_name": "Phường Châu Sơn, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Phủ Lý, Ninh Bình, Việt Nam",
+    "osm_id": 19539173,
+    "osm_type": "relation",
+    "display_name": "Thành phố Phủ Lý, Phường Phủ Lý, Tỉnh Ninh Bình, Việt Nam"
+  },
+  {
+    "name": "Liêm Tuyền, Ninh Bình, Việt Nam",
+    "osm_id": 19539197,
+    "osm_type": "relation",
+    "display_name": "Phường Liêm Tuyền, Tỉnh Ninh Bình, Việt Nam"
+  }
+]

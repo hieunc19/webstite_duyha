@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\MeritoriousFamilies\Schemas;
 
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -13,36 +15,46 @@ class MeritoriousFamilyForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->label('Tên gia đình có công')
+                    ->label('Tên đợt danh sách chính sách')
                     ->required()
-                    ->placeholder('Ví dụ: Gia đình Liệt sĩ Nguyễn Văn Đạt'),
-                Select::make('type')
-                    ->label('Phân loại diện chính sách')
-                    ->options([
-                        'Gia đình Liệt sĩ' => 'Gia đình Liệt sĩ',
-                        'Thương binh 1/4' => 'Thương binh 1/4',
-                        'Thương binh 2/4' => 'Thương binh 2/4',
-                        'Thương binh 3/4' => 'Thương binh 3/4',
-                        'Thương binh 4/4' => 'Thương binh 4/4',
-                        'Bệnh binh 1/4' => 'Bệnh binh 1/4',
-                        'Bệnh binh 2/4' => 'Bệnh binh 2/4',
-                        'Lão thành Cách mạng' => 'Lão thành Cách mạng',
-                        'Cựu chiến binh' => 'Cựu chiến binh',
-                        'Gia đình có công với Cách mạng' => 'Gia đình có công với Cách mạng',
+                    ->placeholder('Ví dụ: Đợt trao quà Tết Nguyên Đán 2026, Danh sách tri ân ngày 27/7...')
+                    ->columnSpanFull(),
+                
+                FileUpload::make('file_path')
+                    ->label('Tệp Excel danh sách (.xlsx, .xls, .csv, .pdf)')
+                    ->disk('public')
+                    ->directory('meritorious_files')
+                    ->acceptedFileTypes([
+                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        'application/vnd.ms-excel',
+                        'text/csv',
+                        'application/csv',
+                        'application/pdf',
                     ])
-                    ->required(),
-                Select::make('celebration_event_id')
-                    ->relationship('celebrationEvent', 'name')
-                    ->label('Thuộc sự kiện kỷ niệm')
-                    ->required(),
+                    ->maxSize(51200)
+                    ->openable()
+                    ->downloadable()
+                    ->storeFileNamesIn('file_name')
+                    ->helperText('Tải lên file Excel danh sách chi tiết các gia đình chính sách trong đợt này.')
+                    ->required()
+                    ->columnSpanFull(),
+
+                Textarea::make('description')
+                    ->label('Ghi chú / Mô tả đợt')
+                    ->placeholder('Nhập thông tin mô tả chi tiết về đối tượng, nội dung quà tặng hoặc chế độ trong đợt này...')
+                    ->rows(3)
+                    ->columnSpanFull()
+                    ->nullable(),
+
                 Select::make('status')
                     ->label('Trạng thái')
                     ->options([
-                        'active' => 'Hoạt động',
+                        'active' => 'Hoạt động / Đang áp dụng',
                         'inactive' => 'Tạm ngưng',
                     ])
                     ->required()
-                    ->default('active'),
+                    ->default('active')
+                    ->columnSpanFull(),
             ]);
     }
 }

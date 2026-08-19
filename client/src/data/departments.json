@@ -1,0 +1,29 @@
+[
+    {
+        "id": 3,
+        "code": "dang_uy",
+        "name": "Đảng ủy Phường",
+        "color": "primary",
+        "sort_order": 3,
+        "status": "active",
+        "description": "Khối Đảng ủy và cơ quan Đảng Phường Duy Hà"
+    },
+    {
+        "id": 4,
+        "code": "chinh_quyen",
+        "name": "UBND \/ Chính quyền",
+        "color": "success",
+        "sort_order": 4,
+        "status": "active",
+        "description": "UBND và các phòng ban quản lý Nhà nước"
+    },
+    {
+        "id": 5,
+        "code": "ttpvhcc",
+        "name": "Hành chính công",
+        "color": "info",
+        "sort_order": 5,
+        "status": "active",
+        "description": "Trung tâm Phục vụ Hành chính công Phường Duy Hà"
+    }
+]

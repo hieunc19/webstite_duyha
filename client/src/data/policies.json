@@ -1,0 +1,58 @@
+[
+    {
+        "id": 1,
+        "title": "Nghị định quy định chi tiết một số điều của Luật Cư trú năm 2020",
+        "code": "Nghị định 144\/2021\/NĐ-CP",
+        "category": "residence",
+        "categoryText": "Cư trú & Định danh điện tử",
+        "date": "31\/12\/2021",
+        "agency": "Chính phủ",
+        "status": "Đang có hiệu lực",
+        "summary": "Quy định chi tiết về hồ sơ, thủ tục đăng ký thường trú, đăng ký tạm trú, thông báo lưu trú và khai báo tạm vắng.",
+        "highlights": [],
+        "downloadUrl": "\/storage\/policy-documents\/hóa đơn.pdf",
+        "sort_order": 1
+    },
+    {
+        "id": 2,
+        "title": "Quyết định phê duyệt Đề án phát triển ứng dụng dữ liệu về dân cư, định danh và xác thực điện tử (Đề án 06)",
+        "code": "Quyết định 06\/QĐ-TTg",
+        "category": "residence",
+        "categoryText": "Cư trú & Định danh điện tử",
+        "date": "06\/01\/2022",
+        "agency": "Thủ tướng Chính phủ",
+        "status": "Đang có hiệu lực",
+        "summary": "Ứng dụng dữ liệu dân cư, định danh và xác thực điện tử phục vụ chuyển đổi số quốc gia giai đoạn 2022 - 2025.",
+        "highlights": [],
+        "downloadUrl": "\/storage\/policy-documents\/demo-policy.pdf",
+        "sort_order": 2
+    },
+    {
+        "id": 3,
+        "title": "Nghị quyết quy định chính sách hỗ trợ tiền ăn, trợ cấp cho trợ cấp xã hội và người có công Phường Duy Hà",
+        "code": "Nghị quyết 12\/2023\/NQ-HĐND",
+        "category": "social",
+        "categoryText": "An sinh xã hội & Người có công",
+        "date": "15\/07\/2023",
+        "agency": "HĐND Tỉnh Ninh Bình",
+        "status": "Đang có hiệu lực",
+        "summary": "Quy định mức hỗ trợ quà lễ tết, chi phí khám chữa bệnh định kỳ và trợ cấp khó khăn đột xuất cho gia đình thương binh, liệt sĩ.",
+        "highlights": [],
+        "downloadUrl": "\/storage\/policy-documents\/demo-policy.pdf",
+        "sort_order": 3
+    },
+    {
+        "id": 4,
+        "title": "Luật Đất đai năm 2024 về hạn mức giao đất, cấp Giấy chứng nhận và nghĩa vụ tài chính đất đai",
+        "code": "Luật Đất đai 31\/2024\/QH15",
+        "category": "land",
+        "categoryText": "Đất đai & Xây dựng",
+        "date": "18\/01\/2024",
+        "agency": "Quốc hội",
+        "status": "Đang có hiệu lực",
+        "summary": "Quy định về chế độ sử dụng đất, quyền và nghĩa vụ của người sử dụng đất, bồi thường giải phóng mặt bằng và cấp Sổ đỏ.",
+        "highlights": [],
+        "downloadUrl": "\/storage\/policy-documents\/demo-policy.pdf",
+        "sort_order": 4
+    }
+]

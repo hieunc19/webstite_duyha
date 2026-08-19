@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Danh sách Cơ quan hành chính &amp; Đơn vị công lập — Phường Duy Hà</title>
+  <meta name="description"
+    content="Tra cứu vị trí trụ sở, đường đi và số điện thoại hotline trực ban các cơ quan hành chính, đơn vị công an, y tế và trường học trên địa bàn Phường Duy Hà, thành phố Ninh Bình." />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="/logo.jpg" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- Google Fonts: Roboto -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap"
+    rel="stylesheet" />
+
+  <!-- Material Symbols Outlined -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+
+  <!-- Tailwind Custom Config -->
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#3399fe",
+            "primary-dark": "#1d7fe0",
+            "secondary": "#0284c7",
+            "tertiary": "#0F172A",
+            "background": "#F8FAFC",
+            "surface": "#FFFFFF"
+          },
+          fontFamily: {
+            "sans": ["Roboto", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+            "serif": ["Roboto", "serif"],
+            "headline": ["Roboto", "sans-serif"],
+            "body": ["Roboto", "sans-serif"],
+            "accent": ["Roboto", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom Style -->
+  <link rel="stylesheet" href="/src/style.css" />
+  <style>
+    body {
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    }
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined' !important;
+    }
+  </style>
+  <script>
+    window.toggleMobileMenu = function() {
+      var m = document.getElementById('mobile-nav-menu');
+      if (m) m.classList.toggle('hidden');
+    };
+  </script>
+</head>
+
+<body
+  class="portal-active bg-[#FFFDF5] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-['Roboto'] font-sans antialiased selection:bg-[#3399fe] selection:text-white transition-colors duration-300">
+
+  <!-- Header Section (injected by sharedHeader.ts) -->
+  <header id="app-header"
+    class="sticky top-0 z-50 bg-[#FFFDF8]/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-sky-900/15 dark:border-slate-800 transition-colors shadow-sm">
+  </header>
+<!-- ==================== MAIN CONTENT ==================== -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-8">
+
+    <!-- BREADCRUMB -->
+    <nav class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400">
+      <a href="/index.html" class="hover:text-[#3399fe] flex items-center gap-1">
+        <span class="material-symbols-outlined text-base">home</span>
+        <span>Trang chủ</span>
+      </a>
+      <span>/</span>
+      <span class="text-[#1d7fe0] font-bold">Danh sách cơ quan hành chính</span>
+    </nav>
+
+    <!-- PAGE HERO BANNER -->
+    <div
+      class="text-white rounded-3xl p-8 sm:p-14 min-h-[280px] flex items-center shadow-2xl border border-sky-500/30 relative overflow-hidden bg-cover bg-center"
+      style="background-image: url('/hero-bg.jpg');">
+      <!-- Dark overlay for high text legibility -->
+      <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/70 to-slate-950/40 z-0"></div>
+
+      <div class="relative z-10 max-w-3xl space-y-3">
+        <div
+          class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/25 text-sky-300 border border-sky-400/40 text-xs font-black uppercase tracking-wider backdrop-blur-md shadow-sm">
+          <span class="material-symbols-outlined text-sm">corporate_fare</span>
+          <span>TRỤ SỞ CƠ QUAN &amp; ĐƠN VỊ CÔNG LẬP</span>
+        </div>
+        <h2 class="text-2xl sm:text-4xl font-black tracking-tight text-white leading-tight" style="text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);">
+          Danh sách Cơ quan hành chính &amp; Đơn vị công lập
+        </h2>
+        <p class="text-sm sm:text-base text-white/90 leading-relaxed font-semibold" style="text-shadow: 0 1.5px 6px rgba(0, 0, 0, 0.95);">
+          Tra cứu thông tin vị trí trụ sở làm việc, số điện thoại hotline trực ban và bản đồ chỉ đường các cơ quan công quyền, đơn vị công an, y tế, trường học tại Phường Duy Hà, tỉnh Ninh Bình.
+        </p>
+      </div>
+    </div>
+
+    <!-- MAIN TABLE SECTION CONTAINER (Matching Image 2 Style) -->
+    <section
+      class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
+
+      <!-- Section Header & Filter Toolbar -->
+      <div
+        class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
+        <div>
+          <h3
+            class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2.5">
+            <span class="material-symbols-outlined text-[#1d7fe0] dark:text-sky-400 text-3xl">corporate_fare</span>
+            <span>Tra cứu &amp; Định vị Cơ quan hành chính</span>
+          </h3>
+          <p class="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 mt-1">
+            Tra cứu thông tin liên hệ và bấm nút "Chỉ đường" để xem tuyến đường di chuyển tới trụ sở
+          </p>
+        </div>
+
+        <!-- Toolbar: Search Input + Select Option Dropdown -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+          <!-- Search input inside page -->
+          <div class="relative w-full sm:w-72">
+            <span class="material-symbols-outlined absolute left-3.5 top-2.5 text-slate-400 text-lg">search</span>
+            <input id="agency-page-search" type="text" placeholder="Tìm kiếm cơ quan, địa chỉ, hotline..."
+              class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs sm:text-sm font-semibold outline-none focus:border-[#1d7fe0] transition-colors" />
+          </div>
+
+          <!-- Custom Select Option Dropdown Component for Agency Categories -->
+          <div class="relative min-w-[240px]" id="agency-category-dropdown">
+            
+            <!-- Select Trigger Button -->
+            <button id="agency-category-btn" type="button"
+              class="w-full flex items-center justify-between gap-3 px-4 py-2.5 bg-slate-50 hover:bg-slate-100/90 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-slate-200/90 dark:border-slate-700 rounded-2xl text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100 shadow-sm transition-all outline-none focus:ring-2 focus:ring-sky-400/30 cursor-pointer">
+              <span id="agency-category-selected-label" class="truncate">Tất cả danh mục cơ quan (8)</span>
+              <span class="material-symbols-outlined text-slate-400 text-lg transition-transform duration-200" id="agency-category-arrow">unfold_more</span>
+            </button>
+
+            <!-- Floating Menu Popup -->
+            <div id="agency-category-menu"
+              class="hidden absolute right-0 sm:left-0 top-full mt-2 w-full min-w-[240px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-2xl p-1.5 z-50 space-y-0.5 backdrop-blur-xl">
+              
+              <button data-value="all"
+                class="agency-opt-item active w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold text-[#1d7fe0] dark:text-sky-400 bg-sky-50 dark:bg-sky-950/50 transition-all text-left cursor-pointer">
+                <span>Tất cả danh mục cơ quan (8)</span>
+              </button>
+
+              <button data-value="government"
+                class="agency-opt-item w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-[#1d7fe0] dark:hover:text-sky-400 transition-all text-left cursor-pointer">
+                <span>Hành chính</span>
+              </button>
+
+              <button data-value="police"
+                class="agency-opt-item w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-[#1d7fe0] dark:hover:text-sky-400 transition-all text-left cursor-pointer">
+                <span>An ninh &amp; Trật tự</span>
+              </button>
+
+              <button data-value="health"
+                class="agency-opt-item w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-[#1d7fe0] dark:hover:text-sky-400 transition-all text-left cursor-pointer">
+                <span>Y tế &amp; Chăm sóc sức khỏe</span>
+              </button>
+
+              <button data-value="school"
+                class="agency-opt-item w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-[#1d7fe0] dark:hover:text-sky-400 transition-all text-left cursor-pointer">
+                <span>Giáo dục &amp; Đào tạo</span>
+              </button>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AGENCIES TABLE VIEW (Exact Image 2 Structure) -->
+      <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-[#1a4a8c] text-white text-xs sm:text-sm uppercase tracking-wider">
+              <th class="py-3.5 px-3 text-center w-14 font-extrabold border-r border-blue-800">STT</th>
+              <th class="py-3.5 px-3 text-center w-28 font-extrabold border-r border-blue-800">Hình ảnh</th>
+              <th class="py-3.5 px-4 w-44 font-extrabold border-r border-blue-800">Phân loại</th>
+              <th class="py-3.5 px-4 font-extrabold border-r border-blue-800 min-w-[220px]">Tên Cơ quan / Đơn vị</th>
+              <th class="py-3.5 px-4 font-extrabold border-r border-blue-800">Địa chỉ / Vị trí</th>
+              <th class="py-3.5 px-4 text-center w-44 font-extrabold border-r border-blue-800">Hotline / Liên hệ</th>
+              <th class="py-3.5 px-4 text-center w-36 font-extrabold">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="agencies-page-table-body" class="divide-y divide-slate-200 dark:divide-slate-800 text-xs sm:text-sm font-medium">
+            <!-- Rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- IMAGE PREVIEW LIGHTBOX MODAL (IMAGE ONLY - EXTRA LARGE) -->
+  <div id="image-preview-modal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90 backdrop-blur-md p-2 sm:p-4 transition-all duration-300 cursor-pointer"
+    onclick="window.closeAgencyImageModal()">
+    
+    <!-- Floating Close Button at Top Right of Screen -->
+    <button onclick="window.closeAgencyImageModal()"
+      class="fixed top-4 right-4 z-50 w-11 h-11 rounded-full bg-slate-900/90 border border-white/40 text-white flex items-center justify-center shadow-2xl hover:bg-red-600 hover:scale-110 transition-all cursor-pointer"
+      title="Đóng (ESC)">
+      <span class="material-symbols-outlined text-2xl font-bold">close</span>
+    </button>
+
+    <div class="relative max-w-[95vw] max-h-[92vh] flex items-center justify-center cursor-default"
+      onclick="event.stopPropagation()">
+      <!-- Pure Extra Large Image -->
+      <img id="image-preview-img" src="" alt="Hình ảnh phóng to"
+        class="max-h-[92vh] max-w-[94vw] w-auto h-auto object-contain rounded-2xl shadow-2xl border border-white/20" />
+    </div>
+  </div>
+
+  <!-- ==================== GOVERNMENT PORTAL FOOTER ==================== -->
+  <footer class="bg-gradient-to-r from-[#143e78] via-[#1a4a8c] to-[#123668] text-white pt-8 pb-6 text-sm relative border-t-4 border-amber-500 shadow-2xl overflow-hidden mt-12">
+    <div class="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px] opacity-5 pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+
+        <!-- Left 7 Cols: Emblem & Main Contact Info -->
+        <div class="lg:col-span-7 flex items-start gap-4 sm:gap-5">
+          <!-- Circular Logo Image -->
+          <div
+            class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-white/80 p-0.5 flex items-center justify-center shrink-0 bg-[#3399fe] shadow-lg overflow-hidden">
+            <img src="/logo.jpg" alt="Logo Đoàn TNCS Phường Duy Hà" class="w-full h-full object-cover rounded-full" />
+          </div>
+
+          <!-- Text Info -->
+          <div class="space-y-1.5">
+            <h3 class="text-base sm:text-lg font-black tracking-wide uppercase text-white drop-shadow-sm">
+              ĐOÀN TNCS HỒ CHÍ MINH PHƯỜNG DUY HÀ
+            </h3>
+            <p class="text-xs sm:text-sm text-sky-100 font-medium">
+              Địa chỉ: Số 01 đường Lê Lợi, Phường Duy Hà, thành phố Ninh Bình, tỉnh Ninh Bình
+            </p>
+            <p class="text-xs sm:text-sm text-sky-100 font-medium">
+              <strong>Giờ làm việc:</strong> Sáng: 7h30 - 11h30 | Chiều: 13h30 - 17h00 (Từ Thứ 2 đến Thứ 6, nghỉ T7 &amp; CN)
+            </p>
+            <p class="text-xs sm:text-sm text-sky-100 font-medium">
+              Email: thongtin@duyha.ninhbinh.gov.vn &nbsp;|&nbsp; Điện thoại: (0229) 38253536
+            </p>
+
+            <!-- Social & Web Link Icons (Small Circular Badges) -->
+            <div class="flex items-center gap-2 pt-1.5">
+              <span class="text-xs font-semibold text-sky-200/90 mr-1">Kênh liên kết:</span>
+              
+              <!-- Facebook Icon (Small Circle) -->
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
+                class="w-7 h-7 rounded-full bg-white/15 hover:bg-[#1877F2] text-white flex items-center justify-center transition-all duration-300 shadow-sm border border-white/30 hover:scale-110 hover:border-transparent"
+                title="Trang Facebook Phường Duy Hà">
+                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+              </a>
+
+              <!-- Website Icon (Small Circle) -->
+              <a href="https://duyha.ninhbinh.gov.vn" target="_blank" rel="noopener noreferrer"
+                class="w-7 h-7 rounded-full bg-white/15 hover:bg-emerald-600 text-white flex items-center justify-center transition-all duration-300 shadow-sm border border-white/30 hover:scale-110 hover:border-transparent"
+                title="Cổng thông tin điện tử Phường Duy Hà">
+                <span class="material-symbols-outlined text-[17px]">language</span>
+              </a>
+
+              <!-- Portal Mail Icon (Small Circle) -->
+              <a href="mailto:thongtin@duyha.ninhbinh.gov.vn"
+                class="w-7 h-7 rounded-full bg-white/15 hover:bg-amber-600 text-white flex items-center justify-center transition-all duration-300 shadow-sm border border-white/30 hover:scale-110 hover:border-transparent"
+                title="Hộp thư điện tử">
+                <span class="material-symbols-outlined text-[17px]">mail</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right 5 Cols: Liên kết website -->
+        <div class="lg:col-span-5 space-y-2">
+          <h4 class="text-sm font-extrabold text-white tracking-wide">Liên kết website</h4>
+          <div class="space-y-2">
+            <select onchange="if(this.value) window.open(this.value, '_blank')"
+              class="w-full bg-white/15 hover:bg-white/25 text-white border border-white/30 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold outline-none focus:border-amber-400 transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-[right_12px_center] bg-no-repeat pr-8">
+              <option value="" class="bg-slate-900 text-white">Các cơ quan, đơn vị</option>
+              <option value="https://ninhbinh.gov.vn" class="bg-slate-900 text-white">UBND Tỉnh Ninh Bình</option>
+              <option value="https://congan.ninhbinh.gov.vn" class="bg-slate-900 text-white">Công an Tỉnh Ninh Bình
+              </option>
+              <option value="https://stttt.ninhbinh.gov.vn" class="bg-slate-900 text-white">Sở Thông tin & Truyền thông
+              </option>
+            </select>
+
+            <select onchange="if(this.value) window.open(this.value, '_blank')"
+              class="w-full bg-white/15 hover:bg-white/25 text-white border border-white/30 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold outline-none focus:border-amber-400 transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-[right_12px_center] bg-no-repeat pr-8">
+              <option value="" class="bg-slate-900 text-white">Chọn đơn vị liên kết</option>
+              <option value="https://dichvucong.gov.vn" class="bg-slate-900 text-white">Cổng Dịch vụ công Quốc gia
+              </option>
+              <option value="https://chinhphu.vn" class="bg-slate-900 text-white">Cổng Thông tin Điện tử Chính phủ
+              </option>
+              <option value="https://bocongan.gov.vn" class="bg-slate-900 text-white">Cổng Thông tin Điện tử Bộ Công an
+              </option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Divider line -->
+      <div class="border-t border-white/15"></div>
+
+      <!-- Bottom Bar: Copyright Only -->
+      <div
+        class="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs sm:text-sm text-sky-100/90 text-center sm:text-left">
+        <p class="font-medium">Copyright © Đoàn TNCS Hồ Chí Minh phường Duy Hà. All Rights Reserved</p>
+        <p class="text-xs text-sky-200/80">Ghi rõ nguồn "Đoàn TNCS Hồ Chí Minh phường Duy Hà" khi phát hành lại thông tin từ Đoàn TNCS Hồ Chí Minh phường Duy Hà.</p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- AGENCIES PAGE DYNAMIC SCRIPT -->
+  <script>
+    let allAgencies = [];
+    let currentCat = 'all';
+    let isAgenciesLoaded = false;
+
+    window.openAgencyImageModal = function(src) {
+      const modal = document.getElementById('image-preview-modal');
+      const img = document.getElementById('image-preview-img');
+      if (!modal || !img) return;
+      img.src = src;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    };
+
+    window.closeAgencyImageModal = function() {
+      const modal = document.getElementById('image-preview-modal');
+      if (!modal) return;
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    };
+
+    async function loadAgencies() {
+      try {
+        let res = await fetch('/api/places');
+        if (!res.ok) {
+          res = await fetch('/src/data/places.json');
+        }
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data)) {
+            allAgencies = data.filter(p => p.category !== 'neighborhood');
+          }
+        }
+      } catch (e) {
+        console.warn('Could not load places data:', e);
+      } finally {
+        isAgenciesLoaded = true;
+        renderAgenciesTable();
+      }
+    }
+
+    function renderAgenciesTable() {
+      const tbody = document.getElementById('agencies-page-table-body');
+      const searchInput = document.getElementById('agency-page-search');
+      if (!tbody) return;
+
+      const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+      let items = [...allAgencies];
+
+      if (currentCat !== 'all') {
+        if (currentCat === 'police') {
+          items = items.filter(p => p.category === 'police' || p.name.toLowerCase().includes('công an'));
+        } else if (currentCat === 'health') {
+          items = items.filter(p => p.category === 'health' || p.name.toLowerCase().includes('y tế') || p.name.toLowerCase().includes('bệnh viện'));
+        } else if (currentCat === 'school') {
+          items = items.filter(p => p.category === 'school' || p.name.toLowerCase().includes('trường') || p.name.toLowerCase().includes('mầm non'));
+        } else if (currentCat === 'government') {
+          items = items.filter(p => p.category === 'government' || p.name.toLowerCase().includes('ubnd') || p.name.toLowerCase().includes('mặt trận'));
+        }
+      }
+
+      if (query) {
+        items = items.filter(p =>
+          p.name.toLowerCase().includes(query) ||
+          (p.address && p.address.toLowerCase().includes(query)) ||
+          (p.phone && p.phone.includes(query))
+        );
+      }
+
+      if (items.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="p-8 text-center text-slate-400 font-semibold">
+              Không tìm thấy cơ quan hay đơn vị công lập phù hợp.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = items.map((p, idx) => {
+        const isPolice = p.category === 'police' || p.name.toLowerCase().includes('công an');
+        const isHealth = p.category === 'health' || p.name.toLowerCase().includes('bệnh viện') || p.name.toLowerCase().includes('y tế');
+        const isSchool = p.category === 'school' || p.name.toLowerCase().includes('trường') || p.name.toLowerCase().includes('mầm non');
+        const isGov = p.category === 'government' || p.name.toLowerCase().includes('ubnd') || p.name.toLowerCase().includes('ủy ban') || p.name.toLowerCase().includes('mặt trận');
+
+        let badgeText = 'HÀNH CHÍNH';
+        let badgeColor = 'bg-red-50 text-red-700 dark:bg-red-950/80 dark:text-red-300 border-red-200 dark:border-red-900/60';
+        if (isPolice) {
+          badgeText = 'AN NINH & TRẬT TỰ';
+          badgeColor = 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/80 dark:text-indigo-300 border-indigo-200 dark:border-indigo-900/60';
+        } else if (isHealth) {
+          badgeText = 'Y TẾ & SỨC KHỎE';
+          badgeColor = 'bg-rose-50 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 border-rose-200 dark:border-rose-900/60';
+        } else if (isSchool) {
+          badgeText = 'GIÁO DỤC & ĐÀO TẠO';
+          badgeColor = 'bg-amber-50 text-amber-700 dark:bg-amber-950/80 dark:text-amber-300 border-amber-200 dark:border-amber-900/60';
+        } else if (isGov) {
+          badgeText = 'CƠ QUAN HÀNH CHÍNH';
+          badgeColor = 'bg-red-50 text-red-700 dark:bg-red-950/80 dark:text-red-300 border-red-200 dark:border-red-900/60';
+        } else {
+          badgeText = 'ĐƠN VỊ CÔNG LẬP';
+          badgeColor = 'bg-sky-50 text-sky-700 dark:bg-sky-950/80 dark:text-sky-300 border-sky-200 dark:border-sky-900/60';
+        }
+
+        const phone = p.phone || '';
+        const directionsUrl = (p.lat && p.lng)
+          ? `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`
+          : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(p.name + ' Phường Duy Hà')}`;
+
+        const imgSrc = p.image || '/hero-bg.jpg';
+        const escapedName = (p.name || '').replace(/'/g, "\\'");
+
+        return `
+          <tr class="odd:bg-white even:bg-slate-50/70 hover:bg-sky-50/60 dark:odd:bg-slate-900 dark:even:bg-slate-800/60 dark:hover:bg-slate-800 transition-colors">
+            <td class="py-3.5 px-3 text-center font-bold text-slate-500 border-r border-slate-200 dark:border-slate-800">${idx + 1}</td>
+            <td class="py-2.5 px-3 text-center border-r border-slate-200 dark:border-slate-800">
+              <div onclick="window.openAgencyImageModal('${imgSrc}', '${escapedName}')"
+                title="Nhấn để xem ảnh phóng to"
+                class="w-16 h-12 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm mx-auto bg-slate-100 dark:bg-slate-800 flex items-center justify-center cursor-pointer group/img relative hover:ring-2 hover:ring-blue-500 hover:shadow-md transition-all">
+                <img src="${imgSrc}" alt="${p.name}" class="w-full h-full object-cover group-hover/img:scale-110 transition-transform duration-300" onerror="this.onerror=null;this.src='/hero-bg.jpg';" />
+                <div class="absolute inset-0 bg-slate-900/30 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
+                  <span class="material-symbols-outlined text-white text-lg drop-shadow">zoom_in</span>
+                </div>
+              </div>
+            </td>
+            <td class="py-3.5 px-4 border-r border-slate-200 dark:border-slate-800">
+              <span class="inline-block text-[11px] font-black uppercase ${badgeColor} border px-2.5 py-1 rounded-lg tracking-wider">${badgeText}</span>
+            </td>
+            <td class="py-3.5 px-4 border-r border-slate-200 dark:border-slate-800">
+              <b class="text-sm font-extrabold text-slate-900 dark:text-white block">${p.name}</b>
+            </td>
+            <td class="py-3.5 px-4 border-r border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300">
+              <div class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-sm text-red-600 shrink-0">location_on</span>
+                <span>${p.address || 'Phường Duy Hà, Ninh Bình'}</span>
+              </div>
+            </td>
+            <td class="py-3.5 px-4 text-center border-r border-slate-200 dark:border-slate-800">
+              ${phone ? `
+                <a href="tel:${phone}" class="inline-flex items-center gap-1 font-extrabold text-blue-600 dark:text-sky-400 hover:underline">
+                  <span class="material-symbols-outlined text-base">call</span>
+                  <span>${phone}</span>
+                </a>
+              ` : `<span class="text-slate-400 font-semibold">--</span>`}
+            </td>
+            <td class="py-3.5 px-4 text-center">
+              <a href="${directionsUrl}" target="_blank" class="inline-flex items-center gap-1 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm hover:shadow-md active:scale-95 whitespace-nowrap">
+                <span class="material-symbols-outlined text-base">directions</span>
+                <span>Chỉ đường</span>
+              </a>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadAgencies();
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          window.closeAgencyImageModal();
+        }
+      });
+
+      const searchInput = document.getElementById('agency-page-search');
+      if (searchInput) {
+        searchInput.addEventListener('input', renderAgenciesTable);
+      }
+
+      const catBtn = document.getElementById('agency-category-btn');
+      const catMenu = document.getElementById('agency-category-menu');
+      const catLabel = document.getElementById('agency-category-selected-label');
+      const catArrow = document.getElementById('agency-category-arrow');
+      const optItems = document.querySelectorAll('#agency-category-menu .agency-opt-item');
+
+      if (catBtn && catMenu) {
+        catBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isHidden = catMenu.classList.contains('hidden');
+          if (isHidden) {
+            catMenu.classList.remove('hidden');
+            if (catArrow) catArrow.classList.add('rotate-180');
+          } else {
+            catMenu.classList.add('hidden');
+            if (catArrow) catArrow.classList.remove('rotate-180');
+          }
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!catMenu.contains(e.target) && !catBtn.contains(e.target)) {
+            catMenu.classList.add('hidden');
+            if (catArrow) catArrow.classList.remove('rotate-180');
+          }
+        });
+
+        optItems.forEach(item => {
+          item.addEventListener('click', () => {
+            const val = item.getAttribute('data-value') || 'all';
+            const text = item.querySelector('span:first-child')?.textContent || '';
+
+            currentCat = val;
+            if (catLabel) catLabel.textContent = text;
+
+            optItems.forEach(i => {
+              i.className = 'agency-opt-item w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-[#1d7fe0] dark:hover:text-sky-400 transition-all text-left cursor-pointer';
+            });
+
+            item.className = 'agency-opt-item active w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold text-[#1d7fe0] dark:text-sky-400 bg-sky-50 dark:bg-sky-950/50 transition-all text-left cursor-pointer';
+
+            catMenu.classList.add('hidden');
+            if (catArrow) catArrow.classList.remove('rotate-180');
+
+            renderAgenciesTable();
+          });
+        });
+      }
+    });
+  </script>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>

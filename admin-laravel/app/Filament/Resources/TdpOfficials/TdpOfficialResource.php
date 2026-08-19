@@ -25,10 +25,19 @@ class TdpOfficialResource extends Resource
 
     protected static ?string $modelLabel = 'Cán bộ Tổ dân phố';
 
+    protected static bool $shouldRegisterNavigation = false;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public static function getNavigationGroup(): ?string
     {
-        return 'Quản lý địa bàn';
+        return 'Tổ chức & Cán bộ';
     }
+
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $recordTitleAttribute = 'tdp_name';
 

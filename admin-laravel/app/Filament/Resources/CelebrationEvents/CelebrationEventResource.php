@@ -20,16 +20,25 @@ class CelebrationEventResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-flag';
 
-    protected static ?string $navigationLabel = 'Sự kiện kỷ niệm';
+    protected static ?string $navigationLabel = 'Sự kiện & Kỷ niệm';
 
-    protected static ?string $pluralLabel = 'Sự kiện kỷ niệm';
+    protected static ?string $pluralLabel = 'Sự kiện & Kỷ niệm';
 
     protected static ?string $modelLabel = 'Sự kiện kỷ niệm';
 
+    protected static bool $shouldRegisterNavigation = false;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public static function getNavigationGroup(): ?string
     {
-        return 'Quản lý địa bàn';
+        return 'Cấu hình & Sự kiện';
     }
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'name';
 

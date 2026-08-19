@@ -19,16 +19,25 @@ class OfficialResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $navigationLabel = 'Cán bộ & CSKV';
+    protected static ?string $navigationLabel = 'Danh sách Cán bộ Phường';
 
-    protected static ?string $pluralLabel = 'Cán bộ & CSKV';
+    protected static ?string $pluralLabel = 'Danh sách Cán bộ Phường';
 
-    protected static ?string $modelLabel = 'Cán bộ CSKV';
+    protected static ?string $modelLabel = 'Cán bộ';
+
+    protected static bool $shouldRegisterNavigation = false;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Quản lý địa bàn';
+        return 'Tổ chức & Cán bộ';
     }
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'name';
 

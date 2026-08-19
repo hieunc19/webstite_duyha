@@ -17,6 +17,11 @@ if (!is_dir($mainTargetDir)) {
 function saveJsonBoth($filename, $data, $mainTargetDir) {
     $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     file_put_contents($mainTargetDir . '/' . $filename, $json);
+    $publicTargetDir = __DIR__ . '/../client/public/data';
+    if (!is_dir($publicTargetDir)) {
+        mkdir($publicTargetDir, 0755, true);
+    }
+    file_put_contents($publicTargetDir . '/' . $filename, $json);
 }
 
 // 1. Provinces
@@ -59,6 +64,7 @@ $places = \App\Models\Place::all()->map(function($place) {
         'category' => $place->category,
         'status' => $place->status,
         'address' => $place->address,
+        'phone' => $place->phone,
         'lat' => (float)$place->lat,
         'lng' => (float)$place->lng,
         'image' => $place->image,
@@ -70,7 +76,7 @@ saveJsonBoth('places.json', $places, $mainTargetDir);
 
 // 4. Neighborhoods
 echo "Dumping neighborhoods...\n";
-$neighborhoods = \App\Models\Neighborhood::all()->map(function($n) {
+$allNeighborhoods = \App\Models\Neighborhood::all()->map(function($n) {
     return [
         'id' => $n->id,
         'name' => $n->name,
@@ -84,6 +90,30 @@ $neighborhoods = \App\Models\Neighborhood::all()->map(function($n) {
         'status' => $n->status
     ];
 });
+
+$cleanName = function($name) {
+    return trim(preg_replace('/^(TDP|Tổ dân phố)\s+/iu', '', $name));
+};
+
+$newNeighborhoods = $allNeighborhoods->where('type', 'new')->sort(function($a, $b) use ($cleanName) {
+    return strcoll($cleanName($a['name']), $cleanName($b['name']));
+})->values();
+
+$groupOrder = [];
+foreach ($newNeighborhoods as $idx => $item) {
+    $groupOrder[$item['group_code']] = $idx;
+}
+
+$oldNeighborhoods = $allNeighborhoods->where('type', 'old')->sort(function($a, $b) use ($groupOrder, $cleanName) {
+    $orderA = $groupOrder[$a['group_code']] ?? 999;
+    $orderB = $groupOrder[$b['group_code']] ?? 999;
+    if ($orderA !== $orderB) {
+        return $orderA - $orderB;
+    }
+    return strcoll($cleanName($a['name']), $cleanName($b['name']));
+})->values();
+
+$neighborhoods = $newNeighborhoods->merge($oldNeighborhoods);
 saveJsonBoth('neighborhoods.json', $neighborhoods, $mainTargetDir);
 
 // 5. Celebration Events
@@ -101,20 +131,20 @@ $events = \App\Models\CelebrationEvent::all()->map(function($e) {
 });
 saveJsonBoth('celebration_events.json', $events, $mainTargetDir);
 
-// 6. Meritorious Families
+// 6. Meritorious Families (Policy Batches with Excel files)
 echo "Dumping meritorious families...\n";
-$families = \App\Models\MeritoriousFamily::all()->map(function($f) {
+$families = \App\Models\MeritoriousFamily::where('status', 'active')->orderBy('created_at', 'desc')->get()->map(function($f) {
     return [
         'id' => $f->id,
         'name' => $f->name,
-        'type' => $f->type,
-        'neighborhood_id' => $f->neighborhood_id,
-        'address' => $f->address,
-        'representative_name' => $f->representative_name,
-        'phone' => $f->phone,
-        'benefit_details' => $f->benefit_details,
-        'celebration_event_id' => $f->celebration_event_id,
-        'status' => $f->status
+        'file_path' => $f->file_path,
+        'file_url' => $f->file_url,
+        'file_name' => $f->file_name ?: 'Danh-sach-chinh-sach.xlsx',
+        'file_size' => $f->file_size,
+        'description' => $f->description,
+        'status' => $f->status,
+        'created_at' => $f->created_at?->format('d/m/Y H:i'),
+        'period_date' => $f->period_date ?: ($f->created_at?->format('d/m/Y') ?? '')
     ];
 });
 saveJsonBoth('meritorious_families.json', $families, $mainTargetDir);
@@ -136,7 +166,25 @@ $officials = \App\Models\Official::all()->map(function($o) {
 });
 saveJsonBoth('officials.json', $officials, $mainTargetDir);
 
-// 8. TDP Officials (Cadres)
+// 8. Departments
+echo "Dumping departments...\n";
+$departments = \App\Models\Department::where('status', 'active')
+    ->orderBy('sort_order', 'asc')
+    ->get()
+    ->map(function($d) {
+        return [
+            'id' => $d->id,
+            'code' => $d->code,
+            'name' => $d->name,
+            'color' => $d->color,
+            'sort_order' => (int) $d->sort_order,
+            'status' => $d->status,
+            'description' => $d->description
+        ];
+    });
+saveJsonBoth('departments.json', $departments, $mainTargetDir);
+
+// 9. TDP Officials (Cadres)
 echo "Dumping TDP officials...\n";
 $newNeighborhoods = \App\Models\Neighborhood::where('type', 'new')->get();
 $tdpOfficials = $newNeighborhoods->map(function($o, $idx) {
@@ -211,7 +259,20 @@ saveJsonBoth('settings.json', $settingsData, $mainTargetDir);
 
 // 10. Homepage Sections (Layout Builder)
 echo "Dumping homepage sections...\n";
-$homepageSections = \App\Models\HomepageSection::orderBy('sort_order', 'asc')->get()->map(function($sec) {
+$managedHomepageCodes = [
+    'header_navbar',
+    'hero_banner',
+    'stats_cards',
+    'agencies_grid',
+    'procedures_utilities',
+    'hdsd_procedure',
+    'footer_section',
+];
+$homepageSections = \App\Models\HomepageSection::where(function ($query) use ($managedHomepageCodes) {
+    $query
+        ->whereIn('section_code', $managedHomepageCodes)
+        ->orWhere('section_code', 'like', 'custom_%');
+})->orderBy('sort_order', 'asc')->get()->map(function($sec) {
     return [
         'id' => $sec->id,
         'section_code' => $sec->section_code,
@@ -224,5 +285,277 @@ $homepageSections = \App\Models\HomepageSection::orderBy('sort_order', 'asc')->g
     ];
 });
 saveJsonBoth('homepage_sections.json', $homepageSections, $mainTargetDir);
+
+// 11. Feedback & Petitions Config (Google Form & Sheets URL)
+echo "Dumping feedback config...\n";
+$fbFormUrl = \App\Models\Setting::where('key', 'feedback_google_form_url')->value('value') ?? '';
+$fbSheetUrl = \App\Models\Setting::where('key', 'feedback_google_sheet_url')->value('value') ?? '';
+$fbEnabled = \App\Models\Setting::where('key', 'feedback_is_enabled')->value('value') ?? '1';
+$fbTitle = \App\Models\Setting::where('key', 'feedback_title')->value('value') ?? 'Phản ánh và kiến nghị';
+$fbSubtitle = \App\Models\Setting::where('key', 'feedback_subtitle')->value('value') ?? 'Kênh tiếp nhận và giải quyết ý kiến phản ánh trực tuyến của công dân';
+
+$feedbackConfig = [
+    'google_form_url' => $fbFormUrl,
+    'google_sheet_url' => $fbSheetUrl,
+    'is_enabled' => (bool) $fbEnabled,
+    'title' => $fbTitle,
+    'subtitle' => $fbSubtitle,
+    'updated_at' => date('Y-m-d H:i:s'),
+];
+saveJsonBoth('feedback_config.json', $feedbackConfig, $mainTargetDir);
+
+// 12. Citizen Reception Schedule (Lịch tiếp công dân)
+echo "Dumping citizen reception schedule...\n";
+$crTitle = \App\Models\Setting::where('key', 'citizen_reception_title')->value('value') ?? 'LỊCH TIẾP CÔNG DÂN ĐỊNH KỲ NĂM 2026';
+$crImage = \App\Models\Setting::where('key', 'citizen_reception_image')->value('value') ?? '';
+$crTime = \App\Models\Setting::where('key', 'citizen_reception_schedule_time')->value('value') ?? 'Thứ 5 hàng tuần (Sáng: 07h30 - 11h30 | Chiều: 13h30 - 17h00)';
+$crLocation = \App\Models\Setting::where('key', 'citizen_reception_location')->value('value') ?? 'Phòng Tiếp công dân — Trụ sở UBND Phường Duy Hà (Số 01 đường Lê Lợi, TP. Ninh Bình)';
+$crOfficer = \App\Models\Setting::where('key', 'citizen_reception_officer')->value('value') ?? 'Đồng chí Chủ tịch UBND Phường và các Phó Chủ tịch UBND Phường';
+$crNotes = \App\Models\Setting::where('key', 'citizen_reception_notes')->value('value') ?? 'Công dân khi đến khiếu nại, tố cáo, kiến nghị, phản ánh cần xuất trình Căn cước công dân và các giấy tờ, tài liệu liên quan đến nội dung phản ánh.';
+
+$citizenReceptionData = [
+    'title' => $crTitle,
+    'image' => $crImage,
+    'schedule_time' => $crTime,
+    'location' => $crLocation,
+    'officer' => $crOfficer,
+    'notes' => $crNotes,
+    'updated_at' => date('Y-m-d H:i:s'),
+];
+saveJsonBoth('citizen_reception.json', $citizenReceptionData, $mainTargetDir);
+
+// 13. Administrative Procedures (Thủ tục hành chính)
+echo "Dumping administrative procedures...\n";
+$procedures = \App\Models\Procedure::where('is_active', true)
+    ->orderBy('id', 'desc')
+    ->get()
+    ->map(function($p) {
+        $categoryMap = [
+            'residence' => 'Cư trú & Hộ khẩu',
+            'civil' => 'Hộ tịch & Tư pháp',
+            'land' => 'Địa chính & Đất đai',
+            'vneid' => 'Định danh VNeID',
+            'social' => 'An sinh xã hội & Trợ cấp',
+            'tax' => 'Thuế & Tài chính',
+            'other' => 'Thủ tục khác',
+        ];
+
+        $docsList = collect($p->docs ?? [])->map(function($doc) {
+            if (is_array($doc)) {
+                $file = $doc['file'] ?? null;
+                $fileUrl = null;
+                if (!empty($file)) {
+                    $fileUrl = \Illuminate\Support\Str::startsWith($file, 'http') ? $file : ('/storage/' . ltrim($file, '/'));
+                }
+                return [
+                    'name' => $doc['name'] ?? '',
+                    'quantity' => $doc['quantity'] ?? '01 bản chính',
+                    'file' => $file,
+                    'file_url' => $fileUrl,
+                ];
+            }
+            return [
+                'name' => (string) $doc,
+                'quantity' => '01 bản chính',
+                'file' => null,
+                'file_url' => null,
+            ];
+        })->values();
+
+        $attachmentUrl = null;
+        $firstDocWithFile = collect($docsList)->first(function ($d) {
+            return !empty($d['file_url']);
+        });
+
+        if ($firstDocWithFile) {
+            $attachmentUrl = $firstDocWithFile['file_url'];
+        } elseif (!empty($p->attachment)) {
+            $attachmentUrl = \Illuminate\Support\Str::startsWith($p->attachment, 'http') ? $p->attachment : ('/storage/' . ltrim($p->attachment, '/'));
+        } elseif (!empty($p->download_url) && !str_contains($p->download_url, 'dichvucong.gov.vn')) {
+            $attachmentUrl = $p->download_url;
+        }
+
+        return [
+            'id' => $p->id,
+            'code' => $p->code ?? ('TTHC-' . str_pad($p->id, 3, '0', STR_PAD_LEFT)),
+            'title' => $p->title,
+            'name' => $p->title,
+            'category' => $p->category,
+            'categoryText' => $categoryMap[$p->category] ?? 'Thủ tục khác',
+            'desc' => $p->desc,
+            'fee' => $p->fee ?? 'Miễn phí',
+            'agency' => $p->agency ?? 'UBND Phường',
+            'docs' => $docsList,
+            'attachment_url' => $attachmentUrl,
+            'created_at' => $p->created_at ? $p->created_at->format('d/m/Y') : null,
+        ];
+    });
+saveJsonBoth('procedures.json', $procedures, $mainTargetDir);
+
+// 14. Procedure Videos (Video hướng dẫn thủ tục)
+echo "Dumping procedure videos...\n";
+$procedureVideos = \App\Models\ProcedureVideo::where('is_active', true)
+    ->orderBy('sort_order', 'asc')
+    ->orderBy('id', 'desc')
+    ->get()
+    ->map(function($v) {
+        $categoryMap = [
+            'residence' => 'Cư trú & Hộ khẩu',
+            'vneid' => 'Định danh VNeID',
+            'civil' => 'Hộ tịch & Chứng thực',
+            'land' => 'Đất đai & Xây dựng',
+            'social' => 'An sinh xã hội',
+            'other' => 'Lĩnh vực khác',
+        ];
+
+        $url = trim($v->video_url ?? '');
+        if (!empty($url)) {
+            // Google Drive auto-convert
+            if (str_contains($url, 'drive.google.com')) {
+                if (!str_contains($url, '/preview')) {
+                    if (preg_match('/\/file\/d\/([a-zA-Z0-9_-]+)/', $url, $m) || preg_match('/[?&]id=([a-zA-Z0-9_-]+)/', $url, $m)) {
+                        $url = 'https://drive.google.com/file/d/' . $m[1] . '/preview';
+                    }
+                }
+            }
+            // YouTube auto-convert
+            elseif (!str_contains($url, 'youtube.com/embed/')) {
+                if (preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([\w-]{11})/', $url, $m)) {
+                    $url = 'https://www.youtube.com/embed/' . $m[1] . '?controls=1&rel=0&enablejsapi=1';
+                }
+            }
+        }
+
+        return [
+            'id' => $v->id,
+            'title' => $v->title,
+            'category' => $v->category,
+            'categoryText' => $categoryMap[$v->category] ?? 'Lĩnh vực khác',
+            'videoUrl' => $url,
+            'sort_order' => $v->sort_order,
+        ];
+    });
+saveJsonBoth('procedure_videos.json', $procedureVideos, $mainTargetDir);
+
+// 15. Policies & Regulations (Chính sách & Quy định)
+echo "Dumping policies...\n";
+$sharedCategoryMap = \App\Models\ProcedureCategory::pluck('name', 'slug')->toArray();
+$policies = \App\Models\Policy::where('is_active', true)
+    ->orderBy('sort_order', 'asc')
+    ->orderBy('id', 'desc')
+    ->get()
+    ->map(function($p) use ($sharedCategoryMap) {
+        $downloadUrl = '#';
+
+        $downloadUrl = '#';
+        if (!empty($p->download_url)) {
+            if (str_starts_with($p->download_url, 'http://') || str_starts_with($p->download_url, 'https://') || $p->download_url === '#') {
+                $downloadUrl = $p->download_url;
+            } else {
+                $downloadUrl = '/storage/' . ltrim($p->download_url, '/');
+            }
+        }
+
+        return [
+            'id' => $p->id,
+            'title' => $p->title,
+            'code' => $p->code ?? '',
+            'category' => $p->category,
+            'categoryText' => $sharedCategoryMap[$p->category] ?? 'Lĩnh vực khác',
+            'date' => $p->issue_date ?? '',
+            'agency' => $p->agency ?? '',
+            'status' => $p->status ?? 'Đang có hiệu lực',
+            'summary' => $p->summary ?? '',
+            'highlights' => $p->highlights ?? [],
+            'downloadUrl' => $downloadUrl,
+            'sort_order' => $p->sort_order,
+        ];
+    });
+saveJsonBoth('policies.json', $policies, $mainTargetDir);
+
+// 16. Waste Schedules
+echo "Dumping waste schedules...\n";
+if (\Illuminate\Support\Facades\Schema::hasTable('waste_schedules')) {
+    $wasteSchedules = \App\Models\WasteSchedule::where('is_active', true)
+        ->orderBy('sort_order', 'asc')
+        ->orderBy('id', 'asc')
+        ->get();
+    saveJsonBoth('waste_schedules.json', $wasteSchedules, $mainTargetDir);
+}
+
+// 17. Form Documents
+echo "Dumping form documents...\n";
+if (\Illuminate\Support\Facades\Schema::hasTable('form_documents')) {
+    $formDocs = \App\Models\FormDocument::where('is_active', true)
+        ->orderBy('sort_order', 'asc')
+        ->orderBy('id', 'asc')
+        ->get()
+        ->map(function ($f) {
+            $downloadUrl = '#';
+            if (!empty($f->download_url)) {
+                $downloadUrl = $f->download_url;
+            } elseif (!empty($f->file_path)) {
+                $downloadUrl = '/storage/' . ltrim($f->file_path, '/');
+            }
+            return [
+                'id' => $f->id,
+                'code' => $f->code ?? '',
+                'title' => $f->title,
+                'name' => $f->title,
+                'description' => $f->description ?? '',
+                'purpose' => $f->description ?? '',
+                'category' => $f->category,
+                'category_name' => $f->category_text ?? 'Thủ tục hành chính',
+                'agency' => $f->agency ?? 'Bộ phận Một cửa',
+                'fee' => $f->fee ?? 'Miễn phí',
+                'file_path' => $f->file_path,
+                'download_url' => $downloadUrl,
+                'downloadUrl' => $downloadUrl,
+                'steps' => $f->steps ?? [],
+                'docs' => $f->docs ?? [],
+                'notes' => $f->notes ?? '',
+            ];
+        });
+    saveJsonBoth('form_documents.json', $formDocs, $mainTargetDir);
+}
+
+// 18. Procedure Categories
+echo "Dumping procedure categories...\n";
+if (\Illuminate\Support\Facades\Schema::hasTable('procedure_categories')) {
+    $procCats = \App\Models\ProcedureCategory::where('is_active', true)
+        ->orderBy('sort_order', 'asc')
+        ->orderBy('id', 'asc')
+        ->get();
+    saveJsonBoth('procedure_categories.json', $procCats, $mainTargetDir);
+}
+
+// Copy storage files to client/public/storage
+function copyStorageToClientPublic() {
+    $source = __DIR__ . '/storage/app/public';
+    $dest = dirname(__DIR__) . '/client/public/storage';
+
+    if (!file_exists($source)) return;
+
+    $dir = new RecursiveDirectoryIterator($source, RecursiveDirectoryIterator::SKIP_DOTS);
+    $iterator = new RecursiveIteratorIterator($dir, RecursiveIteratorIterator::SELF_FIRST);
+
+    foreach ($iterator as $item) {
+        $subPath = $iterator->getSubPathName();
+        $targetPath = $dest . '/' . $subPath;
+
+        if ($item->isDir()) {
+            if (!file_exists($targetPath)) {
+                mkdir($targetPath, 0755, true);
+            }
+        } else {
+            $targetDir = dirname($targetPath);
+            if (!file_exists($targetDir)) {
+                mkdir($targetDir, 0755, true);
+            }
+            copy($item->getPathname(), $targetPath);
+        }
+    }
+}
+copyStorageToClientPublic();
 
 echo "All data dumped successfully to client/src/data!\n";

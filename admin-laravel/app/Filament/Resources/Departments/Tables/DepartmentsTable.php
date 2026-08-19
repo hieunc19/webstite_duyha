@@ -56,6 +56,7 @@ class DepartmentsTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('sort_order', 'asc')
             ->filters([
                 SelectFilter::make('status')
                     ->label('Trạng thái')

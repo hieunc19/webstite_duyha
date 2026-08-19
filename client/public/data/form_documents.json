@@ -1,0 +1,29 @@
+[
+    {
+        "id": 1,
+        "code": "Mẫu TK-KS",
+        "title": "Tờ khai đăng ký khai sinh",
+        "name": "Tờ khai đăng ký khai sinh",
+        "description": "Dùng cho cha, mẹ hoặc người thân thích đi đăng ký khai sinh lần đầu cho trẻ em mới sinh.",
+        "purpose": "Dùng cho cha, mẹ hoặc người thân thích đi đăng ký khai sinh lần đầu cho trẻ em mới sinh.",
+        "category": "civil",
+        "category_name": "Hộ tịch & Chứng thực",
+        "agency": "Bộ phận Tư pháp - Hộ tịch",
+        "fee": "Miễn phí",
+        "file_path": null,
+        "download_url": "#",
+        "downloadUrl": "#",
+        "steps": [
+            "Mục (1) Kính gửi: Ghi rõ 'Ủy ban nhân dân phường Duy Hà'.",
+            "Mục (2) Người yêu cầu: Ghi đầy đủ họ tên, ngày sinh, số CCCD, nơi cư trú của người đi khai sinh.",
+            "Mục (3) Thông tin người được khai sinh: Ghi họ, chữ đệm, tên trẻ bằng chữ in hoa; ngày tháng năm sinh; nơi sinh; quê quán; dân tộc; quốc tịch.",
+            "Mục (4) Thông tin Cha & Mẹ: Ghi đầy đủ họ tên, năm sinh, dân tộc, quốc tịch, nơi cư trú của cả cha và mẹ theo CCCD."
+        ],
+        "docs": [
+            "Giấy chứng sinh (bản chính do cơ sở y tế cấp).",
+            "Bản sao hoặc xuất trình CCCD của cha và mẹ.",
+            "Giấy chứng nhận kết hôn của cha mẹ (nếu có đăng ký kết hôn)."
+        ],
+        "notes": "Trong thời hạn 60 ngày kể từ ngày sinh con, cha hoặc mẹ có trách nhiệm đăng ký khai sinh cho con."
+    }
+]

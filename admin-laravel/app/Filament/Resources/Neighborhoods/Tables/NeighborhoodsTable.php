@@ -55,13 +55,15 @@ class NeighborhoodsTable
                     })
                     ->badge()
                     ->color(fn (Neighborhood $record): string => $record->type === 'new' ? 'success' : 'warning'),
-                TextColumn::make('leader_name')
+                TextColumn::make('cskv_name')
                     ->label('Cán bộ CSKV phụ trách')
+                    ->getStateUsing(fn (Neighborhood $record): ?string => $record->cskv_name ?: $record->leader_name)
                     ->placeholder('Chưa phân công')
                     ->searchable(),
-                TextColumn::make('leader_phone')
+                TextColumn::make('cskv_phone')
                     ->label('SĐT CSKV')
-                    ->placeholder('Chưa phân công')
+                    ->getStateUsing(fn (Neighborhood $record): ?string => $record->cskv_phone ?: $record->leader_phone)
+                    ->placeholder('Chưa cập nhật')
                     ->searchable(),
                 TextColumn::make('households')
                     ->label('Số hộ GD')
@@ -92,6 +94,7 @@ class NeighborhoodsTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('name', 'asc')
             ->filters([
                 SelectFilter::make('type')
                     ->label('Phân loại')

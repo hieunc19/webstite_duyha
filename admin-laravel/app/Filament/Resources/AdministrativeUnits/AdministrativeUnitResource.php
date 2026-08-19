@@ -18,10 +18,22 @@ class AdministrativeUnitResource extends Resource
 {
     protected static ?string $model = AdministrativeUnit::class;
 
-    protected static ?string $navigationLabel = 'Địa giới hành chính';
-    protected static ?string $breadcrumb = 'Địa giới hành chính';
-    protected static ?string $modelLabel = 'Địa giới hành chính';
-    protected static ?string $pluralModelLabel = 'Địa giới hành chính';
+    protected static ?string $navigationLabel = 'Đơn vị Hành chính';
+    protected static ?string $breadcrumb = 'Đơn vị Hành chính';
+    protected static ?string $modelLabel = 'Đơn vị Hành chính';
+    protected static bool $shouldRegisterNavigation = false;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Quản lý Địa bàn & Dân cư';
+    }
+
+    protected static ?int $navigationSort = 1;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMap;
 

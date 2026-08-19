@@ -4,6 +4,16 @@ export interface Image360 {
     type?: 'url' | 'upload';
 }
 
+export interface Department {
+    id: number;
+    code: string;
+    name: string;
+    color?: string;
+    sort_order: number;
+    status: string;
+    description?: string;
+}
+
 export interface Official {
     id: number;
     name: string;
@@ -13,7 +23,7 @@ export interface Official {
     neighborhood_name?: string | string[];
     avatar_color?: string;
     avatar?: string;
-    department?: 'dang_uy' | 'chinh_quyen' | 'ttpvhcc' | 'cskv';
+    department?: string;
 }
 
 export interface Place {
@@ -22,6 +32,7 @@ export interface Place {
     category: 'government' | 'neighborhood' | 'school' | 'health' | 'police' | 'meritorious_family';
     status: 'active' | 'closed';
     address?: string;
+    phone?: string;
     lat: number;
     lng: number;
     image?: string | null;
@@ -70,19 +81,21 @@ export interface Neighborhood {
 export interface MeritoriousFamily {
     id: number;
     name: string;
-    representative_name: string;
-    type: string;
-    neighborhood_id?: number | null;
-    celebration_event_id?: number | null;
-    phone: string;
-    address: string;
+    file_path?: string | null;
+    file_url?: string | null;
+    file_name?: string | null;
+    file_size?: string | null;
+    description?: string | null;
+    period_date?: string | null;
+    created_at?: string | null;
     status: string;
-    benefit_details: string;
-    description?: string;
-    householder_name?: string;
-    merit_title?: string;
-    reward_level?: string;
-    relative_contact?: string;
+    representative_name?: string;
+    type?: string;
+    phone?: string;
+    address?: string;
+    celebration_event_id?: number | null;
+    neighborhood_id?: number | null;
+    benefit_details?: string;
 }
 
 export interface CelebrationEvent {

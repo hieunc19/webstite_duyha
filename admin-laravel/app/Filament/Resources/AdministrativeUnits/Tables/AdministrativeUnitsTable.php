@@ -52,7 +52,8 @@ class AdministrativeUnitsTable
                         }
                         return $json;
                     })
-                    ->wrap()
+                    ->limit(35)
+                    ->tooltip(fn (TextColumn $column): ?string => $column->getState())
                     ->fontFamily('mono')
                     ->size('xs')
                     ->toggleable(isToggledHiddenByDefault: true),

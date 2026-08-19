@@ -5,19 +5,26 @@ import 'leaflet.markercluster';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 
-import type { Place, Official, Neighborhood } from './types';
-import { OFFICIALS } from './data/officials';
+import type { Place, Official, Neighborhood, Department } from './types';
+import placesData from './data/places.json';
+import officialsData from './data/officials.json';
+import departmentsData from './data/departments.json';
 import neighborhoodsData from './data/neighborhoods.json';
 const NEIGHBORHOODS: Neighborhood[] = neighborhoodsData as Neighborhood[];
 import { DUY_HA_BOUNDARY } from './data/duyHaBoundary';
 import { initWeatherWidget } from './services/weather';
-import celebrationEventsData from './data/celebration_events.json';
+import { initFormsView } from './services/forms';
 import meritoriousFamiliesData from './data/meritorious_families.json';
 import settingsData from './data/settings.json';
 import homepageSectionsData from './data/homepage_sections.json';
 import tdpOfficialsData from './data/tdp_officials.json';
 const ALL_TDP_OFFICIALS = tdpOfficialsData as any[];
+import proceduresData from './data/procedures.json';
+import procedureVideosData from './data/procedure_videos.json';
+import policiesData from './data/policies.json';
 import { CSKV_MAP } from './data/tdpOfficials';
+import { applySharedHeaderConfig, initSharedHeader } from './components/sharedHeader';
+import { applySharedFooterConfig, initSharedFooter } from './components/sharedFooter';
 
 declare global {
   interface Window {
@@ -31,211 +38,59 @@ declare global {
     openAllOfficialsModalForTdp: (tdpName: string) => void;
     closeAllOfficialsModal: () => void;
     filterAllOfficialsTable: (keyword: string) => void;
+    openAllAgenciesModal: () => void;
+    closeAllAgenciesModal: () => void;
+    filterAllAgenciesTable: () => void;
     showMeritoriousDetail: (id: number) => void;
     closeMeritoriousModal: () => void;
     filterMeritoriousByEvent: (eventId: number | 'all') => void;
     filterPortalCategory: (category: string) => void;
     filterOfficialsByNeighborhood: (neighborhood: string) => void;
     toggleMobileMenu: () => void;
+    toggleMapPlacesDock: () => void;
+    scrollMapPlacesDock: (direction: 'prev' | 'next' | 'left' | 'right') => void;
+    focusMapPlace: (id: number) => void;
     toggleMobileStatsPanel: () => void;
     switchTdpMobileTab: (tab: 'old' | 'new', prefix?: string) => void;
     pannellum: any;
   }
 }
 
-// Seed Places Data (Full list of Institutions + Old & New Neighborhoods)
-const SEED_PLACES: Place[] = [
-  {
-    id: 1,
-    name: 'Ủy ban Nhân dân Phường Duy Hà',
-    category: 'government',
-    status: 'active',
-    address: 'Trung tâm Hành chính Phường Duy Hà, Ninh Bình',
-    lat: 20.6478448,
-    lng: 105.914737,
-    image: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80',
-    description: 'Trụ sở UBND Phường Duy Hà là nơi tập trung chỉ đạo, điều hành kinh tế - xã hội, tiếp nhận và giải quyết các thủ tục hành chính, dịch vụ công trực tuyến cho công dân trên địa bàn phường Duy Hà.',
-    households: 3850,
-    population: 14200,
-    hours: '07:30 - 17:00 (Thứ 2 - Thứ 6)',
-    images_360: [
-      { title: 'Toàn cảnh Trụ sở UBND Phường 360°', url: 'https://pannellum.org/images/alma.jpg' },
-      { title: 'Khu vực Tiếp nhận & Trả kết quả Dịch vụ công', url: 'https://pannellum.org/images/cerro-toco.jpg' }
-    ]
-  },
-  {
-    id: 4,
-    name: 'Trụ sở Công an Phường Duy Hà',
-    category: 'police',
-    status: 'active',
-    address: 'Trục đường chính Phường Duy Hà, Ninh Bình',
-    lat: 20.646500,
-    lng: 105.913800,
-    image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
-    description: 'Công an Phường Duy Hà có nhiệm vụ đảm bảo an ninh trật tự, an toàn xã hội, quản lý hành chính về trật tự xã hội và tiếp nhận phản ánh, tố giác tội phạm 24/7.',
-    hours: 'Trực ban 24/24',
-    images_360: [{ title: 'Khu vực Trực ban Công an Phường 360°', url: 'https://pannellum.org/images/cerro-toco.jpg' }]
-  },
-  {
-    id: 5,
-    name: 'Trạm Y tế Phường Duy Hà',
-    category: 'health',
-    status: 'active',
-    address: 'Cạnh UBND Phường Duy Hà, Ninh Bình',
-    lat: 20.647100,
-    lng: 105.915500,
-    image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80',
-    description: 'Trạm Y tế Phường Duy Hà thực hiện sơ cấp cứu, chăm sóc sức khỏe ban đầu, tiêm chủng mở rộng và tư vấn y tế cộng đồng.',
-    hours: '07:00 - 17:00 (Trực cấp cứu 24/7)',
-    images_360: [{ title: 'Khuôn viên Trạm Y tế 360°', url: 'https://pannellum.org/images/boulder.jpg' }]
-  },
-  {
-    id: 6,
-    name: 'Trường THCS Duy Hà',
-    category: 'school',
-    status: 'active',
-    address: 'Khu 3, Phường Duy Hà, Ninh Bình',
-    lat: 20.649800,
-    lng: 105.918200,
-    image: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=800&q=80',
-    description: 'Trường THCS Duy Hà đạt chuẩn quốc gia cấp độ 2, giàu truyền thống dạy tốt học tốt.',
-    hours: '07:00 - 17:30',
-    images_360: [{ title: 'Sân trường THCS Duy Hà 360°', url: 'https://pannellum.org/images/alma.jpg' }]
-  },
-  {
-    id: 8,
-    name: 'Trường Tiểu học Duy Hà',
-    category: 'school',
-    status: 'active',
-    address: 'Khu 1, Phường Duy Hà, Ninh Bình',
-    lat: 20.652000,
-    lng: 105.913500,
-    image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80',
-    description: 'Trường Tiểu học Duy Hà nuôi dưỡng và giáo dục học sinh mầm non tương lai của địa phương.',
-    hours: '07:15 - 16:45',
-    images_360: [{ title: 'Khối phòng học Tiểu học Duy Hà 360°', url: 'https://pannellum.org/images/boulder.jpg' }]
-  },
+function formatStorageUrl(path: string | null | undefined): string {
+  if (!path) return '/hero-bg.jpg';
+  if (path.startsWith('http://') || path.startsWith('https://')) return path;
+  if (path.startsWith('/storage/')) return path;
+  if (path.startsWith('/')) return path;
+  return `/storage/${path.replace(/^\/+/, '')}`;
+}
 
-  // --- TỔ DÂN PHỐ MỚI (DỰ KIẾN SAU SÁP NHẬP) ---
-  {
-    id: 101,
-    name: 'Tổ dân phố Hoàng Đồng (Mới)',
-    category: 'neighborhood',
-    status: 'active',
-    address: 'Cụm sáp nhập An Nhân + Hoàng Thượng + Hoàng Hạ',
-    lat: 20.651200,
-    lng: 105.912300,
-    image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80',
-    description: 'Tổ dân phố Hoàng Đồng là đơn vị mới sáp nhập từ 3 thôn cũ: An Nhân, Hoàng Thượng và Hoàng Hạ. Tổng hộ dân: 761 hộ, 2.742 nhân khẩu.',
-    former_names: 'An Nhân + Hoàng Thượng + Hoàng Hạ (Cũ)',
-    cultural_house_address: 'Nhà Văn hóa TDP Hoàng Đồng',
-    households: 761,
-    population: 2742,
-    images_360: [{ title: 'Nhà Văn hóa TDP Hoàng Đồng (360°)', url: 'https://pannellum.org/images/boulder.jpg' }]
-  },
-  {
-    id: 102,
-    name: 'Tổ dân phố Ngọc Tú (Mới)',
-    category: 'neighborhood',
-    status: 'active',
-    address: 'Cụm sáp nhập Thôn Tú + Thôn Ngọc Thị',
-    lat: 20.648900,
-    lng: 105.916500,
-    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80',
-    description: 'Tổ dân phố Ngọc Tú là đơn vị mới sáp nhập từ 2 thôn cũ: Thôn Tú và Thôn Ngọc Thị. Tổng hộ dân: 730 hộ, 2.513 nhân khẩu.',
-    former_names: 'Thôn Tú + Thôn Ngọc Thị (Cũ)',
-    cultural_house_address: 'Nhà Văn hóa TDP Ngọc Tú',
-    households: 730,
-    population: 2513,
-    images_360: [{ title: 'Nhà Văn hóa TDP Ngọc Tú (360°)', url: 'https://pannellum.org/images/alma.jpg' }]
-  },
-  {
-    id: 103,
-    name: 'Tổ dân phố Duy Hải (Mới)',
-    category: 'neighborhood',
-    status: 'active',
-    address: 'Cụm sáp nhập Tam Giáp + Tứ Giáp',
-    lat: 20.645000,
-    lng: 105.916000,
-    image: 'https://images.unsplash.com/photo-1448630360428-65456885c650?auto=format&fit=crop&w=800&q=80',
-    description: 'Tổ dân phố Duy Hải sáp nhập từ Tam Giáp và Tứ Giáp. Tổng hộ dân: 725 hộ, 2.527 nhân khẩu.',
-    former_names: 'Tam Giáp + Tứ Giáp (Cũ)',
-    cultural_house_address: 'Nhà Văn hóa TDP Duy Hải',
-    households: 725,
-    population: 2527,
-    images_360: [{ title: 'Nhà Văn hóa TDP Duy Hải (360°)', url: 'https://pannellum.org/images/cerro-toco.jpg' }]
-  },
-  {
-    id: 104,
-    name: 'Tổ dân phố Đông Linh Trang (Mới)',
-    category: 'neighborhood',
-    status: 'active',
-    address: 'Cụm sáp nhập Động Linh + Trịnh',
-    lat: 20.643500,
-    lng: 105.918000,
-    image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80',
-    description: 'Tổ dân phố Đông Linh Trang sáp nhập từ Động Linh và Trịnh. Tổng hộ dân: 616 hộ, 2.134 nhân khẩu.',
-    former_names: 'Động Linh + Trịnh (Cũ)',
-    cultural_house_address: 'Nhà Văn hóa TDP Đông Linh Trang',
-    households: 616,
-    population: 2134,
-    images_360: [{ title: 'Nhà Văn hóa TDP Đông Linh Trang 360°', url: 'https://pannellum.org/images/boulder.jpg' }]
-  },
+// Chuẩn hóa dữ liệu ban đầu từ database JSON xuất xưởng (0ms delay, không có dữ liệu mock)
+const INITIAL_PLACES: Place[] = (placesData as any[]).map(p => ({
+  ...p,
+  image: formatStorageUrl(p.image)
+}));
 
-  // --- TỔ DÂN PHỐ CỦ (TRƯỚC SÁP NHẬP) ---
-  {
-    id: 201,
-    name: 'Tổ dân phố An Nhân (Cũ)',
-    category: 'neighborhood',
-    status: 'closed',
-    address: 'Thuộc cụm sáp nhập Hoàng Đồng',
-    lat: 20.651000,
-    lng: 105.912000,
-    image: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80',
-    description: 'Tổ dân phố An Nhân trước đây có 201 hộ gia đình với 669 nhân khẩu. Hiện nay thuộc phương án sắp xếp sáp nhập vào Tổ dân phố Hoàng Đồng.',
-    former_names: 'Tổ dân phố An Nhân (Hiện trạng cũ)',
-    households: 201,
-    population: 669
-  },
-  {
-    id: 202,
-    name: 'Tổ dân phố Hoàng Thượng (Cũ)',
-    category: 'neighborhood',
-    status: 'closed',
-    address: 'Thuộc cụm sáp nhập Hoàng Đồng',
-    lat: 20.651500,
-    lng: 105.912500,
-    image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=800&q=80',
-    description: 'Tổ dân phố Hoàng Thượng trước sáp nhập có 326 hộ gia đình với 1.174 nhân khẩu.',
-    former_names: 'Tổ dân phố Hoàng Thượng (Hiện trạng cũ)',
-    households: 326,
-    population: 1174
-  },
-  {
-    id: 203,
-    name: 'Tổ dân phố Tam Giáp (Cũ)',
-    category: 'neighborhood',
-    status: 'closed',
-    address: 'Thuộc cụm sáp nhập Duy Hải',
-    lat: 20.645200,
-    lng: 105.915800,
-    image: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=80',
-    description: 'Tổ dân phố Tam Giáp trước sáp nhập có 379 hộ gia đình với 1.284 nhân khẩu.',
-    former_names: 'Tam Giáp (Hiện trạng cũ)',
-    households: 379,
-    population: 1284
-  }
-];
+const INITIAL_OFFICIALS: Official[] = (officialsData as any[]).map(o => ({
+  ...o,
+  avatar: formatStorageUrl(o.avatar)
+}));
+
+const INITIAL_DEPARTMENTS: Department[] = (departmentsData as Department[]).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
 
 class PortalApp {
-  private places: Place[] = SEED_PLACES;
-  private officials: Official[] = OFFICIALS;
+  private places: Place[] = INITIAL_PLACES;
+  private officials: Official[] = INITIAL_OFFICIALS;
+  private departments: Department[] = INITIAL_DEPARTMENTS;
   private neighborhoods: Neighborhood[] = NEIGHBORHOODS;
-  private celebrationEvents: any[] = celebrationEventsData;
   private meritoriousFamilies: any[] = meritoriousFamiliesData;
+  private proceduresList: any[] = proceduresData as any[];
+  private procedureVideos: any[] = procedureVideosData as any[];
+  private policiesList: any[] = policiesData as any[];
   private activeCategory: string = 'all';
   private currentPlace: Place | null = null;
   private isDarkMode: boolean = false;
+  private procedureActiveTab = 'popular';
+  private selectedAgencyIds: number[] = [];
 
   // Leaflet Map state
   private map: L.Map | null = null;
@@ -243,6 +98,7 @@ class PortalApp {
   constructor() {
     this.initTheme();
     this.initPortalData();
+    this.fetchProceduresData();
     this.initSearch();
     this.initEventListeners();
     this.renderPortalGrid();
@@ -250,6 +106,7 @@ class PortalApp {
     this.populateOfficialNeighborhoodSelect();
     this.renderTdpModalTables();
     this.renderMeritoriousSection();
+    this.renderProceduresSection();
 
     // Wire global window methods
     window.showPortalTab = this.showPortalTab.bind(this);
@@ -262,16 +119,41 @@ class PortalApp {
     window.openAllOfficialsModalForTdp = this.openAllOfficialsModalForTdp.bind(this);
     window.closeAllOfficialsModal = this.closeAllOfficialsModal.bind(this);
     window.filterAllOfficialsTable = this.renderAllOfficialsTable.bind(this);
+    window.openAllAgenciesModal = this.openAllAgenciesModal.bind(this);
+    window.closeAllAgenciesModal = this.closeAllAgenciesModal.bind(this);
     window.showMeritoriousDetail = this.showMeritoriousDetail.bind(this);
     window.closeMeritoriousModal = this.closeMeritoriousModal.bind(this);
-    window.filterMeritoriousByEvent = (eventId: number | 'all') => {
-      this.renderMeritoriousSection(eventId);
+    window.filterMeritoriousByEvent = (_eventId: number | 'all') => {
+      this.renderMeritoriousSection();
     };
     window.filterPortalCategory = this.filterPortalCategory.bind(this);
     window.filterOfficialsByNeighborhood = this.filterOfficialsByNeighborhood.bind(this);
     window.toggleMobileMenu = () => {
       const menu = document.getElementById('mobile-nav-menu');
       if (menu) menu.classList.toggle('hidden');
+    };
+    window.toggleMapPlacesDock = () => {
+      const el = document.getElementById('map-places-dock-wrapper') || document.getElementById('map-places-carousel');
+      const icon = document.getElementById('map-places-toggle-icon');
+      if (el) {
+        el.classList.toggle('hidden');
+        if (icon) {
+          icon.style.transform = el.classList.contains('hidden') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+      }
+    };
+    window.scrollMapPlacesDock = (direction: 'prev' | 'next' | 'left' | 'right') => {
+      const container = document.getElementById('map-places-carousel');
+      if (container) {
+        const scrollAmount = direction === 'prev' || direction === 'left' ? -320 : 320;
+        container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      }
+    };
+    window.focusMapPlace = (id: number) => {
+      const p = this.places.find(item => item.id === id);
+      if (p && this.map) {
+        this.map.flyTo([p.lat, p.lng], 16.5, { animate: true, duration: 0.8 });
+      }
     };
     window.toggleMobileStatsPanel = () => {
       const panel = document.getElementById('stats-panel');
@@ -339,6 +221,33 @@ class PortalApp {
     if (Array.isArray(homepageSectionsData)) {
       this.applyHomepageLayout(homepageSectionsData);
     }
+
+    // Auto open map view if navigating with #map-view hash
+    this.checkInitialRoute();
+    window.addEventListener('hashchange', () => this.checkInitialRoute());
+  }
+
+  private checkInitialRoute() {
+    const hash = window.location.hash;
+    const search = window.location.search;
+    const preloadStyle = document.getElementById('map-preload-style');
+    if (hash === '#map-view' || hash === '#map' || search.includes('view=map')) {
+      const mapContainer = document.getElementById('map-view-container');
+      const mainView = document.getElementById('portal-main-view');
+      if (mainView) mainView.classList.add('hidden');
+      if (mapContainer) {
+        mapContainer.classList.remove('hidden');
+        mapContainer.classList.add('flex');
+        if (!this.map) {
+          this.initLeafletMap();
+        } else {
+          setTimeout(() => this.map?.invalidateSize(), 100);
+        }
+      }
+      if (preloadStyle) preloadStyle.remove();
+    } else {
+      if (preloadStyle) preloadStyle.remove();
+    }
   }
 
   public getCurrentPlace(): Place | null {
@@ -347,24 +256,34 @@ class PortalApp {
 
   private initTheme() {
     const savedTheme = localStorage.getItem('portal_theme');
-    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    if (savedTheme === 'dark') {
       this.isDarkMode = true;
+      document.documentElement.classList.add('dark');
       document.body.classList.add('dark-mode', 'dark');
       document.documentElement.setAttribute('data-theme', 'dark');
       const icon = document.getElementById('theme-icon');
       if (icon) icon.textContent = 'light_mode';
+    } else {
+      this.isDarkMode = false;
+      document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark-mode', 'dark');
+      document.documentElement.setAttribute('data-theme', 'light');
+      const icon = document.getElementById('theme-icon');
+      if (icon) icon.textContent = 'dark_mode';
     }
   }
 
   private toggleTheme() {
     this.isDarkMode = !this.isDarkMode;
     if (this.isDarkMode) {
+      document.documentElement.classList.add('dark');
       document.body.classList.add('dark-mode', 'dark');
       document.documentElement.setAttribute('data-theme', 'dark');
       localStorage.setItem('portal_theme', 'dark');
       const icon = document.getElementById('theme-icon');
       if (icon) icon.textContent = 'light_mode';
     } else {
+      document.documentElement.classList.remove('dark');
       document.body.classList.remove('dark-mode', 'dark');
       document.documentElement.setAttribute('data-theme', 'light');
       localStorage.setItem('portal_theme', 'light');
@@ -375,36 +294,49 @@ class PortalApp {
 
   private async initPortalData() {
     try {
-      const [placesRes, officialsRes, neighborhoodsRes, eventsRes, familiesRes, tdpOfficialsRes, settingsRes, sectionsRes] = await Promise.all([
-        fetch('http://127.0.0.1:8005/api/places'),
-        fetch('http://127.0.0.1:8005/api/officials'),
-        fetch('http://127.0.0.1:8005/api/neighborhoods'),
-        fetch('http://127.0.0.1:8005/api/celebration-events'),
-        fetch('http://127.0.0.1:8005/api/meritorious-families'),
-        fetch('http://127.0.0.1:8005/api/tdp-officials'),
-        fetch('http://127.0.0.1:8005/api/settings'),
-        fetch('http://127.0.0.1:8005/api/homepage-sections')
+      const [placesRes, officialsRes, departmentsRes, neighborhoodsRes, familiesRes, tdpOfficialsRes, settingsRes, sectionsRes] = await Promise.all([
+        fetch('/api/places').catch(() => null),
+        fetch('/api/officials').catch(() => null),
+        fetch('/api/departments').catch(() => null),
+        fetch('/api/neighborhoods').catch(() => null),
+        fetch('/api/meritorious-families').catch(() => null),
+        fetch('/api/tdp-officials').catch(() => null),
+        fetch('/api/settings').catch(() => null),
+        fetch('/api/homepage-sections').catch(() => null)
       ]);
 
-      if (placesRes.ok) {
+      if (placesRes && placesRes.ok) {
         const data = await placesRes.json();
         if (Array.isArray(data) && data.length > 0) {
-          this.places = data;
+          this.places = data.map(p => ({
+            ...p,
+            image: formatStorageUrl(p.image)
+          }));
           this.renderPortalGrid();
           this.renderMapPlacesCarousel();
         }
       }
 
-      if (officialsRes.ok) {
+      if (departmentsRes && departmentsRes.ok) {
+        const dData = await departmentsRes.json();
+        if (Array.isArray(dData) && dData.length > 0) {
+          this.departments = dData.sort((a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0));
+        }
+      }
+
+      if (officialsRes && officialsRes.ok) {
         const officialsData = await officialsRes.json();
         if (Array.isArray(officialsData) && officialsData.length > 0) {
-          this.officials = officialsData;
+          this.officials = officialsData.map(o => ({
+            ...o,
+            avatar: formatStorageUrl(o.avatar)
+          }));
           this.renderOfficialsGrid();
           this.populateOfficialNeighborhoodSelect();
         }
       }
 
-      if (neighborhoodsRes.ok) {
+      if (neighborhoodsRes && neighborhoodsRes.ok) {
         const nData = await neighborhoodsRes.json();
         if (Array.isArray(nData) && nData.length > 0) {
           this.neighborhoods = nData.map((item: any) => ({
@@ -423,17 +355,15 @@ class PortalApp {
         }
       }
 
-      if (eventsRes.ok && familiesRes.ok) {
-        const eventsData = await eventsRes.json();
+      if (familiesRes && familiesRes.ok) {
         const familiesData = await familiesRes.json();
-        if (Array.isArray(eventsData) && Array.isArray(familiesData)) {
-          this.celebrationEvents = eventsData;
+        if (Array.isArray(familiesData)) {
           this.meritoriousFamilies = familiesData;
           this.renderMeritoriousSection();
         }
       }
 
-      if (tdpOfficialsRes.ok) {
+      if (tdpOfficialsRes && tdpOfficialsRes.ok) {
         const tdpData = await tdpOfficialsRes.json();
         if (Array.isArray(tdpData) && tdpData.length > 0) {
           ALL_TDP_OFFICIALS.length = 0;
@@ -457,7 +387,7 @@ class PortalApp {
         }
       }
 
-      if (settingsRes.ok) {
+      if (settingsRes && settingsRes.ok) {
         const s = await settingsRes.json();
         if (s && Array.isArray(s.cards) && s.cards.length > 0) {
           this.renderStatCardsList(s.cards);
@@ -478,16 +408,28 @@ class PortalApp {
   private applyHomepageLayout(sections: any[]) {
     if (!Array.isArray(sections) || sections.length === 0) return;
     const parentContainer = document.getElementById('portal-main-view');
+    if (!parentContainer) return;
 
     const codeToIdMap: Record<string, string> = {
       'hero_banner': 'section-hero-banner',
       'stats_cards': 'section-stats-cards',
       'agencies_grid': 'section-agencies-grid',
-      'hdsd_procedure': 'section-hdsd-procedure',
-      'officials_directory': 'section-officials-directory',
-      'meritorious_families': 'section-meritorious-families',
-      'bottom_highlights': 'section-bottom-highlights'
+      'procedures_utilities': 'section-hdsd-procedure',
+      'hdsd_procedure': 'section-hdsd-procedure'
     };
+
+    const titleIdMap: Record<string, string> = {
+      'agencies_grid': 'title-agencies-grid',
+      'hdsd_procedure': 'title-procedures_utilities',
+      'procedures_utilities': 'title-procedures_utilities',
+    };
+
+    const subtitleIdMap: Record<string, string> = {
+      'agencies_grid': 'subtitle-agencies-grid',
+      'hdsd_procedure': 'subtitle-procedures_utilities',
+      'procedures_utilities': 'subtitle-procedures_utilities',
+    };
+
 
     const sorted = [...sections].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
 
@@ -496,22 +438,45 @@ class PortalApp {
 
     sorted.forEach((sec: any) => {
       if (sec.section_code === 'header_navbar') {
-        const logoImg = document.getElementById('header-site-logo') as HTMLImageElement;
-        const title1El = document.getElementById('header-site-title-1');
-        const title2El = document.getElementById('header-site-title-2');
-        const navHomeEl = document.getElementById('header-nav-tab-home');
-        const navMeritoriousEl = document.getElementById('header-nav-tab-meritorious');
-        const navMapEl = document.getElementById('header-nav-tab-map-text');
-        const adminBtnEl = document.getElementById('header-admin-btn-label');
+        applySharedHeaderConfig(sec);
+        return;
+      }
 
-        if (logoImg && sec.settings?.site_logo) logoImg.src = sec.settings.site_logo;
-        if (title1El && sec.custom_title) title1El.textContent = sec.custom_title;
-        if (title2El && sec.custom_subtitle) title2El.textContent = sec.custom_subtitle;
-        if (navHomeEl && sec.settings?.nav_home_label) navHomeEl.textContent = sec.settings.nav_home_label;
-        if (navMeritoriousEl && sec.settings?.nav_meritorious_label) navMeritoriousEl.textContent = sec.settings.nav_meritorious_label;
-        if (navMapEl && sec.settings?.nav_map_label) navMapEl.textContent = sec.settings.nav_map_label;
-        if (adminBtnEl && sec.settings?.admin_btn_label) adminBtnEl.textContent = sec.settings.admin_btn_label;
+      if (sec.section_code === 'footer_section') {
+        applySharedFooterConfig(sec);
+        return;
+      }
 
+      // Handle custom section blocks
+      if (sec.section_code && sec.section_code.startsWith('custom_')) {
+        let customEl = document.getElementById(`section-${sec.section_code}`);
+        if (!customEl) {
+          customEl = document.createElement('section');
+          customEl.id = `section-${sec.section_code}`;
+          customEl.className = 'max-w-7xl mx-auto px-4 sm:px-6 mt-12';
+        }
+
+        const badgeHtml = sec.settings?.badge ? `<span class="bg-amber-400 text-slate-900 text-xs font-black px-2.5 py-1 rounded-lg uppercase tracking-wider">${sec.settings.badge}</span>` : '';
+        const btnHtml = sec.settings?.btn_text ? `<a href="${sec.settings?.btn_url || '#'}" class="px-5 py-2.5 rounded-xl bg-white text-[#1d7fe0] font-black text-sm shadow-md hover:bg-sky-50 transition-all shrink-0">${sec.settings.btn_text} ↗</a>` : '';
+
+        customEl.innerHTML = `
+          <div class="bg-gradient-to-r from-[#1d7fe0] via-[#1668c2] to-[#124285] text-white p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div class="space-y-2 flex-1">
+              ${badgeHtml}
+              <h2 class="text-xl sm:text-2xl font-black text-white leading-snug">${sec.custom_title || sec.name}</h2>
+              ${sec.custom_subtitle ? `<p class="text-sky-100 text-sm font-medium leading-relaxed">${sec.custom_subtitle}</p>` : ''}
+              ${sec.settings?.content ? `<div class="text-sky-50 text-xs sm:text-sm mt-3 pt-3 border-t border-white/20 whitespace-pre-line">${sec.settings.content}</div>` : ''}
+            </div>
+            ${btnHtml}
+          </div>
+        `;
+
+        if (sec.is_visible === false) {
+          customEl.classList.add('hidden');
+        } else {
+          customEl.classList.remove('hidden');
+          parentContainer.appendChild(customEl);
+        }
         return;
       }
 
@@ -529,62 +494,87 @@ class PortalApp {
       } else {
         el.classList.remove('hidden');
         el.style.display = '';
-      }
-
-      if (parentContainer) {
         parentContainer.appendChild(el);
       }
 
       if (sec.section_code === 'hero_banner') {
         const logoDoan = document.getElementById('hero-logo-doan') as HTMLImageElement;
-        const logoThanhNien = document.getElementById('hero-logo-thanh-nien') as HTMLImageElement;
         const heroTitle = document.getElementById('hero-title-main');
+        const heroSection = document.getElementById('section-hero-banner');
+        const heroVideo = document.getElementById('hero-bg-video') as HTMLVideoElement;
+        const heroOverlay = document.getElementById('hero-video-overlay');
 
         if (logoDoan && sec.settings?.logo_doan_url) logoDoan.src = sec.settings.logo_doan_url;
-        if (logoThanhNien && sec.settings?.logo_thanh_nien_url) logoThanhNien.src = sec.settings.logo_thanh_nien_url;
         if (heroTitle && sec.custom_title) heroTitle.textContent = sec.custom_title;
-      }
 
-      if (sec.section_code === 'agencies_grid' && parentContainer) {
-        const hdsdEl = document.getElementById('section-hdsd-procedure');
-        if (hdsdEl) {
-          parentContainer.appendChild(hdsdEl);
-          processedIds.add('section-hdsd-procedure');
+        const bgType = sec.settings?.bg_type || (sec.settings?.hero_video_url ? 'video' : 'image');
+        const heightMode = sec.settings?.hero_height || 'standard';
+        const fitMode = sec.settings?.hero_fit || 'cover';
+        const posMode = sec.settings?.hero_position || 'center';
+
+        // Apply responsive height mode
+        if (heroSection) {
+          heroSection.classList.remove('hero-h-compact', 'hero-h-standard', 'hero-h-cinematic', 'hero-h-16-9');
+          if (heightMode === 'compact') heroSection.classList.add('hero-h-compact');
+          else if (heightMode === 'cinematic') heroSection.classList.add('hero-h-cinematic');
+          else if (heightMode === 'auto_16_9') heroSection.classList.add('hero-h-16-9');
+          else heroSection.classList.add('hero-h-standard');
+        }
+
+        if (bgType === 'video' && sec.settings?.hero_video_url) {
+          if (heroVideo) {
+            heroVideo.src = sec.settings.hero_video_url;
+            heroVideo.style.objectFit = fitMode;
+            heroVideo.style.objectPosition = posMode;
+            heroVideo.classList.remove('hidden');
+            heroVideo.play().catch(() => {});
+          }
+          if (heroOverlay) heroOverlay.classList.remove('hidden');
+          if (heroSection) {
+            heroSection.style.backgroundImage = 'none';
+          }
+        } else {
+          if (heroVideo) {
+            heroVideo.classList.add('hidden');
+            heroVideo.pause();
+          }
+          if (heroOverlay) heroOverlay.classList.add('hidden');
+          if (heroSection && sec.settings?.hero_bg_url) {
+            heroSection.style.backgroundImage = `linear-gradient(180deg, rgba(0, 0, 0, 0.40) 0%, rgba(0, 0, 0, 0.15) 45%, rgba(0, 0, 0, 0.65) 100%), url('${sec.settings.hero_bg_url}')`;
+            heroSection.style.backgroundSize = fitMode;
+            heroSection.style.backgroundPosition = posMode;
+          }
         }
       }
 
-      if (sec.section_code === 'meritorious_families' && parentContainer) {
-        const bottomEl = document.getElementById('section-bottom-highlights');
-        if (bottomEl) {
-          parentContainer.appendChild(bottomEl);
-          processedIds.add('section-bottom-highlights');
+      if (sec.section_code === 'agencies_grid') {
+        if (Array.isArray(sec.settings?.selected_ids) && sec.settings.selected_ids.length > 0) {
+          this.selectedAgencyIds = sec.settings.selected_ids.map(Number);
+          this.renderPortalGrid();
         }
       }
 
       if (sec.custom_title) {
-        const titleEl = document.getElementById(`title-${sec.section_code}`);
+        const titleId = titleIdMap[sec.section_code] || `title-${sec.section_code}`;
+        const titleEl = document.getElementById(titleId) || document.getElementById(`title-${sec.section_code.replace(/_/g, '-')}`);
         if (titleEl) titleEl.textContent = sec.custom_title;
       }
 
       if (sec.custom_subtitle) {
-        const subtitleEl = document.getElementById(`subtitle-${sec.section_code}`);
+        const subtitleId = subtitleIdMap[sec.section_code] || `subtitle-${sec.section_code}`;
+        const subtitleEl = document.getElementById(subtitleId) || document.getElementById(`subtitle-${sec.section_code.replace(/_/g, '-')}`);
         if (subtitleEl) subtitleEl.textContent = sec.custom_subtitle;
       }
     });
 
-    // Append remaining unprocessed sections (new sections not yet in API)
-    // in their original HTML order so they appear after the API-sorted ones
-    if (parentContainer) {
-      const allSectionIds = Object.values(codeToIdMap);
-      const remainingEls: HTMLElement[] = [];
-      allSectionIds.forEach(id => {
-        if (!processedIds.has(id)) {
-          const el = document.getElementById(id);
-          if (el) remainingEls.push(el);
-        }
-      });
-      remainingEls.forEach(el => parentContainer.appendChild(el));
-    }
+    // Append remaining unprocessed sections in original HTML order
+    const allSectionIds = Object.values(codeToIdMap);
+    allSectionIds.forEach(id => {
+      if (!processedIds.has(id)) {
+        const el = document.getElementById(id);
+        if (el) parentContainer.appendChild(el);
+      }
+    });
   }
 
   private renderStatCardsList(cards: any[]) {
@@ -602,44 +592,84 @@ class PortalApp {
           </div>
         </div>
       `).join('');
+
+      triggerStatCardsCountUp();
     }
   }
 
-  private showPortalTab(tabName: 'home' | 'neighborhoods' | 'merger' | 'officials' | 'meritorious') {
+  private showPortalTab(tabName: string) {
+    const preloadStyle = document.getElementById('map-preload-style');
+    if (preloadStyle) preloadStyle.remove();
+
+    const mainView = document.getElementById('portal-main-view');
+    const formsView = document.getElementById('portal-forms-view');
     const mapContainer = document.getElementById('map-view-container');
-    if (mapContainer && !mapContainer.classList.contains('hidden')) {
-      this.toggleMapView();
-    }
 
-    if (tabName === 'home') {
+    if (tabName === 'forms') {
+      if (mainView) mainView.classList.add('hidden');
+      if (mapContainer) {
+        mapContainer.classList.add('hidden');
+        mapContainer.classList.remove('flex');
+      }
+      if (formsView) {
+        formsView.classList.remove('hidden');
+        initFormsView();
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else if (tabName === 'neighborhoods') {
-      const el = document.getElementById('section-neighborhoods');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    } else if (tabName === 'merger') {
-      window.location.href = '/tdp-merger.html';
-    } else if (tabName === 'officials') {
-      const el = document.getElementById('section-officials');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    } else if (tabName === 'meritorious') {
-      const el = document.getElementById('section-meritorious');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    ['home', 'neighborhoods', 'merger', 'officials', 'meritorious'].forEach(tab => {
-      const btn = document.getElementById(`nav-tab-${tab}`);
-      if (btn) {
-        if (tab === tabName) {
-          btn.className = 'px-5 py-2.5 text-xs sm:text-sm font-extrabold rounded-xl transition-all bg-[#3399fe] text-white shadow-md shadow-sky-500/25';
+    } else if (tabName === 'map') {
+      if (mainView) mainView.classList.add('hidden');
+      if (formsView) formsView.classList.add('hidden');
+      if (mapContainer) {
+        mapContainer.classList.remove('hidden');
+        mapContainer.classList.add('flex');
+        if (!this.map) {
+          this.initLeafletMap();
         } else {
-          btn.className = 'px-5 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all text-slate-700 dark:text-slate-200 hover:text-[#3399fe] dark:hover:text-sky-400';
+          setTimeout(() => this.map?.invalidateSize(), 200);
         }
       }
-    });
+    } else {
+      if (formsView) formsView.classList.add('hidden');
+      if (mapContainer) {
+        mapContainer.classList.add('hidden');
+        mapContainer.classList.remove('flex');
+      }
+      if (mainView) mainView.classList.remove('hidden');
+
+      if (tabName === 'procedures') {
+        const el = document.getElementById('section-hdsd-procedure');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      } else if (tabName === 'neighborhoods') {
+        const el = document.getElementById('section-neighborhoods');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      } else if (tabName === 'officials') {
+        const el = document.getElementById('section-officials');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      } else if (tabName === 'meritorious') {
+        const el = document.getElementById('section-meritorious');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    const navHome = document.getElementById('nav-tab-home');
+    const navForms = document.getElementById('nav-tab-forms');
+    const navProc = document.getElementById('nav-tab-procedures');
+    const navMap = document.getElementById('nav-tab-map');
+
+    const activeClass = 'px-5 sm:px-6 py-2.5 rounded-full transition-all bg-[#1d7fe0] text-white font-bold shadow-md shadow-sky-500/20 whitespace-nowrap shrink-0';
+    const inactiveClass = 'px-5 sm:px-6 py-2.5 rounded-full transition-all text-slate-700 dark:text-slate-200 font-bold hover:text-[#1d7fe0] dark:hover:text-sky-400 hover:bg-sky-100/70 dark:hover:bg-slate-700/60 whitespace-nowrap shrink-0';
+
+    if (navHome) navHome.className = (tabName === 'home') ? activeClass : inactiveClass;
+    if (navProc) navProc.className = (tabName === 'procedures') ? activeClass : inactiveClass;
+    if (navForms) navForms.className = (tabName === 'forms') ? activeClass : inactiveClass;
+    if (navMap) navMap.className = (tabName === 'map') ? activeClass : inactiveClass;
   }
 
   private renderMapPlacesCarousel(query: string = '') {
     const container = document.getElementById('map-places-carousel');
+    const badgeCount = document.getElementById('map-places-count-badge');
     if (!container) return;
 
     let items = this.places.filter(p => p.category !== 'neighborhood');
@@ -652,9 +682,13 @@ class PortalApp {
       );
     }
 
+    if (badgeCount) {
+      badgeCount.textContent = String(items.length);
+    }
+
     if (items.length === 0) {
       container.innerHTML = `
-        <div class="px-6 py-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-500">
+        <div class="px-5 py-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-500 shadow-md">
           Không tìm thấy địa điểm nào khớp với "${query}"
         </div>
       `;
@@ -663,43 +697,39 @@ class PortalApp {
 
     container.innerHTML = items.map(p => {
       let badgeText = 'ĐỊA ĐIỂM';
-      let badgeColor = 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300';
+      let badgeColor = 'bg-sky-50 text-sky-700 dark:bg-sky-950/80 dark:text-sky-300 border-sky-200 dark:border-sky-800';
       if (p.category === 'government') {
         badgeText = 'HÀNH CHÍNH';
-        badgeColor = 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300';
+        badgeColor = 'bg-blue-50 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300 border-blue-200 dark:border-blue-800';
       } else if (p.category === 'police') {
         badgeText = 'CÔNG AN';
-        badgeColor = 'bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300';
+        badgeColor = 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/80 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800';
       } else if (p.category === 'health') {
         badgeText = 'Y TẾ';
-        badgeColor = 'bg-pink-100 text-pink-700 dark:bg-pink-950 dark:text-pink-300';
+        badgeColor = 'bg-rose-50 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 border-rose-200 dark:border-rose-800';
       } else if (p.category === 'school') {
         badgeText = 'TRƯỜNG HỌC';
-        badgeColor = 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300';
-      } else if (p.category === 'neighborhood') {
-        badgeText = p.status === 'closed' ? 'TDP CŨ' : 'TỔ DÂN PHỐ';
-        badgeColor = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300';
+        badgeColor = 'bg-amber-50 text-amber-700 dark:bg-amber-950/80 dark:text-amber-300 border-amber-200 dark:border-amber-800';
       }
 
       return `
-        <div class="min-w-[280px] max-w-[310px] bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl flex items-center gap-3 shrink-0">
-          <img src="${p.image || 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=300&q=80'}" class="w-16 h-16 rounded-xl object-cover shrink-0" alt="${p.name}" />
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-1.5 mb-1">
-              <span class="text-[9px] font-black uppercase ${badgeColor} px-1.5 py-0.5 rounded">${badgeText}</span>
-            </div>
-            <h4 class="text-xs font-black text-slate-900 dark:text-white truncate" title="${p.name}">${p.name}</h4>
-            <p class="text-[10px] text-slate-500 truncate mt-0.5">📍 ${p.address || 'Phường Duy Hà'}</p>
-            <div class="flex items-center gap-2 mt-2">
-              <button onclick="window.viewPlaceDetail(${p.id})" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 text-[10px] font-bold rounded-lg flex items-center gap-1">
-                <span class="material-symbols-outlined text-[12px]">info</span>
+        <div onclick="window.focusMapPlace(${p.id})"
+          class="min-w-[270px] max-w-[310px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl p-3 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xl flex items-center gap-3 shrink-0 cursor-pointer transition-all hover:scale-[1.02] hover:border-[#1d7fe0] hover:shadow-2xl group select-none">
+          <img src="${p.image || 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=200&q=80'}"
+            class="w-16 h-16 rounded-xl object-cover shrink-0 shadow-sm border border-slate-100 dark:border-slate-800 group-hover:brightness-105" alt="${p.name}" />
+          <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5 space-y-1">
+            <div class="flex items-center justify-between gap-1">
+              <span class="inline-block text-[10px] font-black uppercase ${badgeColor} border px-2 py-0.5 rounded-md leading-none">${badgeText}</span>
+              <button onclick="event.stopPropagation(); window.viewPlaceDetail(${p.id})" class="text-[11px] font-bold text-[#1d7fe0] hover:underline flex items-center gap-0.5">
                 <span>Chi tiết</span>
+                <span class="material-symbols-outlined text-xs">arrow_forward</span>
               </button>
-              <a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-bold rounded-lg flex items-center gap-1">
-                <span class="material-symbols-outlined text-[12px]">near_me</span>
-                <span>Định vị</span>
-              </a>
             </div>
+            <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white truncate group-hover:text-[#1d7fe0] transition-colors" title="${p.name}">${p.name}</h4>
+            <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 truncate flex items-center gap-0.5">
+              <span class="material-symbols-outlined text-[13px] text-red-500 shrink-0">location_on</span>
+              <span class="truncate">${p.address || 'Phường Duy Hà'}</span>
+            </p>
           </div>
         </div>
       `;
@@ -805,6 +835,131 @@ class PortalApp {
     this.renderPortalGrid();
   }
 
+  private openAllAgenciesModal() {
+    const modal = document.getElementById('all-agencies-modal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      this.renderAllAgenciesTable();
+    }
+  }
+
+  private closeAllAgenciesModal() {
+    const modal = document.getElementById('all-agencies-modal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+  }
+
+  private renderAllAgenciesTable() {
+    const tbody = document.getElementById('all-agencies-table-body');
+    const badge = document.getElementById('all-agencies-count-badge');
+    const searchInput = document.getElementById('all-agencies-search-input') as HTMLInputElement;
+
+    if (!tbody) return;
+
+    const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+    let agencies = this.places.filter(p => p.category !== 'neighborhood');
+
+    if (query) {
+      agencies = agencies.filter(p =>
+        p.name.toLowerCase().includes(query) ||
+        (p.address && p.address.toLowerCase().includes(query)) ||
+        (p.phone && p.phone.includes(query))
+      );
+    }
+
+    if (badge) badge.textContent = agencies.length.toString();
+
+    if (agencies.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" class="p-8 text-center text-slate-400 font-semibold">
+            Không tìm thấy cơ quan hay đơn vị công lập khớp với từ khóa "${query}".
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = agencies.map((p, idx) => {
+      const isPolice = p.category === 'police' || p.name.toLowerCase().includes('công an');
+      const isHealth = p.category === 'health' || p.name.toLowerCase().includes('bệnh viện') || p.name.toLowerCase().includes('trạm y tế') || p.name.toLowerCase().includes('y tế') || p.name.toLowerCase().includes('phòng khám');
+      const isSchool = p.category === 'school' || p.name.toLowerCase().includes('trường') || p.name.toLowerCase().includes('mầm non') || p.name.toLowerCase().includes('tiểu học') || p.name.toLowerCase().includes('thcs') || p.name.toLowerCase().includes('thpt');
+      const isGov = p.category === 'government' || p.name.toLowerCase().includes('ubnd') || p.name.toLowerCase().includes('ủy ban') || p.name.toLowerCase().includes('đảng') || p.name.toLowerCase().includes('mặt trận') || p.name.toLowerCase().includes('hđnd');
+
+      let badgeText = 'HÀNH CHÍNH';
+      let badgeColor = 'bg-red-50 text-red-700 dark:bg-red-950/80 dark:text-red-300 border-red-200 dark:border-red-900/60';
+      if (isPolice) {
+        badgeText = 'AN NINH & TRẬT TỰ';
+        badgeColor = 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/80 dark:text-indigo-300 border-indigo-200 dark:border-indigo-900/60';
+      } else if (isHealth) {
+        badgeText = 'Y TẾ & SỨC KHỎE';
+        badgeColor = 'bg-rose-50 text-rose-700 dark:bg-rose-950/80 dark:text-rose-300 border-rose-200 dark:border-rose-900/60';
+      } else if (isSchool) {
+        badgeText = 'GIÁO DỤC & ĐÀO TẠO';
+        badgeColor = 'bg-amber-50 text-amber-700 dark:bg-amber-950/80 dark:text-amber-300 border-amber-200 dark:border-amber-900/60';
+      } else if (isGov) {
+        badgeText = 'CƠ QUAN HÀNH CHÍNH';
+        badgeColor = 'bg-red-50 text-red-700 dark:bg-red-950/80 dark:text-red-300 border-red-200 dark:border-red-900/60';
+      } else {
+        badgeText = 'ĐƠN VỊ CÔNG LẬP';
+        badgeColor = 'bg-sky-50 text-sky-700 dark:bg-sky-950/80 dark:text-sky-300 border-sky-200 dark:border-sky-900/60';
+      }
+
+      const phone = p.phone || '';
+      const directionsUrl = (p.lat && p.lng)
+        ? `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`
+        : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(p.name + ' Phường Duy Hà')}`;
+
+      const imgSrc = p.image || '/hero-bg.jpg';
+      const escapedName = (p.name || '').replace(/'/g, "\\'");
+
+      return `
+        <tr class="odd:bg-white even:bg-slate-50/70 hover:bg-sky-50/60 dark:odd:bg-slate-900 dark:even:bg-slate-800/60 dark:hover:bg-slate-800 transition-colors">
+          <td class="py-3 px-3 text-center font-bold text-slate-500 border-r border-slate-200 dark:border-slate-800">${idx + 1}</td>
+          <td class="py-2.5 px-3 text-center border-r border-slate-200 dark:border-slate-800">
+            <div onclick="window.openAgencyImageModal && window.openAgencyImageModal('${imgSrc}', '${escapedName}')"
+              title="Nhấn để xem ảnh phóng to"
+              class="w-16 h-12 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm mx-auto bg-slate-100 dark:bg-slate-800 flex items-center justify-center cursor-pointer group/img relative hover:ring-2 hover:ring-blue-500 hover:shadow-md transition-all">
+              <img src="${imgSrc}" alt="${p.name}" class="w-full h-full object-cover group-hover/img:scale-110 transition-transform duration-300" onerror="this.onerror=null;this.src='/hero-bg.jpg';" />
+              <div class="absolute inset-0 bg-slate-900/30 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
+                <span class="material-symbols-outlined text-white text-lg drop-shadow">zoom_in</span>
+              </div>
+            </div>
+          </td>
+          <td class="py-3 px-4 border-r border-slate-200 dark:border-slate-800">
+            <span class="inline-block text-[11px] font-black uppercase ${badgeColor} border px-2.5 py-1 rounded-lg tracking-wider">${badgeText}</span>
+          </td>
+          <td class="py-3 px-4 border-r border-slate-200 dark:border-slate-800">
+            <b class="text-sm font-extrabold text-slate-900 dark:text-white block">${p.name}</b>
+          </td>
+          <td class="py-3 px-4 border-r border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300">
+            <div class="flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-sm text-red-600 shrink-0">location_on</span>
+              <span>${p.address || 'Phường Duy Hà, Ninh Bình'}</span>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-center border-r border-slate-200 dark:border-slate-800">
+            ${phone ? `
+              <a href="tel:${phone}" class="inline-flex items-center gap-1 font-extrabold text-blue-600 dark:text-sky-400 hover:underline">
+                <span class="material-symbols-outlined text-base">call</span>
+                <span>${phone}</span>
+              </a>
+            ` : `<span class="text-slate-400 font-semibold">--</span>`}
+          </td>
+          <td class="py-3 px-4 text-center">
+            <a href="${directionsUrl}" target="_blank" class="inline-flex items-center gap-1 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm hover:shadow-md active:scale-95 whitespace-nowrap">
+              <span class="material-symbols-outlined text-base">directions</span>
+              <span>Chỉ đường</span>
+            </a>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
   private renderPortalGrid() {
     const grid = document.getElementById('portal-places-grid');
     if (!grid) return;
@@ -827,116 +982,104 @@ class PortalApp {
       return;
     }
 
-    grid.innerHTML = items.map(p => {
+    // Hiển thị đúng 4 cơ quan tùy chọn theo cấu hình Admin (nếu có) hoặc 4 cơ quan đầu tiên
+    let displayItems: Place[] = [];
+    if (this.activeCategory === 'all' && this.selectedAgencyIds && this.selectedAgencyIds.length > 0) {
+      const customPicked: Place[] = [];
+      this.selectedAgencyIds.forEach(id => {
+        const found = this.places.find(p => p.id === id);
+        if (found) customPicked.push(found);
+      });
+      if (customPicked.length > 0) {
+        const pickedSet = new Set(customPicked.map(p => p.id));
+        items.forEach(p => {
+          if (customPicked.length < 4 && !pickedSet.has(p.id)) {
+            customPicked.push(p);
+            pickedSet.add(p.id);
+          }
+        });
+        displayItems = customPicked.slice(0, 4);
+      } else {
+        displayItems = items.slice(0, 4);
+      }
+    } else {
+      displayItems = items.slice(0, 4);
+    }
+
+    grid.innerHTML = displayItems.map(p => {
       const isPolice = p.category === 'police' || p.name.toLowerCase().includes('công an');
-      const isGov = p.category === 'government' || p.name.toLowerCase().includes('ubnd') || p.name.toLowerCase().includes('ủy ban');
+      const isHealth = p.category === 'health' || p.name.toLowerCase().includes('bệnh viện') || p.name.toLowerCase().includes('trạm y tế') || p.name.toLowerCase().includes('y tế') || p.name.toLowerCase().includes('phòng khám');
+      const isSchool = p.category === 'school' || p.name.toLowerCase().includes('trường') || p.name.toLowerCase().includes('mầm non') || p.name.toLowerCase().includes('tiểu học') || p.name.toLowerCase().includes('thcs') || p.name.toLowerCase().includes('thpt');
+      const isTdp = p.category === 'neighborhood' || p.name.toLowerCase().includes('nhà văn hóa') || p.name.toLowerCase().includes('tổ dân phố');
+      const isGov = p.category === 'government' || p.name.toLowerCase().includes('ubnd') || p.name.toLowerCase().includes('ủy ban') || p.name.toLowerCase().includes('đảng') || p.name.toLowerCase().includes('mặt trận') || p.name.toLowerCase().includes('hđnd');
 
-      if (isGov || isPolice || p.category === 'government' || p.category === 'police') {
-        const phone = isPolice ? '02263835113' : '02263835112';
-        const subTitle = isPolice ? 'AN NINH & TRẬT TỰ XÃ HỘI' : 'CƠ QUAN HÀNH CHÍNH';
-        const iconName = isPolice ? 'local_police' : 'corporate_fare';
-        const directionsUrl = (p.lat && p.lng)
-          ? `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`
-          : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(p.name + ' Phường Duy Hà')}`;
+      let subTitle = 'CƠ QUAN HÀNH CHÍNH';
+      let iconName = 'corporate_fare';
 
-        return `
-          <div onclick="window.viewPlaceDetail(${p.id})"
-            class="relative rounded-3xl overflow-hidden shadow-xl min-h-[270px] sm:min-h-[290px] flex flex-col justify-between p-6 sm:p-8 border border-amber-400/20 dark:border-slate-800 group text-white cursor-pointer transition-all duration-300 hover:shadow-2xl">
-            <!-- Background Image with Soft Gradient Overlay -->
-            <img src="${p.image || (isPolice ? 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800&auto=format&fit=crop' : 'https://images.unsplash.com/photo-1577086664693-894d8405334a?q=80&w=800&auto=format&fit=crop')}"
-              alt="${p.name}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/35 to-slate-950/10"></div>
+      if (isPolice) {
+        subTitle = 'AN NINH & TRẬT TỰ XÃ HỘI';
+        iconName = 'local_police';
+      } else if (isHealth) {
+        subTitle = 'Y TẾ & CHĂM SÓC SỨC KHỎE';
+        iconName = 'local_hospital';
+      } else if (isSchool) {
+        subTitle = 'GIÁO DỤC & ĐÀO TẠO';
+        iconName = 'school';
+      } else if (isTdp) {
+        subTitle = 'NHÀ VĂN HÓA & ĐỊA BÀN DÂN CƯ';
+        iconName = 'home_work';
+      } else if (isGov) {
+        subTitle = 'CƠ QUAN HÀNH CHÍNH';
+        iconName = 'corporate_fare';
+      } else {
+        subTitle = 'CƠ QUAN & ĐƠN VỊ CÔNG LẬP';
+        iconName = 'location_city';
+      }
 
-            <!-- Card Top Header -->
-            <div class="relative z-10 flex items-center gap-3.5">
-              <div class="w-12 sm:w-14 h-12 sm:h-14 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-2xl sm:text-3xl font-bold border border-white/30 shrink-0">
-                <span class="material-symbols-outlined">${iconName}</span>
-              </div>
-              <div>
-                <span class="text-xs font-black uppercase tracking-wider text-amber-300 block">
-                  ${subTitle}
-                </span>
-                <h3 class="text-xl sm:text-2xl font-black text-white drop-shadow-md leading-tight mt-0.5">${p.name}</h3>
-              </div>
+      const placeImg = formatStorageUrl(p.image);
+
+      // Chỉ lấy số điện thoại khi có trong dữ liệu nhập của Admin hoặc số trực ban cơ quan đặc thù
+      const phone = p.phone || '';
+
+      const directionsUrl = (p.lat && p.lng)
+        ? `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`
+        : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(p.name + ' Phường Duy Hà')}`;
+
+      return `
+        <div onclick="window.viewPlaceDetail(${p.id})"
+          class="relative rounded-3xl overflow-hidden shadow-xl min-h-[270px] sm:min-h-[290px] flex flex-col justify-between p-6 sm:p-8 border border-amber-400/20 dark:border-slate-800 group text-white cursor-pointer transition-all duration-300 hover:shadow-2xl">
+          <!-- Background Image with Soft Gradient Overlay -->
+          <img src="${placeImg}"
+            alt="${p.name}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/35 to-slate-950/10"></div>
+
+          <!-- Card Top Header -->
+          <div class="relative z-10 flex items-center gap-3.5">
+            <div class="w-12 sm:w-14 h-12 sm:h-14 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-2xl sm:text-3xl font-bold border border-white/30 shrink-0">
+              <span class="material-symbols-outlined">${iconName}</span>
             </div>
+            <div>
+              <span class="text-xs font-black uppercase tracking-wider text-amber-300 block">
+                ${subTitle}
+              </span>
+              <h3 class="text-xl sm:text-2xl font-black text-white drop-shadow-md leading-tight mt-0.5">${p.name}</h3>
+            </div>
+          </div>
 
-            <!-- Card Bottom Actions (3 buttons) -->
-            <div class="relative z-10 flex flex-wrap sm:flex-nowrap items-stretch gap-2.5 mt-6">
+          <!-- Card Bottom Actions (2 nút: Hotline & Trực ban + Chỉ đường) -->
+          <div class="relative z-10 flex items-stretch gap-2.5 mt-6">
+            ${phone ? `
               <a href="tel:${phone}" onclick="event.stopPropagation()"
                 class="flex-1 bg-white hover:bg-slate-100 text-slate-900 rounded-xl py-3 px-3.5 font-extrabold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-95 whitespace-nowrap">
                 <span class="material-symbols-outlined text-base sm:text-lg text-blue-700">call</span>
                 <span>Hotline & Trực ban</span>
               </a>
-              <button onclick="event.stopPropagation(); window.viewPlaceDetail(${p.id})"
-                class="flex-1 bg-white hover:bg-slate-100 text-slate-900 rounded-xl py-3 px-3.5 font-extrabold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-95 whitespace-nowrap">
-                <span class="material-symbols-outlined text-base sm:text-lg text-blue-700">info</span>
-                <span>Xem chi tiết</span>
-              </button>
-              <a href="${directionsUrl}" target="_blank" onclick="event.stopPropagation()"
-                class="bg-white/20 hover:bg-white/30 text-white rounded-xl py-3 px-3.5 font-extrabold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 backdrop-blur-md border border-white/30 shadow-md active:scale-95 whitespace-nowrap shrink-0">
-                <span class="material-symbols-outlined text-base sm:text-lg">directions</span>
-                <span>Chỉ đường</span>
-              </a>
-            </div>
-          </div>
-        `;
-      }
-
-      const getCategoryBadge = (place: Place) => {
-        if (place.category === 'neighborhood') {
-          if (place.status === 'closed') {
-            return { text: 'TRƯỚC SÁP NHẬP', color: 'bg-amber-500/10 text-amber-600 border-amber-200' };
-          }
-          return { text: 'SAU SÁP NHẬP', color: 'bg-blue-500/10 text-blue-600 border-blue-200' };
-        }
-        switch (place.category) {
-          case 'government': return { text: 'HÀNH CHÍNH', color: 'bg-red-500/10 text-red-600 border-red-200' };
-          case 'school': return { text: 'GIÁO DỤC', color: 'bg-emerald-500/10 text-emerald-600 border-emerald-200' };
-          case 'health': return { text: 'Y TẾ', color: 'bg-pink-500/10 text-pink-600 border-pink-200' };
-          case 'police': return { text: 'AN NINH', color: 'bg-indigo-500/10 text-indigo-600 border-indigo-200' };
-          default: return { text: 'ĐỊA ĐIỂM', color: 'bg-slate-500/10 text-slate-600 border-slate-200' };
-        }
-      };
-
-      const badge = getCategoryBadge(p);
-
-      return `
-        <div class="place-card cursor-pointer group" onclick="window.viewPlaceDetail(${p.id})">
-          <div class="place-card-cover relative">
-            <img src="${p.image || 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80'}" alt="${p.name}" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-500" />
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
-            
-            <div class="relative z-10 w-full">
-              <span class="inline-block px-2.5 py-1 text-[10px] font-extrabold uppercase rounded-lg backdrop-blur-md border ${badge.color} mb-1">
-                ${badge.text}
-              </span>
-              <h3 class="text-lg font-black text-white leading-snug drop-shadow-md group-hover:text-blue-300 transition-colors">
-                ${p.name}
-              </h3>
-            </div>
-          </div>
-
-          <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
-            <div class="space-y-2">
-              ${p.former_names ? `<p class="text-xs text-slate-500 dark:text-slate-400 font-semibold">🏛️ Sáp nhập từ: <b class="text-slate-800 dark:text-slate-100">${p.former_names}</b></p>` : ''}
-              ${p.households ? `
-                <div class="flex items-center gap-4 text-xs font-semibold text-slate-600 dark:text-slate-300">
-                  <span>🏠 Hộ dân: <b>${p.households}</b></span>
-                  <span>👥 Dân số: <b>${p.population}</b></span>
-                </div>
-              ` : ''}
-              <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                ${p.description || 'Thông tin địa điểm trên địa bàn Phường Duy Hà, Ninh Bình.'}
-              </p>
-            </div>
-
-            <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-bold text-blue-700 dark:text-blue-400">
-              <span class="flex items-center gap-1">
-                <span class="material-symbols-outlined text-base">info</span>
-                <span>Xem thông tin chi tiết</span>
-              </span>
-              <span class="material-symbols-outlined text-base group-hover:translate-x-1 transition-transform">arrow_forward</span>
-            </div>
+            ` : ''}
+            <a href="${directionsUrl}" target="_blank" onclick="event.stopPropagation()"
+              class="flex-1 bg-white/25 hover:bg-white/35 text-white rounded-xl py-3 px-3.5 font-extrabold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 backdrop-blur-md border border-white/30 shadow-md active:scale-95 whitespace-nowrap">
+              <span class="material-symbols-outlined text-base sm:text-lg">directions</span>
+              <span>Chỉ đường</span>
+            </a>
           </div>
         </div>
       `;
@@ -976,15 +1119,34 @@ class PortalApp {
       'duy-minh': { label: 'TDP Duy Minh', badgeClass: 'bg-amber-100 text-amber-900 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800', highlightClass: '' },
     };
 
-    const oldList = this.neighborhoods.filter(n => n.type === 'old');
-    const newList = this.neighborhoods.filter(n => n.type === 'new');
+    // Helper to extract sortable name without prefix
+    const getCleanName = (name: string) => (name || '').replace(/^(TDP|Tổ dân phố)\s+/gi, '').trim();
 
-    newList.forEach(item => {
+    // 1. Sort New TDPs alphabetically (A-Z)
+    const newList = this.neighborhoods
+      .filter(n => n.type === 'new')
+      .sort((a, b) => getCleanName(a.name).localeCompare(getCleanName(b.name), 'vi', { numeric: true, sensitivity: 'base' }));
+
+    // 2. Map each group_code to its sorted index in newList
+    const groupOrderMap = new Map<string, number>();
+    newList.forEach((item, idx) => {
+      groupOrderMap.set(item.group_code, idx);
       if (groupStyles[item.group_code]) {
-        const cleanName = item.name.replace(/^(TDP|Tổ dân phố)\s+/gi, '').trim();
-        groupStyles[item.group_code].label = `TDP ${cleanName}`;
+        groupStyles[item.group_code].label = `TDP ${getCleanName(item.name)}`;
       }
     });
+
+    // 3. Sort Old TDPs corresponding to the sorted New TDPs, and alphabetically within the same group
+    const oldList = this.neighborhoods
+      .filter(n => n.type === 'old')
+      .sort((a, b) => {
+        const orderA = groupOrderMap.has(a.group_code) ? groupOrderMap.get(a.group_code)! : 999;
+        const orderB = groupOrderMap.has(b.group_code) ? groupOrderMap.get(b.group_code)! : 999;
+        if (orderA !== orderB) {
+          return orderA - orderB;
+        }
+        return getCleanName(a.name).localeCompare(getCleanName(b.name), 'vi', { numeric: true, sensitivity: 'base' });
+      });
 
     const oldTitleText = `HIỆN TRẠNG TỔ DÂN PHỐ (${oldList.length} TỔ DÂN PHỐ - TRƯỚC SÁP NHẬP)`;
     const newTitleText = `DỰ KIẾN PHƯƠNG ÁN SẮP XẾP (${newList.length} TỔ DÂN PHỐ - SAU SÁP NHẬP)`;
@@ -1272,10 +1434,8 @@ class PortalApp {
   }
 
   private showMeritoriousDetail(id: number) {
-    const family = (this.meritoriousFamilies as any[]).find(f => f.id === id);
-    if (!family) return;
-
-    const event = (this.celebrationEvents as any[]).find(e => e.id === family.celebration_event_id);
+    const batch = (this.meritoriousFamilies as any[]).find(f => f.id === id);
+    if (!batch) return;
 
     const modal = document.getElementById('meritorious-modal');
     const badgeEl = document.getElementById('meritorious-modal-badge');
@@ -1283,10 +1443,38 @@ class PortalApp {
     const tdpEl = document.getElementById('meritorious-modal-tdp');
     const summaryEl = document.getElementById('meritorious-modal-summary');
 
-    if (badgeEl) badgeEl.textContent = family.type;
-    if (titleEl) titleEl.textContent = family.name;
-    if (tdpEl) tdpEl.textContent = `Sự kiện vinh danh: ${event ? event.name : 'Sự kiện kỷ niệm Phường Duy Hà'}`;
-    if (summaryEl) summaryEl.textContent = `Gia đình ${family.name} thuộc diện chính sách ${family.type}, được tôn vinh nhân dịp ${event ? event.name : 'các ngày lễ kỷ niệm trọng đại Phường Duy Hà'}.`;
+    const downloadUrl = batch.file_url || (batch.file_path ? (batch.file_path.startsWith('http') ? batch.file_path : `http://127.0.0.1:8005/api/storage/${batch.file_path}`) : '#');
+    const fileName = batch.file_name || 'Danh-sach-chinh-sach.xlsx';
+
+    if (badgeEl) badgeEl.textContent = 'ĐỢT DANH SÁCH CHÍNH SÁCH';
+    if (titleEl) titleEl.textContent = batch.name;
+    if (tdpEl) tdpEl.innerHTML = `<span class="material-symbols-outlined text-amber-600 text-base">calendar_today</span><span>Thời gian cập nhật: ${batch.created_at || batch.period_date || 'Mới nhất'}</span>`;
+
+    if (summaryEl) {
+      summaryEl.innerHTML = `
+        <div class="space-y-4">
+          <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+            ${batch.description || 'Danh sách tổng hợp chi tiết các hộ gia đình chính sách, người có công với cách mạng trên địa bàn Phường Duy Hà.'}
+          </p>
+          <div class="p-4 bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl border border-emerald-200 dark:border-emerald-900/40 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0 shadow-sm">
+                <span class="material-symbols-outlined text-xl">table_chart</span>
+              </div>
+              <div class="text-left">
+                <span class="text-xs sm:text-sm font-black text-slate-900 dark:text-white block truncate max-w-[220px] sm:max-w-xs">${fileName}</span>
+                <span class="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block">${batch.file_size || 'Định dạng Excel (.xlsx)'}</span>
+              </div>
+            </div>
+            <a href="${downloadUrl}" download="${fileName}" target="_blank"
+              class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-sm shrink-0 active:scale-95">
+              <span class="material-symbols-outlined text-sm">download</span>
+              <span>Tải file Excel</span>
+            </a>
+          </div>
+        </div>
+      `;
+    }
 
     if (modal) {
       modal.classList.remove('hidden');
@@ -1294,113 +1482,361 @@ class PortalApp {
     }
   }
 
-  private renderMeritoriousSection(selectedEventId: number | 'all' = 'all') {
+  private async fetchProceduresData() {
+    try {
+      const [procRes, videoRes, polRes] = await Promise.all([
+        fetch('/api/procedures').catch(() => null),
+        fetch('/api/procedure-videos').catch(() => null),
+        fetch('/api/policies').catch(() => null)
+      ]);
+
+      if (procRes && procRes.ok) {
+        const data = await procRes.json();
+        if (Array.isArray(data) && data.length > 0) {
+          this.proceduresList = data;
+        }
+      }
+
+      if (videoRes && videoRes.ok) {
+        const vData = await videoRes.json();
+        if (Array.isArray(vData) && vData.length > 0) {
+          this.procedureVideos = vData;
+        }
+      }
+
+      if (polRes && polRes.ok) {
+        const pData = await polRes.json();
+        if (Array.isArray(pData) && pData.length > 0) {
+          this.policiesList = pData;
+        }
+      }
+
+      this.renderProceduresSection();
+    } catch (e) {
+      console.warn('Using local proceduresData fallback');
+    }
+  }
+
+  private renderProceduresSection() {
+    const container = document.getElementById('interactive-procedures-container');
+    if (!container) return;
+
+    const popularProceduresFallback = [
+      {
+        id: 1,
+        name: '01. Đăng ký tạm trú',
+        title: 'Quy trình đăng ký tạm trú',
+        desc: 'Thủ tục đăng ký tạm trú cho công dân cư trú trên địa bàn Phường Duy Hà'
+      },
+      {
+        id: 2,
+        name: '02. Thông báo lưu trú',
+        title: 'Quy trình thông báo lưu trú',
+        desc: 'Thủ tục thông báo lưu trú qua ứng dụng VNeID và Cổng Dịch vụ công'
+      },
+      {
+        id: 3,
+        name: '03. Xác nhận cư trú',
+        title: 'Quy trình xác nhận thông tin cư trú',
+        desc: 'Cấp Giấy xác nhận thông tin về cư trú mẫu CT07 trực tuyến'
+      },
+      {
+        id: 4,
+        name: '04. Cài đặt VNeID',
+        title: 'Quy trình cài đặt & kích hoạt VNeID',
+        desc: 'Hướng dẫn cài đặt, kích hoạt tài khoản định danh điện tử VNeID Mức 2'
+      }
+    ];
+
+    (window as any).switchProcedureTab = (tab: string) => {
+      this.procedureActiveTab = tab;
+      this.renderProceduresSection();
+    };
+
+    const tabClassActive = 'px-5 py-2.5 bg-[#1d7fe0] text-white rounded-xl shadow-md shrink-0 font-extrabold text-sm sm:text-base transition-all';
+    const tabClassInactive = 'px-5 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 shrink-0 font-bold text-sm sm:text-base transition-all';
+
+    let html = `
+      <!-- Tabs Sub-navigation -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-2 border-b border-slate-100 dark:border-slate-800 no-scrollbar">
+        <button onclick="window.switchProcedureTab('popular')" class="${this.procedureActiveTab === 'popular' ? tabClassActive : tabClassInactive}">Thủ tục hành chính</button>
+        <button onclick="window.switchProcedureTab('videos')" class="${this.procedureActiveTab === 'videos' ? tabClassActive : tabClassInactive}">Video hướng dẫn</button>
+        <button onclick="window.switchProcedureTab('policies')" class="${this.procedureActiveTab === 'policies' ? tabClassActive : tabClassInactive}">Chính sách</button>
+      </div>
+    `;
+
+    if (this.procedureActiveTab === 'popular') {
+      const activeProcedures = (this.proceduresList && this.proceduresList.length > 0)
+        ? this.proceduresList.slice(0, 4)
+        : popularProceduresFallback;
+
+      html += `
+        <!-- Popular Procedures Tab Content (Full-Width List with Xem chi tiết buttons) -->
+        <div class="flex flex-col gap-3.5 pt-2">
+          ${activeProcedures.map(item => {
+        const itemTitle = item.title || item.name || '';
+        const itemDesc = item.desc || item.categoryText || 'Dịch vụ công trực tuyến Phường Duy Hà';
+
+        return `
+              <div onclick="window.location.href='/procedures.html'" class="p-4 sm:p-5 bg-white dark:bg-slate-900 hover:bg-sky-50/40 dark:hover:bg-slate-800/80 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 group cursor-pointer">
+                <div class="flex items-center gap-4 flex-1 min-w-0">
+                  <div class="space-y-1 min-w-0 flex-1">
+                    <h4 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug group-hover:text-[#1d7fe0] transition-colors">
+                      ${itemTitle.replace(/^[0-9]+\.\s*/, '')}
+                    </h4>
+                    <p class="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 leading-normal line-clamp-1">
+                      ${itemDesc}
+                    </p>
+                  </div>
+                </div>
+                <a href="/procedures.html" onclick="event.stopPropagation()"
+                  class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-sky-200 dark:border-slate-700 bg-sky-50 dark:bg-slate-800 hover:bg-[#1d7fe0] hover:border-[#1d7fe0] text-[#1d7fe0] dark:text-sky-300 hover:text-white dark:hover:text-white text-xs sm:text-sm font-bold transition-all shadow-sm active:scale-95 shrink-0 whitespace-nowrap group/btn self-end sm:self-center">
+                  <span>Xem chi tiết</span>
+                  <span class="material-symbols-outlined text-base group-hover/btn:translate-x-0.5 transition-transform">arrow_forward</span>
+                </a>
+              </div>
+            `;
+      }).join('')}
+        </div>
+      `;
+    } else if (this.procedureActiveTab === 'videos') {
+      const getYoutubeThumbnail = (url: string) => {
+        if (!url) return '/hero-bg.jpg';
+        const match = url.match(/(?:embed\/|v=|youtu\.be\/|shorts\/)([\w-]{11})/);
+        if (match && match[1]) {
+          return `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
+        }
+        return '/hero-bg.jpg';
+      };
+
+      const getWatchUrl = (rawUrl: string) => {
+        if (!rawUrl) return '/procedures.html?tab=videos';
+        let url = rawUrl.trim();
+        const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([\w-]{11})/);
+        if (ytMatch && ytMatch[1]) {
+          return `https://www.youtube.com/watch?v=${ytMatch[1]}`;
+        } else if (url.includes('drive.google.com')) {
+          const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+          if (driveMatch && driveMatch[1]) {
+            return `https://drive.google.com/file/d/${driveMatch[1]}/view`;
+          }
+        }
+        return url;
+      };
+
+      const displayVideos = (this.procedureVideos && this.procedureVideos.length > 0)
+        ? this.procedureVideos.slice(0, 4)
+        : [];
+
+      html += `
+        <!-- Video Guides Tab Content (16:9 Aspect Ratio with Centered Play Button) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          ${displayVideos.map(item => `
+            <a href="${getWatchUrl(item.videoUrl)}" target="_blank" rel="noopener noreferrer"
+              class="group block bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-xl hover:border-[#1d7fe0] transition-all duration-300 cursor-pointer">
+              <!-- Video Thumbnail Container (16:9) -->
+              <div class="relative w-full aspect-video bg-slate-950 overflow-hidden">
+                <img src="${getYoutubeThumbnail(item.videoUrl)}" alt="${item.title}"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                
+                <!-- Dark Overlay Gradient -->
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-black/20 group-hover:opacity-80 transition-opacity pointer-events-none"></div>
+                
+                <!-- Category Badge (Top-Left) -->
+                <div class="absolute top-3 left-3 z-10">
+                  <span class="px-2.5 py-1 rounded-lg bg-red-600 text-white text-[10px] sm:text-[11px] font-black uppercase tracking-wider shadow-md backdrop-blur-sm">
+                    ${item.categoryText || 'HƯỚNG DẪN'}
+                  </span>
+                </div>
+
+                <!-- Centered YouTube Play Button -->
+                <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                  <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-red-600 group-hover:bg-red-700 text-white flex items-center justify-center shadow-2xl group-hover:scale-110 transition-all duration-300 ring-4 ring-white/30 group-hover:ring-white/50">
+                    <span class="material-symbols-outlined text-3xl sm:text-4xl translate-x-0.5">play_arrow</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Content Below Thumbnail -->
+              <div class="p-3.5 sm:p-4 space-y-2">
+                <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white group-hover:text-[#1d7fe0] transition-colors line-clamp-2 leading-snug">
+                  ${item.title}
+                </h4>
+                <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-100 dark:border-slate-800">
+                  <span class="font-bold flex items-center gap-1 text-slate-600 dark:text-slate-300">
+                    <span class="material-symbols-outlined text-sm text-red-500">smart_display</span>
+                    <span>Video HD</span>
+                  </span>
+                  <span class="text-[#1d7fe0] font-extrabold flex items-center gap-0.5 group-hover:underline">
+                    <span>Xem video</span>
+                    <span class="material-symbols-outlined text-sm group-hover:translate-x-0.5 transition-transform">open_in_new</span>
+                  </span>
+                </div>
+              </div>
+            </a>
+          `).join('')}
+        </div>
+      `;
+    } else if (this.procedureActiveTab === 'policies') {
+      const displayPolicies = (this.policiesList && this.policiesList.length > 0)
+        ? this.policiesList.slice(0, 3)
+        : [];
+
+      html += `
+        <!-- Policy Documents Tab Content (Real DB Data) -->
+        <div class="space-y-3.5 pt-2">
+          ${displayPolicies.map(doc => {
+            const docLink = doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : '/procedures.html?tab=policies';
+            return `
+              <div onclick="window.location.href='/procedures.html?tab=policies'"
+                class="p-4 sm:p-5 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl hover:border-[#1d7fe0] hover:shadow-md transition-all cursor-pointer group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div class="flex-1 min-w-0 space-y-1">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="px-2 py-0.5 rounded-md bg-sky-50 dark:bg-sky-950 text-[#1d7fe0] dark:text-sky-300 font-black text-[11px] border border-sky-200 dark:border-sky-800">
+                      ${doc.code || 'VĂN BẢN'}
+                    </span>
+                    <span class="text-xs font-bold text-slate-500 dark:text-slate-400">
+                      ${doc.agency || doc.categoryText || 'Chính quyền Phường Duy Hà'}
+                    </span>
+                  </div>
+                  <h4 class="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white group-hover:text-[#1d7fe0] transition-colors leading-snug">
+                    ${doc.title}
+                  </h4>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed font-medium">
+                    ${doc.summary || ''}
+                  </p>
+                </div>
+                <a href="${docLink}" ${docLink.startsWith('http') || docLink.endsWith('.pdf') ? 'target="_blank" rel="noopener noreferrer"' : ''} onclick="event.stopPropagation()"
+                  class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-[#1d7fe0] text-slate-700 dark:text-slate-200 hover:text-white text-xs font-extrabold transition-all shrink-0 self-end sm:self-center">
+                  <span class="material-symbols-outlined text-sm">visibility</span>
+                  <span>Xem văn bản</span>
+                </a>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    let targetHref = '/procedures.html?tab=procedures';
+    let targetText = 'Xem tất cả thủ tục hành chính →';
+    if (this.procedureActiveTab === 'videos') {
+      targetHref = '/procedures.html?tab=videos';
+      targetText = 'Xem tất cả video hướng dẫn →';
+    } else if (this.procedureActiveTab === 'policies') {
+      targetHref = '/procedures.html?tab=policies';
+      targetText = 'Xem tất cả chính sách & quy định →';
+    }
+
+    html += `
+      <div class="pt-3">
+        <a href="${targetHref}"
+          class="w-full py-3.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-extrabold rounded-xl text-xs text-center block transition-all shadow-inner hover:text-[#1d7fe0] dark:hover:text-sky-400">
+          ${targetText}
+        </a>
+      </div>
+    `;
+
+    container.innerHTML = html;
+  }
+
+  private meritoriousSearchQuery = '';
+
+  private renderMeritoriousSection() {
     const container = document.getElementById('meritorious-events-container');
     if (!container) return;
 
-    // CHỈ LẤY CÁC SỰ KIỆN ĐƯỢC ADMIN BẬT NỔI BẬT (is_featured = true) VÀ ĐANG HOẠT ĐỘNG
-    const events = (this.celebrationEvents as any[]).filter(e => e.status === 'active' && e.is_featured === true);
-    const families = (this.meritoriousFamilies as any[]).filter(f => f.status === 'active');
+    (window as any).handleMeritoriousSearch = (e: Event) => {
+      this.meritoriousSearchQuery = (e.target as HTMLInputElement).value.toLowerCase();
+      this.renderMeritoriousGridOnly();
+    };
 
-    if (events.length === 0) {
-      container.innerHTML = `
-        <div class="text-center py-12 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700">
-          <span class="material-symbols-outlined text-4xl text-amber-500 mb-2">event_busy</span>
-          <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Hiện chưa có sự kiện vinh danh nào được kích hoạt hiển thị.</p>
-          <p class="text-xs text-slate-400 mt-1">Quản trị viên có thể bật tùy chọn "Hiển thị nổi bật trang chủ" cho Sự kiện trong trang Quản trị Admin.</p>
+    let html = `
+      <!-- Search & Info Bar -->
+      <div class="space-y-4 mb-6">
+        <div class="flex flex-col sm:flex-row gap-3 items-center justify-between">
+          <!-- Search box -->
+          <div class="relative flex-1 w-full">
+            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+            <input 
+              type="text" 
+              placeholder="Tìm kiếm đợt danh sách chính sách, quà tặng, trợ cấp..." 
+              value="${this.meritoriousSearchQuery}"
+              oninput="window.handleMeritoriousSearch(event)"
+              class="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm font-bold focus:outline-none focus:border-amber-500 focus:bg-white dark:focus:bg-slate-950 transition-all shadow-inner"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid container for Excel batch cards -->
+      <div id="meritorious-grid-only"></div>
+    `;
+
+    container.innerHTML = html;
+    this.renderMeritoriousGridOnly();
+  }
+
+  private renderMeritoriousGridOnly() {
+    const gridContainer = document.getElementById('meritorious-grid-only');
+    if (!gridContainer) return;
+
+    const batches = (this.meritoriousFamilies as any[]).filter(f => f.status === 'active');
+    const filtered = batches.filter(f => {
+      const nameMatch = f.name && f.name.toLowerCase().includes(this.meritoriousSearchQuery);
+      const descMatch = f.description && f.description.toLowerCase().includes(this.meritoriousSearchQuery);
+      return nameMatch || descMatch;
+    });
+
+    if (filtered.length === 0) {
+      gridContainer.innerHTML = `
+        <div class="text-center py-16 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700">
+          <span class="material-symbols-outlined text-4xl text-amber-500 mb-2">folder_off</span>
+          <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Không tìm thấy đợt danh sách chính sách nào phù hợp.</p>
+          <p class="text-xs text-slate-400 mt-1">Vui lòng thử tìm kiếm bằng từ khóa khác.</p>
         </div>
       `;
       return;
     }
 
-    const displayEvents = selectedEventId === 'all'
-      ? events
-      : events.filter(e => e.id === Number(selectedEventId));
-
-    let html = '';
-
-    // Nếu có từ 2 sự kiện trở lên được bật nổi bật, hiển thị các nút Tab chuyển đổi
-    if (events.length > 1) {
-      html += `
-        <!-- Event Filter Tabs -->
-        <div class="flex items-center gap-2 overflow-x-auto pb-3 mb-6 no-scrollbar">
-          <button onclick="window.filterMeritoriousByEvent('all')"
-            class="px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 border ${selectedEventId === 'all'
-          ? 'bg-amber-600 text-white border-amber-600 shadow-md'
-          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-amber-950/40'
-        }">
-            Tất cả sự kiện nổi bật (${events.length})
-          </button>
-          ${events.map((ev: any) => `
-            <button onclick="window.filterMeritoriousByEvent(${ev.id})"
-              class="px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 border flex items-center gap-1.5 ${selectedEventId === ev.id
-            ? 'bg-amber-600 text-white border-amber-600 shadow-md'
-            : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-amber-950/40'
-          }">
-              <span class="text-amber-400">⭐</span>
-              <span>${ev.name.split(' (')[0]}</span>
-              <span class="text-[10px] opacity-80">(${ev.day}/${ev.month})</span>
-            </button>
-          `).join('')}
-        </div>
-      `;
-    }
-
-    if (displayEvents.length === 0) {
-      html += `
-        <div class="text-center py-12 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700">
-          <p class="text-sm text-slate-500 dark:text-slate-400">Không tìm thấy sự kiện tương ứng.</p>
-        </div>
-      `;
-    } else {
-      html += `<div class="space-y-8">`;
-      displayEvents.forEach((ev: any) => {
-        const linkedFamilies = families.filter(f => f.celebration_event_id === ev.id);
-
-        html += `
-          <div class="bg-gradient-to-r from-amber-50/70 via-orange-50/50 to-amber-50/70 dark:from-slate-800/80 dark:via-slate-800/50 dark:to-slate-800/80 rounded-2xl p-5 border border-amber-200/80 dark:border-slate-700/80 shadow-sm space-y-4">
-            <!-- Event Header -->
-            <div class="border-b border-amber-200/60 dark:border-slate-700 pb-3">
+    gridContainer.innerHTML = `
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        ${filtered.map((f: any) => {
+      const downloadUrl = f.file_url || (f.file_path ? (f.file_path.startsWith('http') ? f.file_path : `http://127.0.0.1:8005/api/storage/${f.file_path}`) : '#');
+      const fileName = f.file_name || 'Danh-sach-chinh-sach.xlsx';
+      return `
+            <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-md space-y-4 flex flex-col justify-between hover:border-emerald-500 hover:shadow-xl transition-all duration-300 group">
               <div>
-                <div class="flex items-center gap-2 flex-wrap mb-1">
-                  <span class="text-xs font-black uppercase text-amber-800 dark:text-amber-300 bg-amber-200/70 dark:bg-amber-950 px-2.5 py-0.5 rounded-md">
-                    🚩 Ngày ${ev.day}/${ev.month} hàng năm
+                <div class="flex items-center justify-between gap-2 mb-3">
+                  <span class="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-900/40">
+                    <span class="material-symbols-outlined text-xs">table_chart</span>
+                    <span>TỆP EXCEL (.XLSX)</span>
+                  </span>
+                  <span class="text-[11px] font-bold text-slate-400 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-xs">event</span>
+                    <span>${f.created_at || f.period_date || 'Mới nhất'}</span>
                   </span>
                 </div>
-                <h3 class="text-lg font-black text-slate-900 dark:text-white">${ev.name}</h3>
-                ${ev.description ? `<p class="text-xs text-slate-600 dark:text-slate-300 mt-1 italic">${ev.description}</p>` : ''}
+                <h4 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                  ${f.name}
+                </h4>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 line-clamp-3 leading-relaxed">
+                  ${f.description || 'Danh sách chi tiết đối tượng gia đình chính sách, người có công.'}
+                </p>
+              </div>
+
+              <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
+                <a href="${downloadUrl}" download="${fileName}" target="_blank"
+                  class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-sm active:scale-95">
+                  <span class="material-symbols-outlined text-base">download</span>
+                  <span>Tải về file Excel</span>
+                </a>
               </div>
             </div>
-
-            <!-- Meritorious Families Grid for this Event -->
-            ${linkedFamilies.length === 0 ? `
-              <p class="text-xs text-slate-400 italic py-2">Chưa có hộ gia đình được phân công vinh danh theo sự kiện này.</p>
-            ` : `
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
-                ${linkedFamilies.map((f: any) => `
-                  <div class="bg-white dark:bg-slate-900 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700 shadow-sm space-y-3 flex flex-col justify-between hover:border-amber-400 transition-all">
-                    <div>
-                      <span class="text-[10px] font-extrabold uppercase text-amber-700 dark:text-amber-400 tracking-wider bg-amber-100 dark:bg-amber-950/80 px-2 py-0.5 rounded-md inline-block mb-1.5">
-                        ${f.type}
-                      </span>
-                      <h4 class="text-sm font-black text-slate-900 dark:text-white">${f.name}</h4>
-                    </div>
-                    <button onclick="window.showMeritoriousDetail(${f.id})"
-                      class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 px-3 rounded-lg text-xs flex items-center justify-center gap-1 transition-all shadow-sm active:scale-95 mt-2">
-                      <span class="material-symbols-outlined text-sm">info</span>
-                      <span>Xem thông tin</span>
-                    </button>
-                  </div>
-                `).join('')}
-              </div>
-            `}
-          </div>
-        `;
-      });
-      html += `</div>`;
-    }
-
-    container.innerHTML = html;
+          `;
+    }).join('')}
+      </div>
+    `;
   }
 
   private closeMeritoriousModal() {
@@ -1415,114 +1851,89 @@ class PortalApp {
     const select = document.getElementById('official-neighborhood-select') as HTMLSelectElement;
     if (!select) return;
 
-    const uniqueNeighborhoods = Array.from(new Set(this.officials.map(o => o.neighborhood_name).filter(Boolean)));
-    select.innerHTML = `<option value="all">Tất cả khu vực / Tổ dân phố</option>` +
-      uniqueNeighborhoods.map(n => `<option value="${n}">${n}</option>`).join('');
+    select.innerHTML = `<option value="all">Tất cả đơn vị / Khối công tác</option>` +
+      this.departments.map(d => `<option value="${d.code}">${d.name}</option>`).join('');
   }
 
-  private filterOfficialsByNeighborhood(nb: string) {
-    this.renderOfficialsGrid(nb);
+  private filterOfficialsByNeighborhood(deptOrNb: string) {
+    this.renderOfficialsGrid(deptOrNb);
   }
 
-  private renderOfficialsGrid(filterNb: string = 'all') {
+  private renderOfficialsGrid(filterDept: string = 'all') {
     const grid = document.getElementById('officials-list-grid');
     if (!grid) return;
 
-    let items = this.officials;
-    if (filterNb !== 'all') {
-      items = items.filter(o => o.neighborhood_name === filterNb);
+    const excludedCodes = ['cskv', 'cong_an'];
+    const activeDepartments = this.departments.filter(dept => 
+      dept.status !== 'inactive' && !excludedCodes.includes(dept.code)
+    );
+
+    const validDeptIdentifiers = new Set<string>();
+    activeDepartments.forEach(d => {
+      if (d.code) validDeptIdentifiers.add(d.code);
+      if (d.name) validDeptIdentifiers.add(d.name);
+    });
+
+    let items = this.officials.filter(o => o.department && validDeptIdentifiers.has(o.department));
+    if (filterDept !== 'all') {
+      items = items.filter(o => o.department === filterDept || (Array.isArray(o.neighborhood_name) ? o.neighborhood_name.includes(filterDept) : o.neighborhood_name === filterDept));
     }
 
-    const dangUy = items.filter(o => o.department === 'dang_uy');
-    const chinhQuyen = items.filter(o => o.department === 'chinh_quyen');
-    const cskv = items.filter(o => o.department === 'cskv' || (o.role && o.role.toLowerCase().includes('cảnh sát khu vực')));
-    const ttpvhcc = items.filter(o => o.department === 'ttpvhcc');
-
     const renderCard = (o: Official) => {
-      let assignedBadge = '';
-      if (o.neighborhood_name) {
-        const nbs = Array.isArray(o.neighborhood_name) ? o.neighborhood_name : [o.neighborhood_name];
-        const filteredNbs = nbs.filter(Boolean);
-        if (filteredNbs.length > 0) {
-          assignedBadge = `<div class="mt-1 text-[11px] font-bold text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 px-2.5 py-0.5 rounded-full border border-amber-200 dark:border-amber-900/40 flex items-center justify-center gap-1"><span class="material-symbols-outlined text-xs">location_on</span><span>${filteredNbs.join(', ')}</span></div>`;
-        }
-      }
-
       return `
-        <div class="bg-white dark:bg-slate-900/90 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md flex flex-col items-center text-center transition-all hover:scale-[1.02] duration-300 justify-between">
+        <div class="bg-white dark:bg-slate-900/90 p-6 sm:p-7 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md hover:shadow-xl flex flex-col items-center text-center transition-all hover:scale-[1.02] duration-300 justify-between">
           <div class="flex flex-col items-center text-center w-full">
-            <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3 shrink-0 border border-blue-100 dark:border-slate-700">
-              <span class="material-symbols-outlined text-2xl">badge</span>
+            <div class="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3.5 shrink-0 border border-blue-100 dark:border-slate-700 shadow-inner">
+              <span class="material-symbols-outlined text-3xl">badge</span>
             </div>
-            <h5 class="text-base font-black text-slate-900 dark:text-slate-100 leading-tight">${o.name}</h5>
-            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1 leading-normal min-h-[24px] flex items-center justify-center">${o.role}</span>
-            ${assignedBadge}
+            <h5 class="text-lg sm:text-xl font-black text-slate-900 dark:text-slate-100 leading-snug">${o.name}</h5>
+            <span class="text-sm sm:text-[15px] font-bold text-slate-600 dark:text-slate-300 mt-1.5 leading-snug min-h-[32px] flex items-center justify-center">${o.role}</span>
           </div>
-          <a href="tel:${o.phone}" class="mt-4 inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 text-blue-600 dark:text-blue-400 rounded-full font-extrabold text-xs transition-colors w-full border border-blue-100 dark:border-blue-900/50">
-            <span class="material-symbols-outlined text-sm">call</span>
+          <a href="tel:${o.phone}" class="mt-5 inline-flex items-center justify-center gap-2 px-5 py-3 bg-blue-50 dark:bg-blue-950/50 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-600 dark:hover:text-white text-blue-600 dark:text-blue-400 rounded-2xl font-black text-sm sm:text-base transition-all w-full border border-blue-200 dark:border-blue-900/50 shadow-sm active:scale-95">
+            <span class="material-symbols-outlined text-lg">call</span>
             <span>${o.phone}</span>
           </a>
         </div>
       `;
     };
 
+    const getDeptStyle = (color?: string, code?: string) => {
+      if (code === 'dang_uy' || color === 'danger' || color === 'primary') {
+        return { text: 'text-red-600 dark:text-red-400', dot: 'bg-red-600' };
+      }
+      if (code === 'chinh_quyen' || color === 'success' || color === 'emerald') {
+        return { text: 'text-emerald-600 dark:text-emerald-400', dot: 'bg-emerald-600' };
+      }
+      if (code === 'ttpvhcc' || color === 'info' || color === 'sky') {
+        return { text: 'text-blue-600 dark:text-blue-400', dot: 'bg-blue-600' };
+      }
+      return { text: 'text-indigo-600 dark:text-indigo-400', dot: 'bg-indigo-600' };
+    };
+
     let html = '';
 
-    if (dangUy.length > 0) {
-      html += `
-        <div class="col-span-full mb-2">
-          <h4 class="text-xs font-black uppercase tracking-widest text-red-600 dark:text-red-400 border-b border-slate-200 dark:border-slate-800 pb-2 mb-4 flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-red-600"></span>
-            <span>ĐẢNG ỦY</span>
-          </h4>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            ${dangUy.map(renderCard).join('')}
-          </div>
-        </div>
-      `;
-    }
+    // Render theo thứ tự từng đơn vị được phép hiển thị (Đảng ủy, UBND / Chính quyền, Hành chính công)
+    activeDepartments.forEach((dept, index) => {
+      const deptOfficials = items.filter(o => o.department === dept.code || o.department === dept.name);
+      if (deptOfficials.length === 0) return;
 
-    if (chinhQuyen.length > 0) {
-      html += `
-        <div class="col-span-full mb-2 mt-4">
-          <h4 class="text-xs font-black uppercase tracking-widest text-blue-600 dark:text-blue-400 border-b border-slate-200 dark:border-slate-800 pb-2 mb-4 flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-blue-600"></span>
-            <span>CHÍNH QUYỀN</span>
-          </h4>
-          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6">
-            ${chinhQuyen.map(renderCard).join('')}
-          </div>
-        </div>
-      `;
-    }
+      const style = getDeptStyle(dept.color, dept.code);
 
-    if (cskv.length > 0) {
       html += `
-        <div class="col-span-full mt-4">
-          <h4 class="text-xs font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 border-b border-slate-200 dark:border-slate-800 pb-2 mb-4 flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
-            <span>CẢNH SÁT KHU VỰC</span>
+        <div class="col-span-full ${index > 0 ? 'mt-8' : 'mb-2'}">
+          <h4 class="text-base sm:text-lg font-black uppercase tracking-wide ${style.text} border-b-2 border-slate-100 dark:border-slate-800 pb-3 mb-5 flex items-center gap-2.5">
+            <span class="w-3 h-3 rounded-full ${style.dot} ring-4 ring-slate-100 dark:ring-slate-800"></span>
+            <span>${dept.name.toUpperCase()}</span>
+            <span class="text-xs sm:text-sm font-extrabold px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 ml-auto lowercase shadow-sm">
+              ${deptOfficials.length} cán bộ
+            </span>
           </h4>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            ${cskv.map(renderCard).join('')}
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            ${deptOfficials.map(renderCard).join('')}
           </div>
         </div>
       `;
-    }
-
-    if (ttpvhcc.length > 0) {
-      html += `
-        <div class="col-span-full mt-4">
-          <h4 class="text-xs font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400 border-b border-slate-200 dark:border-slate-800 pb-2 mb-4 flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-            <span>TTPVHCC</span>
-          </h4>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            ${ttpvhcc.map(renderCard).join('')}
-          </div>
-        </div>
-      `;
-    }
+    });
 
     grid.innerHTML = html;
   }
@@ -1534,55 +1945,35 @@ class PortalApp {
     this.currentPlace = place;
 
     const modal = document.getElementById('portal-detail-modal');
-    const badge = document.getElementById('modal-category-badge');
     const name = document.getElementById('modal-place-name');
     const desc = document.getElementById('modal-description');
     const addr = document.getElementById('modal-address');
+    const directionsBtn = document.getElementById('modal-directions-btn') as HTMLAnchorElement | null;
     const statsRow = document.getElementById('modal-stats-row');
-    const officialsBox = document.getElementById('modal-officials-list');
 
-    if (badge) badge.textContent = place.category.toUpperCase();
     if (name) name.textContent = place.name;
-    if (desc) desc.textContent = place.description || 'Không có mô tả chi tiết.';
-    if (addr) addr.textContent = `📍 ${place.address || 'Phường Duy Hà, Ninh Bình'}`;
+    if (desc) desc.textContent = place.description || 'Chưa có thông tin giới thiệu chi tiết.';
+    if (addr) addr.textContent = place.address || 'Phường Duy Hà, tỉnh Ninh Bình';
+
+    if (directionsBtn) {
+      if (place.lat && place.lng) {
+        directionsBtn.href = `https://www.google.com/maps/dir/?api=1&destination=${place.lat},${place.lng}`;
+      } else {
+        directionsBtn.href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place.name + ' Phường Duy Hà')}`;
+      }
+    }
 
     if (statsRow) {
-      if (place.households || place.population || place.hours) {
+      if (place.households || place.population || place.hours || place.cultural_house_address) {
         statsRow.innerHTML = `
-          ${place.households ? `<div class="bg-blue-50 dark:bg-slate-800 p-3 rounded-2xl text-center"><b class="text-lg font-bold text-blue-700 dark:text-blue-400 block">${place.households}</b><span class="text-[11px] text-slate-500">Số hộ dân</span></div>` : ''}
-          ${place.population ? `<div class="bg-emerald-50 dark:bg-slate-800 p-3 rounded-2xl text-center"><b class="text-lg font-bold text-emerald-700 dark:text-emerald-400 block">${place.population}</b><span class="text-[11px] text-slate-500">Dân số</span></div>` : ''}
-          ${place.hours ? `<div class="bg-amber-50 dark:bg-slate-800 p-3 rounded-2xl text-center"><b class="text-xs font-bold text-amber-700 dark:text-amber-400 block mt-1">${place.hours}</b><span class="text-[11px] text-slate-500">Giờ làm việc</span></div>` : ''}
-          ${place.cultural_house_address ? `<div class="bg-purple-50 dark:bg-slate-800 p-3 rounded-2xl text-center"><b class="text-xs font-bold text-purple-700 dark:text-purple-400 block truncate mt-1">${place.cultural_house_address}</b><span class="text-[11px] text-slate-500">Nhà văn hóa</span></div>` : ''}
+          ${place.households ? `<div class="bg-blue-50 dark:bg-slate-800 p-3 rounded-2xl text-center border border-blue-100 dark:border-slate-700/60"><b class="text-base sm:text-lg font-bold text-blue-700 dark:text-blue-400 block">${place.households}</b><span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Số hộ dân</span></div>` : ''}
+          ${place.population ? `<div class="bg-emerald-50 dark:bg-slate-800 p-3 rounded-2xl text-center border border-emerald-100 dark:border-slate-700/60"><b class="text-base sm:text-lg font-bold text-emerald-700 dark:text-emerald-400 block">${place.population}</b><span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Dân số</span></div>` : ''}
+          ${place.hours ? `<div class="bg-amber-50 dark:bg-slate-800 p-3 rounded-2xl text-center border border-amber-100 dark:border-slate-700/60"><b class="text-xs sm:text-sm font-bold text-amber-700 dark:text-amber-400 block mt-0.5">${place.hours}</b><span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Giờ làm việc</span></div>` : ''}
+          ${place.cultural_house_address ? `<div class="bg-purple-50 dark:bg-slate-800 p-3 rounded-2xl text-center border border-purple-100 dark:border-slate-700/60"><b class="text-xs font-bold text-purple-700 dark:text-purple-400 block truncate mt-0.5">${place.cultural_house_address}</b><span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Nhà văn hóa</span></div>` : ''}
         `;
         statsRow.classList.remove('hidden');
       } else {
         statsRow.classList.add('hidden');
-      }
-    }
-
-    if (officialsBox) {
-      const matchOfficials = this.officials.filter(o =>
-        o.neighborhood_name === place.name ||
-        (place.category === 'government' && o.neighborhood_name?.includes('UBND'))
-      );
-
-      if (matchOfficials.length > 0) {
-        officialsBox.innerHTML = matchOfficials.map(o => `
-          <div class="officer-card p-3">
-            <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0" style="background-color: ${o.avatar_color || '#1D4ED8'}">
-              ${o.name.charAt(0)}
-            </div>
-            <div class="flex-1 min-w-0">
-              <b class="text-xs font-bold text-slate-900 dark:text-white block truncate">${o.name}</b>
-              <span class="text-[11px] text-blue-600 dark:text-blue-400 block truncate">${o.role}</span>
-            </div>
-            <a href="tel:${o.phone}" class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-              <span class="material-symbols-outlined text-base">call</span>
-            </a>
-          </div>
-        `).join('');
-      } else {
-        officialsBox.innerHTML = `<p class="text-xs text-slate-400 col-span-full">Danh bạ cán bộ phụ trách khu vực đang được cập nhật.</p>`;
       }
     }
 
@@ -1625,12 +2016,12 @@ class PortalApp {
 
     this.map = L.map('map', {
       zoomControl: true,
-      attributionControl: true
+      attributionControl: false
     }).setView([20.6478448, 105.914737], 14.5);
 
     L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
       maxZoom: 20,
-      attribution: '© Google Maps'
+      attribution: ''
     }).addTo(this.map);
 
     // Render boundary of Phường Duy Hà (GeoJSON)
@@ -1701,7 +2092,7 @@ class PortalApp {
 
       const marker = L.marker([p.lat, p.lng], { icon: customIcon });
       marker.bindPopup(`
-        <div style="font-family:sans-serif; padding:6px; min-width:180px;">
+        <div style="font-family:'Roboto',sans-serif; padding:6px; min-width:180px;">
           <div style="font-size:10px; font-weight:800; text-transform:uppercase; color:#1D4ED8; margin-bottom:2px;">
             ${p.category === 'government' ? 'Cơ quan Hành chính' : p.category === 'police' ? 'Công an Phường' : p.category === 'health' ? 'Cơ sở Y tế' : p.category === 'school' ? 'Trường học' : 'Tổ dân phố'}
           </div>
@@ -1715,6 +2106,9 @@ class PortalApp {
       `);
       marker.addTo(this.map!);
     });
+
+    // Render places carousel at bottom of map
+    this.renderMapPlacesCarousel();
   }
 
   private initEventListeners() {
@@ -1750,6 +2144,123 @@ class PortalApp {
   }
 }
 
+/**
+ * Initialize fixed floating Back-to-Top button at bottom-right corner
+ */
+export function initBackToTopButton(): void {
+  let btn = document.getElementById('back-to-top-btn');
+  if (!btn) {
+    btn = document.createElement('button');
+    btn.id = 'back-to-top-btn';
+    btn.setAttribute('title', 'Lên đầu trang');
+    btn.className = 'fixed bottom-6 right-6 z-50 w-12 h-12 rounded-2xl bg-[#1d7fe0] hover:bg-[#1565c0] text-white flex items-center justify-center shadow-2xl hover:shadow-sky-500/40 transition-all duration-300 active:scale-95 border border-white/30 cursor-pointer opacity-0 pointer-events-none';
+    btn.innerHTML = '<span class="material-symbols-outlined text-2xl font-black">arrow_upward</span>';
+    btn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.body.appendChild(btn);
+  }
+
+  const toggleVisibility = () => {
+    if (window.scrollY > 200) {
+      btn?.classList.remove('opacity-0', 'pointer-events-none');
+      btn?.classList.add('opacity-100');
+    } else {
+      btn?.classList.add('opacity-0', 'pointer-events-none');
+      btn?.classList.remove('opacity-100');
+    }
+  };
+
+  window.addEventListener('scroll', toggleVisibility);
+  toggleVisibility();
+}
+
+/**
+ * Animate numeric values with count-up effect on page load
+ */
+export function animateCountUp(element: HTMLElement, duration: number = 1500): void {
+  const originalText = element.innerText.trim();
+  if (!originalText || element.dataset.animated === 'true') return;
+  element.dataset.animated = 'true';
+
+  // Extract number pattern from string (e.g., "6.767", "23.615", "15,46 km²", "10")
+  const match = originalText.match(/([0-9.,]+)(.*)/);
+  if (!match) return;
+
+  const rawNumStr = match[1];
+  const suffix = match[2] || '';
+
+  const hasCommaDecimal = rawNumStr.includes(',') && !rawNumStr.includes('.');
+  const isDotThousands = rawNumStr.includes('.') && !rawNumStr.includes(',');
+
+  let targetNum = 0;
+  let decimals = 0;
+
+  if (hasCommaDecimal) {
+    const parts = rawNumStr.split(',');
+    decimals = parts[1] ? parts[1].length : 0;
+    targetNum = parseFloat(rawNumStr.replace(',', '.'));
+  } else if (isDotThousands) {
+    targetNum = parseInt(rawNumStr.replace(/\./g, ''), 10);
+  } else {
+    targetNum = parseFloat(rawNumStr);
+  }
+
+  if (isNaN(targetNum) || targetNum <= 0) return;
+
+  const startTime = performance.now();
+
+  const updateCount = (currentTime: number) => {
+    const elapsedTime = currentTime - startTime;
+    const progress = Math.min(elapsedTime / duration, 1);
+
+    // Ease-out cubic formula for smooth slowdown
+    const easeProgress = 1 - Math.pow(1 - progress, 3);
+    const currentNum = targetNum * easeProgress;
+
+    let formattedStr = '';
+    if (hasCommaDecimal) {
+      formattedStr = currentNum.toFixed(decimals).replace('.', ',');
+    } else if (isDotThousands) {
+      formattedStr = Math.round(currentNum).toLocaleString('vi-VN');
+    } else {
+      formattedStr = Math.round(currentNum).toString();
+    }
+
+    element.innerText = formattedStr + suffix;
+
+    if (progress < 1) {
+      requestAnimationFrame(updateCount);
+    } else {
+      element.innerText = originalText;
+    }
+  };
+
+  requestAnimationFrame(updateCount);
+}
+
+export function triggerStatCardsCountUp(): void {
+  const container = document.getElementById('stats-cards-container');
+  if (!container) return;
+
+  const statElements = container.querySelectorAll('b');
+  if (statElements.length === 0) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        statElements.forEach(el => animateCountUp(el as HTMLElement, 1500));
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  observer.observe(container);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  // Inject shared header/nav into all pages from single source of truth
+  initSharedHeader();
+  initSharedFooter();
+  initBackToTopButton();
   new PortalApp();
+  triggerStatCardsCountUp();
 });

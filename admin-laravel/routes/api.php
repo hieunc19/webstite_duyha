@@ -16,6 +16,7 @@ Route::get('/places', function () {
                 'category' => $place->category,
                 'status' => $place->status,
                 'address' => $place->address,
+                'phone' => $place->phone,
                 'lat' => (float) $place->lat,
                 'lng' => (float) $place->lng,
                 'image' => $place->image ? (Str::startsWith($place->image, 'http') ? $place->image : url('/api/storage/' . $place->image)) : null,
@@ -34,6 +35,7 @@ Route::get('/places/{id}', function (int $id) {
         'category' => $place->category,
         'status' => $place->status,
         'address' => $place->address,
+        'phone' => $place->phone,
         'lat' => (float) $place->lat,
         'lng' => (float) $place->lng,
         'image' => $place->image ? (Str::startsWith($place->image, 'http') ? $place->image : url('/api/storage/' . $place->image)) : null,
@@ -225,7 +227,24 @@ Route::get('/settings', function () {
 });
 
 Route::get('/homepage-sections', function () {
-    return \App\Models\HomepageSection::orderBy('sort_order', 'asc')->get()->map(function ($sec) {
+    $managedCodes = [
+        'header_navbar',
+        'hero_banner',
+        'stats_cards',
+        'agencies_grid',
+        'procedures_utilities',
+        'hdsd_procedure',
+        'footer_section',
+    ];
+
+    return \App\Models\HomepageSection::where(function ($query) use ($managedCodes) {
+            $query
+                ->whereIn('section_code', $managedCodes)
+                ->orWhere('section_code', 'like', 'custom_%');
+        })
+        ->orderBy('sort_order', 'asc')
+        ->get()
+        ->map(function ($sec) {
         return [
             'id'              => $sec->id,
             'section_code'    => $sec->section_code,
@@ -280,6 +299,23 @@ Route::get('/celebration-events/active', function (Request $request) {
     ];
 });
 
+Route::get('/departments', function () {
+    return \App\Models\Department::where('status', 'active')
+        ->orderBy('sort_order', 'asc')
+        ->get()
+        ->map(function ($d) {
+            return [
+                'id' => $d->id,
+                'code' => $d->code,
+                'name' => $d->name,
+                'color' => $d->color,
+                'sort_order' => (int) $d->sort_order,
+                'status' => $d->status,
+                'description' => $d->description,
+            ];
+        });
+});
+
 Route::get('/officials', function () {
     return \App\Models\Official::where('status', 'active')
         ->orderBy('id')
@@ -318,23 +354,490 @@ Route::get('/celebration-events', function () {
 
 Route::get('/meritorious-families', function () {
     return \App\Models\MeritoriousFamily::where('status', 'active')
-        ->orderBy('id')
+        ->orderBy('created_at', 'desc')
         ->get()
         ->map(function ($f) {
             return [
                 'id' => $f->id,
                 'name' => $f->name,
-                'type' => $f->type,
-                'neighborhood_id' => $f->neighborhood_id,
-                'address' => $f->address,
-                'representative_name' => $f->representative_name,
-                'phone' => $f->phone,
-                'benefit_details' => $f->benefit_details,
-                'celebration_event_id' => (int) $f->celebration_event_id,
+                'file_path' => $f->file_path,
+                'file_url' => $f->file_url,
+                'file_name' => $f->file_name ?: 'Danh-sach-chinh-sach.xlsx',
+                'file_size' => $f->file_size,
+                'description' => $f->description,
                 'status' => $f->status,
+                'created_at' => $f->created_at?->format('d/m/Y H:i'),
+                'period_date' => $f->period_date ?: ($f->created_at?->format('d/m/Y') ?? ''),
             ];
         });
 });
 
+Route::get('/feedback-config', function () {
+    $fbFormUrl = \App\Models\Setting::where('key', 'feedback_google_form_url')->value('value') ?? '';
+    $fbSheetUrl = \App\Models\Setting::where('key', 'feedback_google_sheet_url')->value('value') ?? '';
+    $fbEnabled = \App\Models\Setting::where('key', 'feedback_is_enabled')->value('value') ?? '1';
+    $fbTitle = \App\Models\Setting::where('key', 'feedback_title')->value('value') ?? 'Phản ánh và kiến nghị';
+    $fbSubtitle = \App\Models\Setting::where('key', 'feedback_subtitle')->value('value') ?? 'Kênh tiếp nhận và giải quyết ý kiến phản ánh trực tuyến của công dân';
+
+    return response()->json([
+        'google_form_url' => $fbFormUrl,
+        'google_sheet_url' => $fbSheetUrl,
+        'is_enabled' => (bool) $fbEnabled,
+        'title' => $fbTitle,
+        'subtitle' => $fbSubtitle,
+    ]);
+});
+
+
+Route::post('/submit-feedback', function (Request $request) {
+    $validated = $request->validate([
+        'fullname' => 'required|string|max:255',
+        'phone' => 'required|string|max:50',
+        'title' => 'required|string|max:255',
+        'content' => 'required|string',
+    ]);
+
+    // 1. Save in local database
+    $feedback = \App\Models\Feedback::create([
+        'fullname' => $validated['fullname'],
+        'phone' => $validated['phone'],
+        'title' => $validated['title'],
+        'content' => $validated['content'],
+        'status' => 'pending',
+        'ip_address' => $request->ip(),
+        'synced_to_sheets' => false,
+    ]);
+
+    // 2. Automatically Forward to Google Form in background
+    $googleFormUrl = \App\Models\Setting::where('key', 'feedback_google_form_url')->value('value');
+    if (!empty($googleFormUrl)) {
+        try {
+            $formResponseUrl = preg_replace('/(\/(viewform|edit)).*$/', '/formResponse', $googleFormUrl);
+            if (!str_contains($formResponseUrl, '/formResponse')) {
+                $formResponseUrl = rtrim($formResponseUrl, '/') . '/formResponse';
+            }
+
+            // Extract or fetch entry IDs dynamically from any Google Form
+            $entryMap = \Illuminate\Support\Facades\Cache::remember('gf_entries_' . md5($googleFormUrl), 3600, function () use ($googleFormUrl) {
+                $viewUrl = preg_replace('/(\/(formResponse|viewform|edit)).*$/', '/viewform', $googleFormUrl);
+                try {
+                    $resp = \Illuminate\Support\Facades\Http::timeout(5)->get($viewUrl);
+                    if ($resp->ok() && preg_match('/var FB_PUBLIC_LOAD_DATA_ = (\[.+?\]);<\/script>/s', $resp->body(), $matches)) {
+                        $data = json_decode($matches[1], true);
+                        $questions = $data[1][1] ?? [];
+                        $map = [];
+                        $allEntries = [];
+
+                        foreach ($questions as $q) {
+                            $title = mb_strtolower(trim($q[1] ?? ''));
+                            $entryId = $q[4][0][0] ?? null;
+                            if ($entryId) {
+                                $allEntries[] = 'entry.' . $entryId;
+                                if (str_contains($title, 'họ') || str_contains($title, 'tên') || str_contains($title, 'người gửi') || str_contains($title, 'name')) {
+                                    $map['fullname'] = 'entry.' . $entryId;
+                                } elseif (str_contains($title, 'điện thoại') || str_contains($title, 'sđt') || str_contains($title, 'phone') || str_contains($title, 'liên hệ') || str_contains($title, 'số')) {
+                                    $map['phone'] = 'entry.' . $entryId;
+                                } elseif (str_contains($title, 'tiêu đề') || str_contains($title, 'chủ đề') || str_contains($title, 'title') || str_contains($title, 'vấn đề')) {
+                                    $map['title'] = 'entry.' . $entryId;
+                                } elseif (str_contains($title, 'nội dung') || str_contains($title, 'chi tiết') || str_contains($title, 'content') || str_contains($title, 'ý kiến') || str_contains($title, 'mô tả')) {
+                                    $map['content'] = 'entry.' . $entryId;
+                                }
+                            }
+                        }
+
+                        // Positional Fallback if any field was not matched by keyword
+                        if (empty($map['fullname']) && isset($allEntries[0])) $map['fullname'] = $allEntries[0];
+                        if (empty($map['phone']) && isset($allEntries[1])) $map['phone'] = $allEntries[1];
+                        if (empty($map['title']) && isset($allEntries[2])) $map['title'] = $allEntries[2];
+                        if (empty($map['content']) && isset($allEntries[3])) $map['content'] = $allEntries[3];
+
+                        if (!empty($map['fullname']) || !empty($map['content'])) return $map;
+                    }
+                } catch (\Throwable $e) {}
+
+                // Default fallback
+                return [
+                    'fullname' => 'entry.2116225144',
+                    'phone' => 'entry.138807521',
+                    'title' => 'entry.568776538',
+                    'content' => 'entry.68837689',
+                ];
+            });
+
+            $postData = [];
+            if (!empty($entryMap['fullname'])) $postData[$entryMap['fullname']] = $validated['fullname'];
+            if (!empty($entryMap['phone'])) $postData[$entryMap['phone']] = $validated['phone'];
+            if (!empty($entryMap['title'])) $postData[$entryMap['title']] = $validated['title'];
+            if (!empty($entryMap['content'])) $postData[$entryMap['content']] = $validated['content'];
+
+            if (!empty($postData)) {
+                $gfRes = \Illuminate\Support\Facades\Http::asForm()->timeout(10)->post($formResponseUrl, $postData);
+                if ($gfRes->successful()) {
+                    $feedback->update(['synced_to_sheets' => true]);
+                }
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Google Form sync error: ' . $e->getMessage());
+        }
+    }
+
+    // 3. Forward to Google Sheets Webhook if configured
+    $webhookUrl = \App\Models\Setting::where('key', 'feedback_google_sheet_webhook_url')->value('value');
+    if (!empty($webhookUrl)) {
+        try {
+            \Illuminate\Support\Facades\Http::timeout(10)->post($webhookUrl, [
+                'id' => $feedback->id,
+                'fullname' => $validated['fullname'],
+                'phone' => $validated['phone'],
+                'title' => $validated['title'],
+                'content' => $validated['content'],
+                'created_at' => now()->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i:s'),
+            ]);
+            $feedback->update(['synced_to_sheets' => true]);
+        } catch (\Throwable $e) {}
+    }
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Ý kiến phản ánh của bạn đã được tiếp nhận thành công!',
+        'id' => $feedback->id,
+    ]);
+});
+
+Route::get('/citizen-reception', function () {
+    $title = \App\Models\Setting::where('key', 'citizen_reception_title')->value('value') ?? 'LỊCH TIẾP CÔNG DÂN ĐỊNH KỲ NĂM 2026';
+    $rawImage = \App\Models\Setting::where('key', 'citizen_reception_image')->value('value') ?? '';
+    $time = \App\Models\Setting::where('key', 'citizen_reception_schedule_time')->value('value') ?? 'Thứ 5 hàng tuần (Sáng: 07h30 - 11h30 | Chiều: 13h30 - 17h00)';
+    $location = \App\Models\Setting::where('key', 'citizen_reception_location')->value('value') ?? 'Phòng Tiếp công dân — Trụ sở UBND Phường Duy Hà (Số 01 đường Lê Lợi, TP. Ninh Bình)';
+    $officer = \App\Models\Setting::where('key', 'citizen_reception_officer')->value('value') ?? 'Đồng chí Chủ tịch UBND Phường và các Phó Chủ tịch UBND Phường';
+    $notes = \App\Models\Setting::where('key', 'citizen_reception_notes')->value('value') ?? 'Công dân khi đến khiếu nại, tố cáo, kiến nghị, phản ánh cần xuất trình Căn cước công dân và các giấy tờ, tài liệu liên quan đến nội dung phản ánh.';
+
+    $imageUrl = null;
+    if (!empty($rawImage)) {
+        $imageUrl = \Illuminate\Support\Str::startsWith($rawImage, 'http') ? $rawImage : url('/api/storage/' . $rawImage);
+    }
+
+    return response()->json([
+        'title' => $title,
+        'image' => $rawImage,
+        'image_url' => $imageUrl,
+        'schedule_time' => $time,
+        'location' => $location,
+        'officer' => $officer,
+        'notes' => $notes,
+    ]);
+});
+
+Route::get('/procedures', function () {
+    return response()->json(
+        \App\Models\Procedure::where('is_active', true)
+            ->orderBy('id', 'desc')
+            ->get()
+            ->map(function($p) {
+                $attachmentUrl = null;
+                if ($p->attachment) {
+                    $attachmentUrl = \Illuminate\Support\Str::startsWith($p->attachment, 'http') ? $p->attachment : url('/api/storage/' . $p->attachment);
+                }
+                $categoryMap = [
+                    'residence' => 'Cư trú & Hộ khẩu',
+                    'civil' => 'Hộ tịch & Tư pháp',
+                    'land' => 'Địa chính & Đất đai',
+                    'vneid' => 'Định danh VNeID',
+                    'social' => 'An sinh xã hội & Trợ cấp',
+                    'tax' => 'Thuế & Tài chính',
+                    'other' => 'Thủ tục khác',
+                ];
+
+                $docsList = collect($p->docs ?? [])->map(function($doc) {
+                    if (is_array($doc)) {
+                        $file = $doc['file'] ?? null;
+                        $fileUrl = null;
+                        if ($file) {
+                            $fileUrl = \Illuminate\Support\Str::startsWith($file, 'http') ? $file : url('/api/storage/' . $file);
+                        }
+                        return [
+                            'name' => $doc['name'] ?? '',
+                            'quantity' => $doc['quantity'] ?? '01 bản chính',
+                            'file' => $file,
+                            'file_url' => $fileUrl,
+                        ];
+                    }
+                    return [
+                        'name' => (string) $doc,
+                        'quantity' => '01 bản chính',
+                        'file' => null,
+                        'file_url' => null,
+                    ];
+                })->values();
+
+                return [
+                    'id' => $p->id,
+                    'code' => $p->code ?? ('TTHC-' . str_pad($p->id, 3, '0', STR_PAD_LEFT)),
+                    'title' => $p->title,
+                    'category' => $p->category,
+                    'categoryText' => $categoryMap[$p->category] ?? 'Thủ tục khác',
+                    'desc' => $p->desc,
+                    'agency' => $p->agency,
+                    'docs' => $docsList,
+                    'created_at' => $p->created_at ? $p->created_at->format('d/m/Y') : null,
+                ];
+            })
+    );
+});
+
+Route::get('/procedure-videos', function () {
+    return response()->json(
+        \App\Models\ProcedureVideo::where('is_active', true)
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('id', 'desc')
+            ->get()
+            ->map(function($v) {
+                $categoryMap = [
+                    'residence' => 'Cư trú & Hộ khẩu',
+                    'vneid' => 'Định danh VNeID',
+                    'civil' => 'Hộ tịch & Chứng thực',
+                    'land' => 'Đất đai & Xây dựng',
+                    'social' => 'An sinh xã hội',
+                    'other' => 'Lĩnh vực khác',
+                ];
+
+                $url = trim($v->video_url ?? '');
+                if (!empty($url)) {
+                    // Google Drive auto-convert
+                    if (str_contains($url, 'drive.google.com')) {
+                        if (!str_contains($url, '/preview')) {
+                            if (preg_match('/\/file\/d\/([a-zA-Z0-9_-]+)/', $url, $m) || preg_match('/[?&]id=([a-zA-Z0-9_-]+)/', $url, $m)) {
+                                $url = 'https://drive.google.com/file/d/' . $m[1] . '/preview';
+                            }
+                        }
+                    }
+                    // YouTube auto-convert
+                    elseif (!str_contains($url, 'youtube.com/embed/')) {
+                        if (preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([\w-]{11})/', $url, $m)) {
+                            $url = 'https://www.youtube.com/embed/' . $m[1] . '?controls=1&rel=0&enablejsapi=1';
+                        }
+                    }
+                }
+
+                return [
+                    'id' => $v->id,
+                    'title' => $v->title,
+                    'category' => $v->category,
+                    'categoryText' => $categoryMap[$v->category] ?? 'Lĩnh vực khác',
+                    'videoUrl' => $url,
+                    'sort_order' => $v->sort_order,
+                ];
+            })
+    );
+});
+
+Route::get('/policies', function () {
+    $categoryMap = \App\Models\ProcedureCategory::pluck('name', 'slug')->toArray();
+
+    return response()->json(
+        \App\Models\Policy::where('is_active', true)
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('id', 'desc')
+            ->get()
+            ->map(function($p) use ($categoryMap) {
+                $downloadUrl = '#';
+
+                $downloadUrl = '#';
+                if (!empty($p->download_url)) {
+                    if (str_starts_with($p->download_url, 'http://') || str_starts_with($p->download_url, 'https://') || $p->download_url === '#') {
+                        $downloadUrl = $p->download_url;
+                    } else {
+                        $downloadUrl = '/storage/' . ltrim($p->download_url, '/');
+                    }
+                }
+
+                return [
+                    'id' => $p->id,
+                    'title' => $p->title,
+                    'code' => $p->code ?? '',
+                    'category' => $p->category,
+                    'categoryText' => $categoryMap[$p->category] ?? 'Lĩnh vực khác',
+                    'date' => $p->issue_date ?? '',
+                    'agency' => $p->agency ?? '',
+                    'status' => $p->status ?? 'Đang có hiệu lực',
+                    'summary' => $p->summary ?? '',
+                    'highlights' => $p->highlights ?? [],
+                    'downloadUrl' => $downloadUrl,
+                    'sort_order' => $p->sort_order,
+                ];
+            })
+    );
+});
+
+Route::get('/waste-schedules', function () {
+    return response()->json(
+        \App\Models\WasteSchedule::where('is_active', true)
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('id', 'asc')
+            ->get()
+    );
+});
+
+Route::get('/form-documents', function () {
+    return response()->json(
+        \App\Models\FormDocument::where('is_active', true)
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('id', 'asc')
+            ->get()
+            ->map(function ($f) {
+                $downloadUrl = '#';
+                if (!empty($f->download_url)) {
+                    $downloadUrl = $f->download_url;
+                } elseif (!empty($f->file_path)) {
+                    $downloadUrl = '/storage/' . ltrim($f->file_path, '/');
+                }
+                return [
+                    'id' => $f->id,
+                    'code' => $f->code ?? '',
+                    'title' => $f->title,
+                    'name' => $f->title,
+                    'description' => $f->description ?? '',
+                    'purpose' => $f->description ?? '',
+                    'category' => $f->category,
+                    'category_name' => $f->category_text ?? 'Thủ tục hành chính',
+                    'agency' => $f->agency ?? 'Bộ phận Một cửa',
+                    'fee' => $f->fee ?? 'Miễn phí',
+                    'file_path' => $f->file_path,
+                    'download_url' => $downloadUrl,
+                    'downloadUrl' => $downloadUrl,
+                    'steps' => $f->steps ?? [],
+                    'docs' => $f->docs ?? [],
+                    'notes' => $f->notes ?? '',
+                ];
+            })
+    );
+});
+
+Route::get('/procedure-categories', function () {
+    return response()->json(
+        \App\Models\ProcedureCategory::where('is_active', true)
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('id', 'asc')
+            ->get()
+    );
+});
+
+Route::get('/procedures', function () {
+    $categoriesMap = \App\Models\ProcedureCategory::pluck('name', 'slug')->toArray();
+    return response()->json(
+        \App\Models\Procedure::where('is_active', true)
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('id', 'desc')
+            ->get()
+            ->map(function ($p) use ($categoriesMap) {
+                $docsList = collect($p->docs ?? [])->map(function ($doc) {
+                    if (is_array($doc)) {
+                        $file = $doc['file'] ?? null;
+                        $fileUrl = null;
+                        if (!empty($file)) {
+                            $fileUrl = \Illuminate\Support\Str::startsWith($file, 'http') ? $file : ('/storage/' . ltrim($file, '/'));
+                        }
+                        return [
+                            'name' => $doc['name'] ?? '',
+                            'quantity' => $doc['quantity'] ?? '01 bản chính',
+                            'file' => $file,
+                            'file_url' => $fileUrl,
+                        ];
+                    }
+                    return [
+                        'name' => (string) $doc,
+                        'quantity' => '01 bản chính',
+                        'file' => null,
+                        'file_url' => null,
+                    ];
+                })->values()->all();
+
+                $attachmentUrl = null;
+                $firstDocWithFile = collect($docsList)->first(function ($d) {
+                    return !empty($d['file_url']);
+                });
+
+                if ($firstDocWithFile) {
+                    $attachmentUrl = $firstDocWithFile['file_url'];
+                } elseif (!empty($p->attachment)) {
+                    $attachmentUrl = \Illuminate\Support\Str::startsWith($p->attachment, 'http') ? $p->attachment : ('/storage/' . ltrim($p->attachment, '/'));
+                } elseif (!empty($p->download_url) && !str_contains($p->download_url, 'dichvucong.gov.vn')) {
+                    $attachmentUrl = $p->download_url;
+                }
+
+                return [
+                    'id' => $p->id,
+                    'code' => $p->code ?? ('TTHC-' . str_pad($p->id, 3, '0', STR_PAD_LEFT)),
+                    'title' => $p->title,
+                    'name' => $p->title,
+                    'category' => $p->category,
+                    'categoryText' => $p->category_text ?? ($categoriesMap[$p->category] ?? 'Thủ tục hành chính'),
+                    'desc' => $p->desc ?? '',
+                    'fee' => $p->fee ?? 'Miễn phí',
+                    'agency' => $p->agency ?? 'UBND Phường',
+                    'docs' => $docsList,
+                    'attachment_url' => $attachmentUrl,
+                    'created_at' => $p->created_at ? $p->created_at->format('d/m/Y') : '',
+                ];
+            })
+    );
+});
+
+Route::get('/procedure-videos', function () {
+    $categoriesMap = \App\Models\ProcedureCategory::pluck('name', 'slug')->toArray();
+    return response()->json(
+        \App\Models\ProcedureVideo::where('is_active', true)
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('id', 'desc')
+            ->get()
+            ->map(function ($v) use ($categoriesMap) {
+                return [
+                    'id' => $v->id,
+                    'title' => $v->title,
+                    'category' => $v->category,
+                    'categoryText' => $categoriesMap[$v->category] ?? 'Video hướng dẫn',
+                    'videoUrl' => $v->video_url,
+                    'duration' => '05:00',
+                    'views' => '1.0k lượt xem',
+                    'desc' => $v->title,
+                    'thumbnail' => '/hero-bg.jpg',
+                ];
+            })
+    );
+});
+
+Route::get('/policies', function () {
+    $categoriesMap = \App\Models\ProcedureCategory::pluck('name', 'slug')->toArray();
+    return response()->json(
+        \App\Models\Policy::where('is_active', true)
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('id', 'desc')
+            ->get()
+            ->map(function ($pol) use ($categoriesMap) {
+                $downloadUrl = '#';
+                if (!empty($pol->download_url)) {
+                    if (str_starts_with($pol->download_url, 'http://') || str_starts_with($pol->download_url, 'https://') || $pol->download_url === '#') {
+                        $downloadUrl = $pol->download_url;
+                    } else {
+                        $downloadUrl = '/storage/' . ltrim($pol->download_url, '/');
+                    }
+                }
+                return [
+                    'id' => $pol->id,
+                    'title' => $pol->title,
+                    'code' => $pol->code ?? '',
+                    'category' => $pol->category,
+                    'categoryText' => $categoriesMap[$pol->category] ?? 'Chính sách & Quy định',
+                    'date' => $pol->issue_date ?? '',
+                    'agency' => $pol->agency ?? 'UBND Phường',
+                    'status' => $pol->status ?? 'Đang có hiệu lực',
+                    'summary' => $pol->summary ?? '',
+                    'highlights' => $pol->highlights ?? [],
+                    'downloadUrl' => $downloadUrl,
+                    'download_url' => $downloadUrl,
+                ];
+            })
+    );
+});
 
 

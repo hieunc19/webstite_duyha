@@ -6,7 +6,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages\Dashboard;
+use App\Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -30,8 +30,13 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->spa()
             ->brandName('Bản đồ Địa bàn Phường Duy Hà')
+            ->font('Inter')
             ->colors([
                 'primary' => Color::Amber,
+            ])
+            ->navigationGroups([
+                'Dịch vụ Công & Cổng Thông tin',
+                'Quản lý Địa bàn & Dân cư',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -40,8 +45,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
+                \Filament\Widgets\AccountWidget::class,
+                \App\Filament\Widgets\StatsOverview::class,
             ])
             ->middleware([
                 EncryptCookies::class,

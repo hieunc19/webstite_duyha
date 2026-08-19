@@ -26,69 +26,40 @@ class OfficialForm
                     ->placeholder('Ví dụ: 0986.361.395')
                     ->required()
                     ->tel(),
-                Select::make('department')
-                    ->label('Khối / Lĩnh vực công tác')
-                    ->options(function () {
-                        $deps = \App\Models\Department::where('status', 'active')->orderBy('sort_order')->pluck('name', 'code')->toArray();
-                        return !empty($deps) ? $deps : [
-                            'cskv' => 'Cảnh sát khu vực (CSKV)',
-                            'cong_an' => 'Công an Phường Duy Hà',
-                            'dang_uy' => 'Đảng ủy Phường',
-                            'chinh_quyen' => 'UBND / Chính quyền',
-                            'ttpvhcc' => 'Hành chính công',
-                        ];
-                    })
-                    ->required()
-                    ->default('cskv'),
                 Select::make('neighborhood_name')
-                    ->label('Địa bàn / TDP Phụ trách')
+                    ->label('Đơn vị / Cơ quan trực thuộc')
                     ->multiple()
                     ->options(function ($record) {
                         $options = [];
-                        $currentOfficerName = $record?->name;
 
-                        // Lấy danh sách các TDP mới (Sau sáp nhập)
-                        $newNeighborhoods = Neighborhood::where('type', 'new')->orderBy('id')->get();
+                        // Lấy danh sách trực tiếp từ bảng Đơn vị & Khối công tác (Department)
+                        $departments = \App\Models\Department::where('status', 'active')
+                            ->orderBy('sort_order')
+                            ->get();
 
-                        foreach ($newNeighborhoods as $n) {
-                            $cleanName = str_replace(['TDP ', 'Tổ dân phố '], '', $n->name);
-                            $value = "TDP {$cleanName}";
-
-                            // Kiểm tra nếu TDP đã có Cán bộ CSKV khác phụ trách
-                            $isAssignedToOther = !empty($n->leader_name) && ($currentOfficerName === null || $n->leader_name !== $currentOfficerName);
-
-                            // Nếu đã thuộc về CSKV khác -> ẨN hoàn toàn khỏi danh sách lựa chọn!
-                            if ($isAssignedToOther) {
-                                continue;
-                            }
-
-                            $options[$value] = $value;
+                        foreach ($departments as $dep) {
+                            $options[$dep->name] = $dep->name;
                         }
 
-                        // Thêm các Đơn vị công tác chính
-                        $units = [
-                            'Công an Phường Duy Hà' => 'Công an Phường Duy Hà',
-                            'UBND Phường Duy Hà' => 'UBND Phường Duy Hà',
-                            'Đảng ủy Phường Duy Hà' => 'Đảng ủy Phường Duy Hà',
-                            'Trung tâm Phục vụ Hành chính công' => 'Trung tâm Phục vụ Hành chính công',
-                        ];
-                        foreach ($units as $val => $lbl) {
-                            if (!isset($options[$val])) {
-                                $options[$val] = $lbl;
+                        // Giữ lại giá trị hiện tại của cán bộ nếu có
+                        if ($record && !empty($record->neighborhood_name)) {
+                            $currentValues = is_array($record->neighborhood_name) ? $record->neighborhood_name : [$record->neighborhood_name];
+                            foreach ($currentValues as $val) {
+                                if (!isset($options[$val])) {
+                                    $options[$val] = $val;
+                                }
                             }
                         }
 
                         return $options;
                     })
                     ->searchable()
-                    ->helperText('Chỉ hiển thị các TDP chưa có người phụ trách (và TDP đang do Cán bộ này phụ trách). TDP đã có CSKV khác đảm nhiệm sẽ bị ẩn.')
+                    ->preload()
+                    ->helperText('Danh sách lấy tự động từ mục "Đơn vị & Khối công tác".')
                     ->nullable(),
                 TextInput::make('avatar_color')
                     ->label('Màu nhãn đại diện')
                     ->default('#B91C1C')
-                    ->nullable(),
-                TextInput::make('avatar')
-                    ->label('Đường dẫn ảnh đại diện (URL)')
                     ->nullable(),
                 Select::make('status')
                     ->label('Trạng thái')

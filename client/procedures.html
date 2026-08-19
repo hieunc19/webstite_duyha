@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thủ tục Hành chính, Video Hướng dẫn &amp; Chính sách — Phường Duy Hà</title>
+  <meta name="description"
+    content="Tra cứu quy trình thủ tục hành chính, video hướng dẫn trực quan và hệ thống văn bản chính sách quy định của UBND Phường Duy Hà." />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="/logo.jpg" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- Google Fonts: Roboto -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap"
+    rel="stylesheet" />
+
+  <!-- Material Symbols Outlined -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+
+  <!-- Tailwind Custom Config -->
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#3399fe",
+            "primary-dark": "#1d7fe0",
+            "secondary": "#0284c7",
+            "tertiary": "#0F172A",
+            "background": "#F8FAFC",
+            "surface": "#FFFFFF"
+          },
+          fontFamily: {
+            "sans": ["Roboto", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+            "serif": ["Roboto", "serif"],
+            "headline": ["Roboto", "sans-serif"],
+            "body": ["Roboto", "sans-serif"],
+            "accent": ["Roboto", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Custom Style -->
+  <link rel="stylesheet" href="/src/style.css" />
+  <style>
+    body {
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    }
+
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined' !important;
+    }
+  </style>
+  <script>
+      (function () {
+        var tab = new URLSearchParams(window.location.search).get('tab') || 'procedures';
+        document.documentElement.setAttribute('data-active-tab', tab);
+        var style = document.createElement('style');
+        style.id = 'initial-tab-style';
+        style.innerHTML = `
+        html[data-active-tab="videos"] #panel-procedures,
+        html[data-active-tab="policies"] #panel-procedures { display: none !important; }
+        html[data-active-tab="videos"] #panel-videos { display: block !important; }
+        html[data-active-tab="policies"] #panel-policies { display: block !important; }
+
+        html[data-active-tab="videos"] .tab-btn-procedures,
+        html[data-active-tab="policies"] .tab-btn-procedures {
+          background-color: transparent !important;
+          color: rgb(51 65 85) !important;
+          font-weight: 700 !important;
+          box-shadow: none !important;
+        }
+        html[data-active-tab="procedures"] .tab-btn-procedures {
+          background-color: #1d7fe0 !important;
+          color: #ffffff !important;
+          font-weight: 800 !important;
+          box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+        }
+        html[data-active-tab="videos"] .tab-btn-videos {
+          background-color: #1d7fe0 !important;
+          color: #ffffff !important;
+          font-weight: 800 !important;
+          box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+        }
+        html[data-active-tab="policies"] .tab-btn-policies {
+          background-color: #1d7fe0 !important;
+          color: #ffffff !important;
+          font-weight: 800 !important;
+          box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+        }
+      `;
+        document.head.appendChild(style);
+      })();
+  </script>
+  <script>
+    window.toggleMobileMenu = function () {
+      var m = document.getElementById('mobile-nav-menu');
+      if (m) m.classList.toggle('hidden');
+    };
+  </script>
+</head>
+
+<body
+  class="portal-active bg-[#FFFDF5] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-['Roboto'] font-sans antialiased selection:bg-[#3399fe] selection:text-white transition-colors duration-300">
+
+  <!-- Header Section (injected by sharedHeader.ts) -->
+  <header id="app-header"
+    class="sticky top-0 z-50 bg-[#FFFDF8]/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-sky-900/15 dark:border-slate-800 transition-colors shadow-sm">
+  </header>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+
+    <!-- BREADCRUMB -->
+    <nav class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400">
+      <a href="/index.html" class="hover:text-[#3399fe] flex items-center gap-1">
+        <span class="material-symbols-outlined text-base">home</span>
+        <span>Trang chủ</span>
+      </a>
+      <span>/</span>
+      <span id="breadcrumb-current-label" class="text-[#1d7fe0] font-bold">Thủ tục hành chính &amp; Văn bản</span>
+    </nav>
+
+    <!-- SHARED PAGE HERO BANNER -->
+    <div
+      class="relative rounded-3xl overflow-hidden shadow-2xl border border-sky-900/30 bg-cover bg-center min-h-[220px] sm:min-h-[260px] flex items-center"
+      style="background-image: url('/images/tdp_merger_banner_bg.jpg');">
+      <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/75 to-black/40"></div>
+      <div class="relative z-10 p-6 sm:p-10 text-white max-w-4xl space-y-3">
+        <div
+          class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/25 border border-sky-400/40 text-sky-300 text-xs font-bold backdrop-blur-md">
+          <span class="material-symbols-outlined text-base" id="hero-banner-icon">verified</span>
+          <span id="hero-banner-badge">UBND PHƯỜNG DUY HÀ — CỔNG HƯỚNG DẪN DỊCH VỤ CÔNG</span>
+        </div>
+        <h1 id="hero-banner-title"
+          class="text-2xl sm:text-4xl font-black tracking-tight text-white uppercase leading-tight drop-shadow-md">
+          HƯỚNG DẪN THỦ TỤC HÀNH CHÍNH
+        </h1>
+        <p id="hero-banner-desc" class="text-xs sm:text-sm text-slate-200 font-medium max-w-3xl leading-relaxed">
+          Tra cứu chi tiết quy trình thực hiện, hồ sơ giấy tờ cần chuẩn bị và tải mẫu biểu trực tiếp phục vụ công dân
+          Phường Duy Hà.
+        </p>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var tab = new URLSearchParams(window.location.search).get('tab');
+        if (tab === 'videos') {
+          var icon = document.getElementById('hero-banner-icon');
+          var badge = document.getElementById('hero-banner-badge');
+          var title = document.getElementById('hero-banner-title');
+          var desc = document.getElementById('hero-banner-desc');
+          var breadcrumb = document.getElementById('breadcrumb-current-label');
+          if (icon) icon.textContent = 'play_circle';
+          if (badge) badge.textContent = 'UBND PHƯỜNG DUY HÀ — KHO VIDEO HƯỚNG DẪN DỊCH VỤ CÔNG';
+          if (title) title.textContent = 'KHO VIDEO HƯỚNG DẪN THỦ TỤC HÀNH CHÍNH';
+          if (desc) desc.textContent = 'Xem chi tiết các đoạn phim hướng dẫn thao tác trực quan từng bước nộp hồ sơ Dịch vụ công Quốc gia, Đăng ký tạm trú và VNeID.';
+          if (breadcrumb) breadcrumb.textContent = 'Video hướng dẫn thủ tục';
+        } else if (tab === 'policies') {
+          var icon = document.getElementById('hero-banner-icon');
+          var badge = document.getElementById('hero-banner-badge');
+          var title = document.getElementById('hero-banner-title');
+          var desc = document.getElementById('hero-banner-desc');
+          var breadcrumb = document.getElementById('breadcrumb-current-label');
+          if (icon) icon.textContent = 'policy';
+          if (badge) badge.textContent = 'UBND PHƯỜNG DUY HÀ — HỆ THỐNG VĂN BẢN & CHÍNH SÁCH HÀNH CHÍNH';
+          if (title) title.textContent = 'CHÍNH SÁCH & QUY ĐỊNH HÀNH CHÍNH';
+          if (desc) desc.textContent = 'Tra cứu đầy đủ các văn bản quy phạm pháp luật, Nghị định, Thông tư và Quyết định an sinh xã hội cho công dân Phường Duy Hà.';
+          if (breadcrumb) breadcrumb.textContent = 'Chính sách & Quy định';
+        }
+      })();
+    </script>
+
+    <!-- ==================== TAB 1: THỦ TỤC HÀNH CHÍNH ==================== -->
+    <div id="panel-procedures" class="space-y-6">
+
+      <!-- UNIFIED TOOLBAR & NAVIGATION CARD -->
+      <div
+        class="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4 sm:space-y-5">
+
+        <!-- NAVIGATION TABS -->
+        <div
+          class="bg-slate-100/90 dark:bg-slate-800/90 rounded-2xl p-1.5 border border-slate-200/80 dark:border-slate-700/60">
+          <div class="flex flex-col sm:flex-row items-stretch gap-1.5">
+            <button onclick="switchMainTab('procedures')"
+              class="tab-btn-procedures flex-1 py-3 px-5 rounded-xl font-extrabold text-sm sm:text-base text-center transition-all bg-[#1d7fe0] text-white shadow-md">
+              Thủ tục hành chính
+            </button>
+            <button onclick="switchMainTab('videos')"
+              class="tab-btn-videos flex-1 py-3 px-5 rounded-xl font-bold text-sm sm:text-base text-center text-slate-700 dark:text-slate-200 hover:bg-slate-200/80 dark:hover:bg-slate-700 transition-all">
+              Video hướng dẫn thủ tục
+            </button>
+            <button onclick="switchMainTab('policies')"
+              class="tab-btn-policies flex-1 py-3 px-5 rounded-xl font-bold text-sm sm:text-base text-center text-slate-700 dark:text-slate-200 hover:bg-slate-200/80 dark:hover:bg-slate-700 transition-all">
+              Chính sách &amp; Quy định
+            </button>
+          </div>
+        </div>
+
+        <!-- SEARCH & FILTER ROW -->
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3.5 pt-1">
+
+          <!-- Search Input -->
+          <div class="relative flex-1">
+            <span
+              class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+            <input id="procedure-search-input" type="text"
+              placeholder="Tìm kiếm tên thủ tục, từ khóa, lĩnh vực (ví dụ: Tạm trú, VNeID, Khai sinh...)"
+              class="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs sm:text-sm font-semibold outline-none focus:border-[#1d7fe0] focus:ring-2 focus:ring-sky-400/20 transition-all" />
+          </div>
+
+          <!-- Filter Select Option Dropdown & Badge Container -->
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+
+            <div class="relative min-w-[220px]" id="procedure-category-dropdown">
+              <button id="procedure-category-btn" type="button"
+                class="w-full flex items-center justify-between gap-3 px-4 py-3 bg-slate-50 hover:bg-slate-100/90 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-slate-200/90 dark:border-slate-700 rounded-2xl text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100 shadow-sm transition-all outline-none focus:ring-2 focus:ring-sky-400/30">
+                <span id="procedure-category-selected-label" class="truncate">Tất cả thủ tục</span>
+                <span class="material-symbols-outlined text-slate-400 text-lg transition-transform duration-200"
+                  id="procedure-category-arrow">unfold_more</span>
+              </button>
+
+              <div id="procedure-category-menu"
+                class="hidden absolute right-0 sm:left-0 top-full mt-2 w-full min-w-[220px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-2xl p-1.5 z-50 space-y-0.5 backdrop-blur-xl">
+                <!-- Dynamically populated from DB API /api/procedure-categories -->
+              </div>
+            </div>
+
+            <!-- Counter Indicator -->
+            <div class="flex items-center gap-2 justify-between sm:justify-start px-1 shrink-0">
+              <span class="text-xs font-bold text-slate-500 dark:text-slate-400">Hiển thị:</span>
+              <span id="procedure-count-badge"
+                class="px-3 py-1.5 rounded-xl bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300 text-xs font-black border border-sky-200 dark:border-sky-800 whitespace-nowrap">
+                0 thủ tục
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- PROCEDURES LIST TABLE -->
+      <section
+        class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
+
+        <div
+          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
+          <div>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+              Danh mục Biểu mẫu &amp; Thủ tục Hành chính Phường Duy Hà
+            </h2>
+          </div>
+        </div>
+
+        <div id="procedures-table-container"
+          class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
+          <table class="w-full text-left border-collapse min-w-[1000px]">
+            <thead>
+              <tr
+                class="bg-gradient-to-r from-[#143e78] via-[#1a4a8c] to-[#143e78] text-white text-xs sm:text-sm font-extrabold uppercase tracking-wider">
+                <th class="py-4 px-4 border-r border-sky-800/60 w-16 text-center">STT</th>
+                <th class="py-4 px-5 border-r border-sky-800/60 min-w-[320px]">TÊN THỦ TỤC HÀNH CHÍNH</th>
+                <th class="py-4 px-4 border-r border-sky-800/60 w-52 text-center">LĨNH VỰC</th>
+                <th class="py-4 px-4 border-r border-sky-800/60 w-52 text-center">CƠ QUAN TIẾP NHẬN</th>
+                <th class="py-4 px-4 text-center w-52">THAO TÁC</th>
+              </tr>
+            </thead>
+            <tbody id="procedures-table-body"
+              class="divide-y divide-slate-200 dark:divide-slate-800 text-xs sm:text-sm font-medium">
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination Controls Container -->
+        <div id="procedures-pagination"
+          class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-400">
+          <div id="pagination-info">
+            Hiển thị 0 - 0 trên tổng số 0 thủ tục
+          </div>
+          <div id="pagination-controls" class="flex items-center gap-1.5 flex-wrap justify-center">
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- ==================== TAB 2: VIDEO HƯỚNG DẪN ==================== -->
+    <div id="panel-videos" class="space-y-6 hidden">
+
+      <!-- UNIFIED TOOLBAR & NAVIGATION CARD -->
+      <div
+        class="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4 sm:space-y-5">
+
+        <!-- NAVIGATION TABS -->
+        <div
+          class="bg-slate-100/90 dark:bg-slate-800/90 rounded-2xl p-1.5 border border-slate-200/80 dark:border-slate-700/60">
+          <div class="flex flex-col sm:flex-row items-stretch gap-1.5">
+            <button onclick="switchMainTab('procedures')"
+              class="tab-btn-procedures flex-1 py-3 px-5 rounded-xl font-bold text-sm sm:text-base text-center text-slate-700 dark:text-slate-200 hover:bg-slate-200/80 dark:hover:bg-slate-700 transition-all">
+              Thủ tục hành chính
+            </button>
+            <button onclick="switchMainTab('videos')"
+              class="tab-btn-videos flex-1 py-3 px-5 rounded-xl font-extrabold text-sm sm:text-base text-center transition-all bg-[#1d7fe0] text-white shadow-md">
+              Video hướng dẫn thủ tục
+            </button>
+            <button onclick="switchMainTab('policies')"
+              class="tab-btn-policies flex-1 py-3 px-5 rounded-xl font-bold text-sm sm:text-base text-center text-slate-700 dark:text-slate-200 hover:bg-slate-200/80 dark:hover:bg-slate-700 transition-all">
+              Chính sách &amp; Quy định
+            </button>
+          </div>
+        </div>
+
+        <!-- SEARCH & FILTER ROW -->
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3.5 pt-1">
+
+          <!-- Search Input -->
+          <div class="relative flex-1">
+            <span
+              class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+            <input id="video-search-input" type="text"
+              placeholder="Tìm kiếm tên video hướng dẫn, từ khóa thủ tục (ví dụ: Tạm trú, VNeID, Khai sinh...)"
+              class="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs sm:text-sm font-semibold outline-none focus:border-[#1d7fe0] focus:ring-2 focus:ring-sky-400/20 transition-all" />
+          </div>
+
+          <!-- Dropdown Filter -->
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+            <div class="relative min-w-[220px]" id="video-category-dropdown">
+              <button id="video-category-btn" type="button"
+                class="w-full flex items-center justify-between gap-3 px-4 py-3 bg-slate-50 hover:bg-slate-100/90 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-slate-200/90 dark:border-slate-700 rounded-2xl text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100 shadow-sm transition-all outline-none focus:ring-2 focus:ring-sky-400/30">
+                <span id="video-category-selected-label" class="truncate">Tất cả video hướng dẫn</span>
+                <span class="material-symbols-outlined text-slate-400 text-lg transition-transform duration-200"
+                  id="video-category-arrow">unfold_more</span>
+              </button>
+
+              <div id="video-category-menu"
+                class="hidden absolute right-0 sm:left-0 top-full mt-2 w-full min-w-[220px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-2xl p-1.5 z-50 space-y-0.5 backdrop-blur-xl">
+                <!-- Dynamically populated from DB API /api/procedure-categories -->
+              </div>
+            </div>
+
+            <!-- Counter Badge -->
+            <div class="flex items-center gap-2 justify-between sm:justify-start px-1 shrink-0">
+              <span class="text-xs font-bold text-[#555] dark:text-slate-400">Hiển thị:</span>
+              <span id="video-count-badge"
+                class="px-3 py-1.5 rounded-xl bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300 text-xs font-black border border-sky-200 dark:border-sky-800 whitespace-nowrap">
+                6 video
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- VIDEOS LIST SECTION -->
+      <section
+        class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
+
+        <div
+          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
+          <div>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+              Danh mục Video Hướng dẫn Thủ tục Hành chính Phường Duy Hà
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+              Xem các video hướng dẫn chi tiết từng bước thực hiện thủ tục trực tuyến
+            </p>
+          </div>
+        </div>
+
+        <div id="videos-grid-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Dynamically populated from API -->
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- ==================== TAB 3: CHÍNH SÁCH & QUY ĐỊNH ==================== -->
+    <div id="panel-policies" class="space-y-6 hidden">
+
+      <!-- UNIFIED TOOLBAR & NAVIGATION CARD -->
+      <div
+        class="bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4 sm:space-y-5">
+
+        <!-- NAVIGATION TABS -->
+        <div
+          class="bg-slate-100/90 dark:bg-slate-800/90 rounded-2xl p-1.5 border border-slate-200/80 dark:border-slate-700/60">
+          <div class="flex flex-col sm:flex-row items-stretch gap-1.5">
+            <button onclick="switchMainTab('procedures')"
+              class="tab-btn-procedures flex-1 py-3 px-5 rounded-xl font-bold text-sm sm:text-base text-center text-slate-700 dark:text-slate-200 hover:bg-slate-200/80 dark:hover:bg-slate-700 transition-all">
+              Thủ tục hành chính
+            </button>
+            <button onclick="switchMainTab('videos')"
+              class="tab-btn-videos flex-1 py-3 px-5 rounded-xl font-bold text-sm sm:text-base text-center text-slate-700 dark:text-slate-200 hover:bg-slate-200/80 dark:hover:bg-slate-700 transition-all">
+              Video hướng dẫn thủ tục
+            </button>
+            <button onclick="switchMainTab('policies')"
+              class="tab-btn-policies flex-1 py-3 px-5 rounded-xl font-extrabold text-sm sm:text-base text-center transition-all bg-[#1d7fe0] text-white shadow-md">
+              Chính sách &amp; Quy định
+            </button>
+          </div>
+        </div>
+
+        <!-- SEARCH & FILTER ROW -->
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3.5 pt-1">
+
+          <!-- Search Input -->
+          <div class="relative flex-1">
+            <span
+              class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+            <input id="policy-search-input" type="text"
+              placeholder="Tìm theo tên chính sách, số hiệu văn bản (ví dụ: Nghị định 59, An sinh, Đất đai...)"
+              class="w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs sm:text-sm font-semibold outline-none focus:border-[#1d7fe0] focus:ring-2 focus:ring-sky-400/20 transition-all" />
+          </div>
+
+          <!-- Dropdown Filter -->
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+            <div class="relative min-w-[220px]" id="policy-category-dropdown">
+              <button id="policy-category-btn" type="button"
+                class="w-full flex items-center justify-between gap-3 px-4 py-3 bg-slate-50 hover:bg-slate-100/90 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 border border-slate-200/90 dark:border-slate-700 rounded-2xl text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-100 shadow-sm transition-all outline-none focus:ring-2 focus:ring-sky-400/30">
+                <span id="policy-category-selected-label" class="truncate">Tất cả chính sách &amp; văn bản</span>
+                <span class="material-symbols-outlined text-slate-400 text-lg transition-transform duration-200"
+                  id="policy-category-arrow">unfold_more</span>
+              </button>
+
+              <div id="policy-category-menu"
+                class="hidden absolute right-0 sm:left-0 top-full mt-2 w-full min-w-[220px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-2xl p-1.5 z-50 space-y-0.5 backdrop-blur-xl">
+                <!-- Dynamically populated from DB API /api/procedure-categories -->
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 justify-between sm:justify-start px-1 shrink-0">
+              <span class="text-xs font-bold text-slate-500 dark:text-slate-400">Hiển thị:</span>
+              <span id="policy-count-badge"
+                class="px-3 py-1.5 rounded-xl bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300 text-xs font-black border border-sky-200 dark:border-sky-800 whitespace-nowrap">
+                6 văn bản
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- POLICIES LIST TABLE -->
+      <section
+        class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
+
+        <div
+          class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
+          <div>
+            <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+              Danh mục Văn bản &amp; Chính sách Hành chính Phường Duy Hà
+            </h2>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
+          <table class="w-full text-left border-collapse min-w-[1000px]">
+            <thead>
+              <tr
+                class="bg-gradient-to-r from-[#143e78] via-[#1a4a8c] to-[#143e78] text-white text-xs sm:text-sm font-extrabold uppercase tracking-wider">
+                <th class="py-4 px-4 border-r border-sky-800/60 w-16 text-center">STT</th>
+                <th class="py-4 px-4 border-r border-sky-800/60 w-44 text-center">SỐ HIỆU VĂN BẢN</th>
+                <th class="py-4 px-5 border-r border-sky-800/60 min-w-[300px]">TÊN CHÍNH SÁCH &amp; VĂN BẢN</th>
+                <th class="py-4 px-4 border-r border-sky-800/60 w-52 text-center">LĨNH VỰC</th>
+                <th class="py-4 px-4 border-r border-sky-800/60 w-48 text-center">CƠ QUAN BAN HÀNH</th>
+                <th class="py-4 px-4 text-center w-52">THAO TÁC</th>
+              </tr>
+            </thead>
+            <tbody id="policies-table-body"
+              class="divide-y divide-slate-200 dark:divide-slate-800 text-xs sm:text-sm font-medium">
+            </tbody>
+          </table>
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+  <!-- PROCEDURE DETAIL MODAL -->
+  <div id="procedure-detail-modal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 overflow-y-auto"
+    onclick="closeProcedureModal()">
+    <div
+      class="relative max-w-3xl w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl space-y-0 my-auto"
+      onclick="event.stopPropagation()">
+
+      <!-- Modal Header -->
+      <div
+        class="flex items-center justify-between p-5 sm:p-6 bg-gradient-to-r from-[#1d7fe0] via-[#1b65c2] to-[#143e78] text-white">
+        <div class="flex items-center gap-3 min-w-0 pr-4">
+          <div>
+            <span id="modal-proc-cat" class="text-[11px] font-black uppercase text-amber-200 tracking-wider">Lĩnh
+              vực</span>
+            <h3 id="modal-proc-title" class="text-base sm:text-xl font-black text-white leading-snug truncate">
+              Tên thủ tục hành chính
+            </h3>
+          </div>
+        </div>
+        <button onclick="closeProcedureModal()"
+          class="w-9 h-9 rounded-xl bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors shrink-0">
+          <span class="material-symbols-outlined text-xl">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Content Body -->
+      <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+
+        <!-- Summary Info Grid -->
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 text-xs">
+          <div>
+            <span class="text-slate-400 font-bold block mb-1">MÃ THỦ TỤC / BIỂU MẪU</span>
+            <b id="modal-proc-code" class="text-[#1d7fe0] dark:text-sky-400 font-extrabold text-sm">---</b>
+          </div>
+          <div>
+            <span class="text-slate-400 font-bold block mb-1">CƠ QUAN THỰC HIỆN</span>
+            <b id="modal-proc-agency" class="text-blue-600 dark:text-sky-400 font-extrabold text-sm">Công an Phường Duy
+              Hà</b>
+          </div>
+        </div>
+
+        <!-- Section 1: Step-by-step process / Trình tự thực hiện -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-black uppercase text-slate-500 tracking-wider">
+            Trình tự thực hiện
+          </h4>
+          <p id="modal-proc-desc"
+            class="text-sm font-semibold text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+            Áp dụng cho mọi công dân cư trú trên địa bàn Phường Duy Hà.
+          </p>
+        </div>
+
+        <!-- Section 2: Required Documents -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-black uppercase text-slate-500 tracking-wider">
+            Hồ sơ giấy tờ cần chuẩn bị &amp; Biểu mẫu đính kèm
+          </h4>
+          <ul id="modal-proc-docs"
+            class="space-y-2 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div
+        class="p-4 sm:p-5 bg-slate-100 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end">
+        <button onclick="closeProcedureModal()"
+          class="px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-bold transition-colors">
+          Đóng lại
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- VIDEO PLAYER MODAL -->
+  <div id="video-player-modal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/85 backdrop-blur-md p-4 overflow-y-auto"
+    onclick="closeVideoModal()">
+    <div
+      class="relative max-w-4xl w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl space-y-0 my-auto"
+      onclick="event.stopPropagation()">
+      <div
+        class="flex items-center justify-between p-4 sm:p-5 bg-gradient-to-r from-[#1d7fe0] via-[#1b65c2] to-[#143e78] text-white">
+        <div class="flex items-center gap-3 min-w-0 pr-4">
+          <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-2xl">play_circle</span>
+          </div>
+          <div class="truncate">
+            <span id="modal-video-cat" class="text-[11px] font-black uppercase text-amber-200 tracking-wider">Lĩnh
+              vực</span>
+            <h3 id="modal-video-title" class="text-sm sm:text-lg font-black text-white leading-snug truncate">
+              Tên video hướng dẫn
+            </h3>
+          </div>
+        </div>
+        <button onclick="closeVideoModal()"
+          class="w-9 h-9 rounded-xl bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors shrink-0">
+          <span class="material-symbols-outlined text-xl">close</span>
+        </button>
+      </div>
+
+      <div class="p-4 sm:p-6 space-y-4">
+        <div
+          class="relative aspect-video rounded-2xl overflow-hidden bg-slate-950 shadow-inner flex items-center justify-center border border-slate-800">
+          <iframe id="modal-video-iframe" class="w-full h-full border-0" src="" title="Video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen></iframe>
+        </div>
+      </div>
+
+      <div
+        class="p-4 sm:p-5 bg-slate-100 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
+        <button id="modal-play-video-btn" onclick="playCurrentModalVideo()"
+          class="px-5 py-2.5 rounded-xl bg-[#1d7fe0] hover:bg-[#1868b8] text-white text-xs sm:text-sm font-black shadow-md flex items-center gap-2 transition-all active:scale-95">
+          <span class="material-symbols-outlined text-lg">play_arrow</span>
+          <span>Phát Video</span>
+        </button>
+        <button onclick="closeVideoModal()"
+          class="px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-bold transition-colors">
+          Đóng lại
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- POLICY DETAIL MODAL -->
+  <div id="policy-detail-modal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/85 backdrop-blur-md p-2 sm:p-4 overflow-y-auto"
+    onclick="closePolicyModal()">
+    <div
+      class="relative max-w-5xl w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl space-y-0 my-auto"
+      onclick="event.stopPropagation()">
+      <!-- Modal Header -->
+      <div
+        class="flex items-center justify-between p-4 sm:p-5 bg-gradient-to-r from-[#1d7fe0] via-[#1b65c2] to-[#143e78] text-white">
+        <div class="flex items-center gap-3 min-w-0 pr-4">
+          <div class="truncate">
+            <span id="modal-policy-code" class="text-[11px] font-black uppercase text-amber-200 tracking-wider">Số hiệu
+              văn bản</span>
+            <h3 id="modal-policy-title" class="text-base sm:text-lg font-black text-white leading-snug truncate">
+              Tên chính sách quy định
+            </h3>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button onclick="openCurrentPolicyFile()"
+            class="px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all flex items-center gap-1 shadow-sm active:scale-95">
+            <span class="material-symbols-outlined text-sm">open_in_new</span>
+            <span class="hidden sm:inline">Mở tab mới</span>
+          </button>
+          <button onclick="downloadCurrentPolicyFile()"
+            class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all flex items-center gap-1 shadow-sm active:scale-95">
+            <span class="material-symbols-outlined text-sm">download</span>
+            <span class="hidden sm:inline">Tải PDF</span>
+          </button>
+          <button onclick="closePolicyModal()"
+            class="w-9 h-9 rounded-xl bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors">
+            <span class="material-symbols-outlined text-xl">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Body (Direct PDF Display) -->
+      <div class="p-3 sm:p-4">
+        <!-- EMBEDDED PDF VIEWER -->
+        <div id="modal-policy-pdf-container" class="w-full">
+          <div
+            class="relative w-full h-[72vh] min-h-[500px] rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-inner">
+            <iframe id="modal-policy-pdf-iframe" class="w-full h-full border-0" src="about:blank"
+              title="Xem văn bản PDF"></iframe>
+          </div>
+        </div>
+
+        <!-- NOTICE WHEN NO VALID PDF FILE -->
+        <div id="modal-policy-pdf-empty"
+          class="p-12 text-center bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-3 hidden">
+          <span class="material-symbols-outlined text-5xl text-slate-400">picture_as_pdf</span>
+          <p class="text-base font-bold text-slate-800 dark:text-slate-200">
+            Văn bản này hiện chưa có tệp PDF đính kèm.
+          </p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Vui lòng vào trang Quản trị Admin để tải tệp PDF văn bản lên hệ thống.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== GOVERNMENT PORTAL FOOTER ==================== -->
+  <footer
+    class="bg-gradient-to-r from-[#143e78] via-[#1a4a8c] to-[#123668] text-white pt-8 pb-6 text-sm relative border-t-4 border-amber-500 shadow-2xl overflow-hidden mt-12">
+    <div
+      class="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px] opacity-5 pointer-events-none">
+    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+        <div class="lg:col-span-7 flex items-start gap-4 sm:gap-5">
+          <div
+            class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-white/80 p-0.5 flex items-center justify-center shrink-0 bg-[#3399fe] shadow-lg overflow-hidden">
+            <img src="/logo.jpg" alt="Logo Phường Duy Hà" class="w-full h-full object-cover" />
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-base sm:text-lg font-black tracking-tight text-white uppercase leading-snug">
+              ỦY BAN NHÂN DÂN PHƯỜNG DUY HÀ — THÀNH PHỐ NINH BÌNH
+            </h3>
+            <p class="text-xs sm:text-sm text-sky-100/90 font-medium">
+              Địa chỉ: Phường Duy Hà, Thành phố Ninh Bình, Tỉnh Ninh Bình
+            </p>
+            <p class="text-xs sm:text-sm text-sky-100/90 font-medium">
+              Điện thoại cơ quan: <a href="tel:02293871025"
+                class="hover:underline font-bold text-amber-300">0229.3871.025</a> — Email: <a
+                href="mailto:duyha@ninhbinh.gov.vn"
+                class="hover:underline font-bold text-amber-300">duyha@ninhbinh.gov.vn</a>
+            </p>
+          </div>
+        </div>
+        <div class="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3">
+          <div class="relative w-full">
+            <select onchange="if(this.value) window.open(this.value, '_blank')"
+              class="w-full bg-white/10 hover:bg-white/15 text-white text-xs sm:text-sm font-bold py-2.5 px-4 rounded-xl border border-white/20 outline-none focus:ring-2 focus:ring-amber-400 transition-all cursor-pointer appearance-none">
+              <option value="" class="bg-slate-900 text-white">-- LIÊN KẾT WEBSITE CHÍNH THỨC --</option>
+              <option value="https://ninhbinh.gov.vn" class="bg-slate-900 text-white">UBND Tỉnh Ninh Bình</option>
+              <option value="https://congan.ninhbinh.gov.vn" class="bg-slate-900 text-white">Công an Tỉnh Ninh Bình
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="lg:col-span-1 flex justify-start lg:justify-end">
+          <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+            class="w-10 h-10 rounded-full bg-white/10 hover:bg-amber-500 hover:text-slate-900 text-white flex items-center justify-center transition-all shadow-md active:scale-90"
+            title="Cuộn lên đầu trang">
+            <span class="material-symbols-outlined text-xl">arrow_upward</span>
+          </button>
+        </div>
+      </div>
+      <div class="border-t border-white/15"></div>
+      <div
+        class="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs sm:text-sm text-sky-100/90 text-center sm:text-left">
+        <p class="font-medium">Copyright © Đoàn TNCS Hồ Chí Minh phường Duy Hà. All Rights Reserved</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- PROCEDURES & TABS DYNAMIC SCRIPT -->
+  <script>
+    let PROCEDURES_DATA = [];
+    let currentPage = 1;
+    const ITEMS_PER_PAGE = 20;
+    let currentCat = 'all';
+
+    let VIDEOS_DATA = [];
+    let POLICIES_DATA = [];
+    let isVideosLoaded = false;
+    let isPoliciesLoaded = false;
+
+    let currentVideoCat = 'all';
+    let currentPolicyCat = 'all';
+
+    // --- TAB SWITCHER LOGIC ---
+    function switchMainTab(tab) {
+      document.documentElement.setAttribute('data-active-tab', tab);
+      const btnProcedures = document.getElementById('main-tab-procedures-btn');
+      const btnVideos = document.getElementById('main-tab-videos-btn');
+      const btnPolicies = document.getElementById('main-tab-policies-btn');
+
+      const panelProcedures = document.getElementById('panel-procedures');
+      const panelVideos = document.getElementById('panel-videos');
+      const panelPolicies = document.getElementById('panel-policies');
+
+      const label = document.getElementById('breadcrumb-current-label');
+
+      const activeClass = 'flex-1 py-3 px-5 rounded-xl font-extrabold text-sm sm:text-base text-center transition-all bg-[#1d7fe0] text-white shadow-md';
+      const inactiveClass = 'flex-1 py-3 px-5 rounded-xl font-bold text-sm sm:text-base text-center text-slate-700 dark:text-slate-200 hover:bg-slate-200/80 dark:hover:bg-slate-700 transition-all';
+
+      document.querySelectorAll('.tab-btn-procedures').forEach(b => b.className = 'tab-btn-procedures ' + (tab === 'procedures' ? activeClass : inactiveClass));
+      document.querySelectorAll('.tab-btn-videos').forEach(b => b.className = 'tab-btn-videos ' + (tab === 'videos' ? activeClass : inactiveClass));
+      document.querySelectorAll('.tab-btn-policies').forEach(b => b.className = 'tab-btn-policies ' + (tab === 'policies' ? activeClass : inactiveClass));
+
+      if (panelProcedures) panelProcedures.style.display = tab === 'procedures' ? 'block' : 'none';
+      if (panelVideos) panelVideos.style.display = tab === 'videos' ? 'block' : 'none';
+      if (panelPolicies) panelPolicies.style.display = tab === 'policies' ? 'block' : 'none';
+
+      if (label) {
+        if (tab === 'videos') label.textContent = 'Video hướng dẫn thủ tục';
+        else if (tab === 'policies') label.textContent = 'Chính sách & Quy định';
+        else label.textContent = 'Thủ tục hành chính';
+      }
+
+      const iconEl = document.getElementById('hero-banner-icon');
+      const badgeEl = document.getElementById('hero-banner-badge');
+      const titleEl = document.getElementById('hero-banner-title');
+      const descEl = document.getElementById('hero-banner-desc');
+
+      if (tab === 'videos') {
+        if (iconEl) iconEl.textContent = 'play_circle';
+        if (badgeEl) badgeEl.textContent = 'UBND PHƯỜNG DUY HÀ — KHO VIDEO HƯỚNG DẪN DỊCH VỤ CÔNG';
+        if (titleEl) titleEl.textContent = 'KHO VIDEO HƯỚNG DẪN THỦ TỤC HÀNH CHÍNH';
+        if (descEl) descEl.textContent = 'Xem chi tiết các đoạn phim hướng dẫn thao tác trực quan từng bước nộp hồ sơ Dịch vụ công Quốc gia, Đăng ký tạm trú và VNeID.';
+      } else if (tab === 'policies') {
+        if (iconEl) iconEl.textContent = 'policy';
+        if (badgeEl) badgeEl.textContent = 'UBND PHƯỜNG DUY HÀ — HỆ THỐNG VĂN BẢN & CHÍNH SÁCH HÀNH CHÍNH';
+        if (titleEl) titleEl.textContent = 'CHÍNH SÁCH & QUY ĐỊNH HÀNH CHÍNH';
+        if (descEl) descEl.textContent = 'Tra cứu đầy đủ các văn bản quy phạm pháp luật, Nghị định, Thông tư và Quyết định an sinh xã hội cho công dân Phường Duy Hà.';
+      } else {
+        if (iconEl) iconEl.textContent = 'verified';
+        if (badgeEl) badgeEl.textContent = 'UBND PHƯỜNG DUY HÀ — CỔNG HƯỚNG DẪN DỊCH VỤ CÔNG';
+        if (titleEl) titleEl.textContent = 'HƯỚNG DẪN THỦ TỤC HÀNH CHÍNH';
+        if (descEl) descEl.textContent = 'Tra cứu chi tiết quy trình thực hiện, hồ sơ giấy tờ cần chuẩn bị và tải mẫu biểu trực tiếp phục vụ công dân Phường Duy Hà.';
+      }
+
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', tab);
+      window.history.replaceState(null, '', url.toString());
+
+      if (tab === 'videos') {
+        renderVideos();
+      } else if (tab === 'policies') {
+        renderPolicies();
+      } else {
+        renderProcedures();
+      }
+    }
+
+    window.switchMainTab = switchMainTab;
+
+    // --- DOWNLOAD HELPER ---
+    window.downloadProcedureFile = async function (url, customFileName) {
+      if (!url) return;
+      try {
+        let name = customFileName;
+        if (!name) {
+          try {
+            const rawName = decodeURIComponent(url.split('/').pop() || '');
+            if (rawName && rawName.includes('.')) {
+              name = rawName;
+            }
+          } catch (e) { }
+        }
+        if (!name) name = 'bieu-mau';
+        if (!name.includes('.')) {
+          const ext = url.split('.').pop();
+          if (ext && ext.length <= 4 && !ext.includes('/')) name += '.' + ext;
+        }
+
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Download failed');
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(blobUrl);
+      } catch (err) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+    };
+
+    // --- PROCEDURES TAB RENDERER ---
+    function renderPagination(totalItems, totalPages) {
+      const infoElem = document.getElementById('pagination-info');
+      const controlsElem = document.getElementById('pagination-controls');
+      const containerElem = document.getElementById('procedures-pagination');
+
+      if (!containerElem) return;
+
+      if (totalItems <= ITEMS_PER_PAGE) {
+        containerElem.style.display = totalItems === 0 ? 'none' : 'flex';
+        if (infoElem) infoElem.textContent = `Hiển thị tất cả ${totalItems} thủ tục`;
+        if (controlsElem) controlsElem.innerHTML = '';
+        return;
+      }
+
+      containerElem.style.display = 'flex';
+
+      const startIdx = (currentPage - 1) * ITEMS_PER_PAGE + 1;
+      const endIdx = Math.min(currentPage * ITEMS_PER_PAGE, totalItems);
+
+      if (infoElem) {
+        infoElem.textContent = `Hiển thị ${startIdx} - ${endIdx} trên tổng số ${totalItems} thủ tục`;
+      }
+
+      if (!controlsElem) return;
+
+      let html = '';
+
+      const prevDisabled = currentPage === 1;
+      html += `
+        <button onclick="changeProcedurePage(${currentPage - 1})" ${prevDisabled ? 'disabled' : ''}
+          class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-xs font-bold transition-all flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">chevron_left</span>
+          <span>Trước</span>
+        </button>
+      `;
+
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === currentPage) {
+          html += `
+            <button class="w-8 h-8 rounded-xl bg-[#1d7fe0] text-white font-extrabold text-xs shadow-md transition-all">
+              ${i}
+            </button>
+          `;
+        } else {
+          html += `
+            <button onclick="changeProcedurePage(${i})"
+              class="w-8 h-8 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs transition-all">
+              ${i}
+            </button>
+          `;
+        }
+      }
+
+      const nextDisabled = currentPage === totalPages;
+      html += `
+        <button onclick="changeProcedurePage(${currentPage + 1})" ${nextDisabled ? 'disabled' : ''}
+          class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-xs font-bold transition-all flex items-center gap-1">
+          <span>Sau</span>
+          <span class="material-symbols-outlined text-sm">chevron_right</span>
+        </button>
+      `;
+
+      controlsElem.innerHTML = html;
+    }
+
+    window.changeProcedurePage = function (page) {
+      currentPage = page;
+      renderProcedures();
+      const container = document.getElementById('procedures-table-container');
+      if (container) {
+        container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+
+    function renderProcedures() {
+      const tableBody = document.getElementById('procedures-table-body');
+      const searchInput = document.getElementById('procedure-search-input');
+      const badge = document.getElementById('procedure-count-badge');
+      if (!tableBody) return;
+
+      const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+      let items = [...PROCEDURES_DATA];
+
+      if (currentCat !== 'all') {
+        items = items.filter(p => p.category === currentCat);
+      }
+
+      if (query) {
+        items = items.filter(p =>
+          (p.title || '').toLowerCase().includes(query) ||
+          (p.desc || '').toLowerCase().includes(query) ||
+          (p.code || '').toLowerCase().includes(query) ||
+          (p.categoryText || '').toLowerCase().includes(query) ||
+          (p.agency || '').toLowerCase().includes(query)
+        );
+      }
+
+      if (badge) {
+        badge.textContent = `${items.length} thủ tục`;
+      }
+
+      const totalItems = items.length;
+      const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
+
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+
+      if (items.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="6" class="p-12 text-center text-slate-500 dark:text-slate-400 font-semibold">
+              Không tìm thấy thủ tục hành chính phù hợp với từ khóa "${query}".
+            </td>
+          </tr>
+        `;
+        renderPagination(0, 0);
+        return;
+      }
+
+      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+      const paginatedItems = items.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+      renderPagination(totalItems, totalPages);
+
+      tableBody.innerHTML = paginatedItems.map((p, idx) => {
+        const stt = startIndex + idx + 1;
+        let categoryPillClass = "bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-300 border-rose-200 dark:border-rose-900/60";
+        if (p.category === 'land') {
+          categoryPillClass = "bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-900/60";
+        } else if (p.category === 'vneid') {
+          categoryPillClass = "bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 border-sky-200 dark:border-sky-900/60";
+        }
+
+        // Check if procedure has attachment_url or any file in docs
+        let attachedFileUrl = p.attachment_url || null;
+        if (!attachedFileUrl && Array.isArray(p.docs) && p.docs.length > 0) {
+          const firstWithFile = p.docs.find(d => typeof d === 'object' && (d.file_url || d.file));
+          if (firstWithFile) {
+            attachedFileUrl = firstWithFile.file_url || (firstWithFile.file ? ('/storage/' + String(firstWithFile.file).replace(/^\/?storage\//, '')) : null);
+          }
+        }
+
+        const downloadBtnHtml = attachedFileUrl
+          ? `<button onclick="downloadProcedureFile('${attachedFileUrl}')"
+              class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-sm active:scale-95 whitespace-nowrap flex items-center gap-1">
+              <span class="material-symbols-outlined text-sm">download</span>
+              <span>Tải file đính kèm</span>
+            </button>`
+          : '';
+
+        return `
+          <tr class="hover:bg-sky-50/60 dark:hover:bg-slate-800/60 transition-colors">
+            <td class="py-4 px-4 text-center font-bold text-slate-500 border-r border-slate-200 dark:border-slate-800">${stt}</td>
+            <td class="py-4 px-5 border-r border-slate-200 dark:border-slate-800">
+              <b class="text-slate-900 dark:text-white font-extrabold text-sm sm:text-base block leading-snug">${p.title}</b>
+            </td>
+            <td class="py-4 px-4 text-center border-r border-slate-200 dark:border-slate-800">
+              <span class="px-3 py-1 rounded-xl text-xs font-bold border ${categoryPillClass} inline-block whitespace-nowrap">
+                ${p.categoryText || 'Thủ tục'}
+              </span>
+            </td>
+            <td class="py-4 px-4 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 border-r border-slate-200 dark:border-slate-800">
+              ${p.agency || 'UBND Phường'}
+            </td>
+            <td class="py-4 px-4 text-center">
+              <div class="flex items-center justify-center gap-2">
+                <button onclick="openProcedureModal(${p.id})"
+                  class="px-3.5 py-2 rounded-xl border border-sky-300 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 hover:bg-[#1d7fe0] hover:text-white text-[#1d7fe0] dark:text-sky-300 text-xs font-bold transition-all shadow-sm active:scale-95 whitespace-nowrap">
+                  Hướng dẫn
+                </button>
+                ${downloadBtnHtml}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function downloadProcedureFile(rawUrl, fileName = '') {
+      if (!rawUrl || rawUrl === 'null' || rawUrl === 'undefined') {
+        alert('Thủ tục này hiện chưa có file đính kèm biểu mẫu từ ban quản trị.');
+        return;
+      }
+
+      let url = String(rawUrl).trim();
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = url.startsWith('/') ? url : ('/' + url);
+        if (!url.startsWith('/storage/') && !url.startsWith('/api/')) {
+          url = '/storage/' + url.replace(/^\/?storage\//, '');
+        }
+      }
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      if (fileName) {
+        a.download = fileName;
+      }
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+    window.downloadProcedureFile = downloadProcedureFile;
+
+    function openProcedureModal(procId) {
+      const item = PROCEDURES_DATA.find(p => p.id === procId);
+      if (!item) return;
+
+      document.getElementById('modal-proc-cat').textContent = item.categoryText || 'Thủ tục';
+      document.getElementById('modal-proc-title').textContent = item.title;
+      const codeElem = document.getElementById('modal-proc-code');
+      if (codeElem) codeElem.textContent = item.code || ('TTHC-' + String(item.id).padStart(3, '0'));
+      document.getElementById('modal-proc-agency').textContent = item.agency || 'UBND Phường Duy Hà';
+      document.getElementById('modal-proc-desc').textContent = item.desc || 'Chưa có thông tin trình tự thực hiện.';
+
+      const docsUl = document.getElementById('modal-proc-docs');
+      if (docsUl) {
+        docsUl.innerHTML = (item.docs || []).map(doc => {
+          const docName = typeof doc === 'object' ? (doc.name || '') : doc;
+          const docQty = (typeof doc === 'object' && doc.quantity) ? doc.quantity : '01 bản';
+          let docFileUrl = null;
+          if (typeof doc === 'object') {
+            if (doc.file_url) {
+              docFileUrl = doc.file_url;
+            } else if (doc.file) {
+              docFileUrl = doc.file.startsWith('http') ? doc.file : ('/storage/' + String(doc.file).replace(/^\/?storage\//, ''));
+            }
+          }
+
+          const downloadBtn = docFileUrl ? `
+            <button onclick="downloadProcedureFile('${docFileUrl}')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 shadow-sm active:scale-95">
+              <span class="material-symbols-outlined text-sm">download</span>
+              <span>Tải biểu mẫu</span>
+            </button>
+          ` : '';
+
+          return `
+            <li class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/60 font-semibold flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
+              <div class="space-y-0.5 flex-1 min-w-0">
+                <span class="text-sm font-extrabold text-slate-900 dark:text-white block whitespace-pre-line">${docName}</span>
+                <span class="text-xs font-bold text-sky-700 dark:text-sky-400 block">📄 Số lượng: ${docQty}</span>
+              </div>
+              ${downloadBtn}
+            </li>
+          `;
+        }).join('');
+      }
+
+      const modal = document.getElementById('procedure-detail-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+
+    function closeProcedureModal() {
+      const modal = document.getElementById('procedure-detail-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    // --- VIDEOS TAB RENDERER ---
+    function getYoutubeThumbnail(url) {
+      if (!url) return '/hero-bg.jpg';
+      const match = url.match(/(?:embed\/|v=|youtu\.be\/|shorts\/)([\w-]{11})/);
+      if (match && match[1]) {
+        return `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
+      }
+      return '/hero-bg.jpg';
+    }
+
+    function renderVideos() {
+      const grid = document.getElementById('videos-grid-container');
+      const searchInput = document.getElementById('video-search-input');
+      const badge = document.getElementById('video-count-badge');
+      if (!grid) return;
+
+      if (!isVideosLoaded) {
+        grid.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-500 dark:text-slate-400 font-semibold flex items-center justify-center gap-2.5">
+            <span class="animate-spin rounded-full h-6 w-6 border-b-2 border-[#1d7fe0]"></span>
+            <span>Đang tải video hướng dẫn...</span>
+          </div>
+        `;
+        return;
+      }
+
+      const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+      let items = [...VIDEOS_DATA];
+
+      if (currentVideoCat !== 'all') {
+        items = items.filter(v => v.category === currentVideoCat);
+      }
+
+      if (query) {
+        items = items.filter(v =>
+          v.title.toLowerCase().includes(query) ||
+          (v.desc && v.desc.toLowerCase().includes(query)) ||
+          (v.categoryText && v.categoryText.toLowerCase().includes(query))
+        );
+      }
+
+      if (badge) {
+        badge.textContent = `${items.length} video`;
+      }
+
+      if (items.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full py-12 text-center text-slate-500 dark:text-slate-400 font-semibold bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-800">
+            ${query ? `Không tìm thấy video hướng dẫn phù hợp với từ khóa "${query}".` : 'Hiện chưa có video hướng dẫn nào trong lĩnh vực này.'}
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = items.map((v) => `
+        <a href="javascript:void(0)" onclick="openVideoUrl('${v.videoUrl}')"
+          class="group flex flex-col bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 overflow-hidden shadow-md hover:shadow-2xl hover:border-[#1d7fe0] transition-all duration-300 cursor-pointer">
+          <!-- Video Thumbnail Container (16:9) -->
+          <div class="relative w-full aspect-video bg-slate-950 overflow-hidden">
+            <img src="${getYoutubeThumbnail(v.videoUrl)}" alt="${v.title}"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            
+            <!-- Dark Overlay Gradient -->
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-black/25 group-hover:opacity-80 transition-opacity pointer-events-none"></div>
+            
+            <!-- Category Badge (Top-Left) -->
+            <div class="absolute top-3.5 left-3.5 z-10">
+              <span class="px-3 py-1 rounded-xl bg-red-600 text-white text-xs font-black uppercase tracking-wider shadow-lg backdrop-blur-sm">
+                ${v.categoryText || 'HƯỚNG DẪN'}
+              </span>
+            </div>
+
+            <!-- Centered YouTube Play Button -->
+            <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+              <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-red-600 group-hover:bg-red-700 text-white flex items-center justify-center shadow-2xl group-hover:scale-110 transition-all duration-300 ring-4 ring-white/30 group-hover:ring-white/50">
+                <span class="material-symbols-outlined text-3xl sm:text-4xl translate-x-0.5">play_arrow</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Content Below Thumbnail -->
+          <div class="p-5 flex flex-col justify-between flex-1 space-y-4">
+            <h4 class="text-base sm:text-lg font-black text-slate-900 dark:text-white group-hover:text-[#1d7fe0] transition-colors line-clamp-2 leading-snug">
+              ${v.title}
+            </h4>
+            <div class="flex items-center justify-between text-xs sm:text-sm text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <span class="font-bold flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
+                <span class="material-symbols-outlined text-base text-red-500">smart_display</span>
+                <span>Video HD</span>
+              </span>
+              <span class="text-[#1d7fe0] font-black flex items-center gap-1 group-hover:underline">
+                <span>Xem video</span>
+                <span class="material-symbols-outlined text-base group-hover:translate-x-0.5 transition-transform">open_in_new</span>
+              </span>
+            </div>
+          </div>
+        </a>
+      `).join('');
+    }
+
+    function openVideoUrl(rawUrl) {
+      if (!rawUrl) return;
+      let url = rawUrl.trim();
+
+      // Convert YouTube embed link to standard watch link
+      const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([\w-]{11})/);
+      if (ytMatch && ytMatch[1]) {
+        url = `https://www.youtube.com/watch?v=${ytMatch[1]}`;
+      } else if (url.includes('drive.google.com')) {
+        // Convert Drive link to standard view link
+        const driveMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+        if (driveMatch && driveMatch[1]) {
+          url = `https://drive.google.com/file/d/${driveMatch[1]}/view`;
+        }
+      }
+
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+
+    function closeVideoModal() {
+      currentModalVideoUrl = '';
+      const iframe = document.getElementById('modal-video-iframe');
+      if (iframe) iframe.src = '';
+      const modal = document.getElementById('video-player-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    // --- POLICIES TAB RENDERER ---
+    function renderPolicies() {
+      const tableBody = document.getElementById('policies-table-body');
+      const searchInput = document.getElementById('policy-search-input');
+      const badge = document.getElementById('policy-count-badge');
+      if (!tableBody) return;
+
+      const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+      let items = [...POLICIES_DATA];
+
+      if (currentPolicyCat !== 'all') {
+        items = items.filter(p => p.category === currentPolicyCat);
+      }
+
+      if (query) {
+        items = items.filter(p =>
+          p.title.toLowerCase().includes(query) ||
+          p.code.toLowerCase().includes(query) ||
+          p.summary.toLowerCase().includes(query) ||
+          p.categoryText.toLowerCase().includes(query) ||
+          p.agency.toLowerCase().includes(query)
+        );
+      }
+
+      if (badge) {
+        badge.textContent = `${items.length} văn bản`;
+      }
+
+      if (items.length === 0) {
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="6" class="p-12 text-center text-slate-500 dark:text-slate-400 font-semibold">
+              Không tìm thấy văn bản chính sách phù hợp với từ khóa "${query}".
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tableBody.innerHTML = items.map((p, idx) => {
+        let categoryPillClass = "bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-300 border-rose-200 dark:border-rose-900/60";
+        if (p.category === 'social') {
+          categoryPillClass = "bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-900/60";
+        } else if (p.category === 'residence') {
+          categoryPillClass = "bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 border-sky-200 dark:border-sky-900/60";
+        } else if (p.category === 'tax') {
+          categoryPillClass = "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200 dark:border-emerald-900/60";
+        }
+
+        return `
+          <tr class="hover:bg-sky-50/60 dark:hover:bg-slate-800/60 transition-colors">
+            <td class="py-4 px-4 text-center font-bold text-slate-500 border-r border-slate-200 dark:border-slate-800">${idx + 1}</td>
+            <td class="py-4 px-4 text-center border-r border-slate-200 dark:border-slate-800">
+              <span class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-extrabold text-xs block whitespace-nowrap">
+                ${p.code}
+              </span>
+            </td>
+            <td class="py-4 px-5 border-r border-slate-200 dark:border-slate-800">
+              <b class="text-slate-900 dark:text-white font-extrabold text-sm sm:text-base block leading-snug">${p.title}</b>
+              <span class="text-xs text-slate-500 dark:text-slate-400 mt-1 block font-medium leading-relaxed">${p.summary}</span>
+            </td>
+            <td class="py-4 px-4 text-center border-r border-slate-200 dark:border-slate-800">
+              <span class="px-3 py-1 rounded-xl text-xs font-bold border ${categoryPillClass} inline-block whitespace-nowrap">
+                ${p.categoryText}
+              </span>
+            </td>
+            <td class="py-4 px-4 text-center text-xs font-semibold text-slate-700 dark:text-slate-300 border-r border-slate-200 dark:border-slate-800">
+              ${p.agency}
+            </td>
+            <td class="py-4 px-4 text-center">
+              <div class="flex items-center justify-center gap-2">
+                <button onclick="openPolicyModal(${p.id})"
+                  class="px-3.5 py-2 rounded-xl border border-sky-300 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 hover:bg-[#1d7fe0] hover:text-white text-[#1d7fe0] dark:text-sky-300 text-xs font-bold transition-all shadow-sm active:scale-95 whitespace-nowrap flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-sm">picture_as_pdf</span>
+                  <span>Đọc tài liệu</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    let currentPolicyFileUrl = '';
+    let currentPolicyTitle = '';
+
+    function openCurrentPolicyFile() {
+      if (!currentPolicyFileUrl || currentPolicyFileUrl === '#' || currentPolicyFileUrl === '/') {
+        alert('Văn bản này hiện chưa có tệp file PDF đính kèm.');
+        return;
+      }
+      window.open(currentPolicyFileUrl, '_blank', 'noopener,noreferrer');
+    }
+    window.openCurrentPolicyFile = openCurrentPolicyFile;
+
+    function downloadCurrentPolicyFile() {
+      if (!currentPolicyFileUrl || currentPolicyFileUrl === '#' || currentPolicyFileUrl === '/') {
+        alert('Văn bản này hiện chưa có tệp file PDF đính kèm.');
+        return;
+      }
+      const a = document.createElement('a');
+      a.href = currentPolicyFileUrl;
+      a.download = (currentPolicyTitle || 'van-ban-chinh-sach') + '.pdf';
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+    window.downloadCurrentPolicyFile = downloadCurrentPolicyFile;
+
+    function openPolicyModal(pid) {
+      const item = POLICIES_DATA.find(p => p.id === pid);
+      if (!item) return;
+
+      const codeElem = document.getElementById('modal-policy-code');
+      if (codeElem) codeElem.textContent = item.code || '';
+      const titleElem = document.getElementById('modal-policy-title');
+      if (titleElem) titleElem.textContent = item.title || '';
+      const agencyElem = document.getElementById('modal-policy-agency');
+      if (agencyElem) agencyElem.textContent = item.agency || 'UBND Phường Duy Hà';
+      const statusElem = document.getElementById('modal-policy-status');
+      if (statusElem) statusElem.textContent = item.status || 'Đang có hiệu lực';
+      const summaryElem = document.getElementById('modal-policy-summary');
+      if (summaryElem) summaryElem.textContent = item.summary || 'Chưa có thông tin trích yếu văn bản.';
+
+      currentPolicyTitle = item.title || '';
+
+      let fileUrl = item.downloadUrl || item.download_url || '';
+      if (fileUrl && fileUrl !== '#' && fileUrl !== '/') {
+        if (!fileUrl.startsWith('http://') && !fileUrl.startsWith('https://')) {
+          fileUrl = fileUrl.startsWith('/') ? fileUrl : ('/' + fileUrl);
+          if (!fileUrl.startsWith('/storage/')) {
+            fileUrl = '/storage/' + fileUrl.replace(/^\/?storage\//, '');
+          }
+        }
+        // Encode URI to handle spaces and Vietnamese characters
+        fileUrl = encodeURI(fileUrl);
+      }
+
+      currentPolicyFileUrl = fileUrl || '#';
+
+      const pdfIframe = document.getElementById('modal-policy-pdf-iframe');
+      const pdfContainer = document.getElementById('modal-policy-pdf-container');
+      const pdfEmpty = document.getElementById('modal-policy-pdf-empty');
+
+      const hasValidPdf = fileUrl && fileUrl !== '#' && fileUrl !== '/';
+
+      if (hasValidPdf) {
+        if (pdfIframe) pdfIframe.src = fileUrl;
+        if (pdfContainer) pdfContainer.style.display = 'block';
+        if (pdfEmpty) pdfEmpty.style.display = 'none';
+      } else {
+        if (pdfIframe) pdfIframe.src = 'about:blank';
+        if (pdfContainer) pdfContainer.style.display = 'none';
+        if (pdfEmpty) pdfEmpty.style.display = 'block';
+      }
+
+      const modal = document.getElementById('policy-detail-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+    window.openPolicyModal = openPolicyModal;
+
+    function closePolicyModal() {
+      currentPolicyFileUrl = '';
+      currentPolicyTitle = '';
+      const pdfIframe = document.getElementById('modal-policy-pdf-iframe');
+      if (pdfIframe) pdfIframe.src = 'about:blank';
+      const modal = document.getElementById('policy-detail-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+    window.closePolicyModal = closePolicyModal;
+
+    // Dynamic load procedures from API
+    async function loadProceduresData() {
+      try {
+        let data = null;
+        try {
+          const res = await fetch('/api/procedures');
+          if (res.ok) data = await res.json();
+        } catch (e) { }
+
+        if (!data || !Array.isArray(data) || data.length === 0) {
+          try {
+            const fallbackRes = await fetch('/data/procedures.json');
+            if (fallbackRes.ok) data = await fallbackRes.json();
+          } catch (e) { }
+        }
+
+        if (!data || !Array.isArray(data) || data.length === 0) {
+          try {
+            const fallbackRes = await fetch('/src/data/procedures.json');
+            if (fallbackRes.ok) data = await fallbackRes.json();
+          } catch (e) { }
+        }
+
+        if (Array.isArray(data) && data.length > 0) {
+          PROCEDURES_DATA = data;
+        }
+      } catch (e) {
+        console.warn('Could not fetch procedures data:', e);
+      }
+      renderProcedures();
+    }
+
+    // Dynamic load procedure videos from API
+    async function loadVideosData() {
+      try {
+        let data = null;
+        try {
+          const res = await fetch('/api/procedure-videos');
+          if (res.ok) data = await res.json();
+        } catch (e) { }
+
+        if (!data || !Array.isArray(data) || data.length === 0) {
+          try {
+            const fallbackRes = await fetch('/data/procedure_videos.json');
+            if (fallbackRes.ok) data = await fallbackRes.json();
+          } catch (e) { }
+        }
+
+        if (!data || !Array.isArray(data) || data.length === 0) {
+          try {
+            const fallbackRes = await fetch('/src/data/procedure_videos.json');
+            if (fallbackRes.ok) data = await fallbackRes.json();
+          } catch (e) { }
+        }
+
+        if (Array.isArray(data) && data.length > 0) {
+          VIDEOS_DATA = data;
+        }
+      } catch (e) {
+        console.warn('Could not fetch procedure videos data:', e);
+      } finally {
+        isVideosLoaded = true;
+        renderVideos();
+      }
+    }
+
+    // Dynamic load policies from API
+    async function loadPoliciesData() {
+      try {
+        let data = null;
+        try {
+          const res = await fetch('/api/policies');
+          if (res.ok) data = await res.json();
+        } catch (e) { }
+
+        if (!data || !Array.isArray(data) || data.length === 0) {
+          try {
+            const fallbackRes = await fetch('/data/policies.json');
+            if (fallbackRes.ok) data = await fallbackRes.json();
+          } catch (e) { }
+        }
+
+        if (!data || !Array.isArray(data) || data.length === 0) {
+          try {
+            const fallbackRes = await fetch('/src/data/policies.json');
+            if (fallbackRes.ok) data = await fallbackRes.json();
+          } catch (e) { }
+        }
+
+        if (Array.isArray(data) && data.length > 0) {
+          POLICIES_DATA = data;
+        }
+      } catch (e) {
+        console.warn('Could not fetch policies data:', e);
+      } finally {
+        isPoliciesLoaded = true;
+        renderPolicies();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Handle URL Tab parameter
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab');
+      if (tabParam === 'videos' || tabParam === 'policies') {
+        switchMainTab(tabParam);
+      } else {
+        switchMainTab('procedures');
+      }
+
+      loadProcedureCategories();
+      loadProceduresData();
+      loadVideosData();
+      loadPoliciesData();
+    });
+
+    let MASTER_PROC_CATEGORIES = [
+      { slug: 'all', name: 'Tất cả lĩnh vực' },
+      { slug: 'residence', name: 'Cư trú & Định danh điện tử' },
+      { slug: 'vneid', name: 'Định danh VNeID' },
+      { slug: 'civil', name: 'Hộ tịch & Chứng thực' },
+      { slug: 'land', name: 'Đất đai & Xây dựng' },
+      { slug: 'social', name: 'An sinh xã hội & Người có công' },
+      { slug: 'other', name: 'Lĩnh vực khác' }
+    ];
+
+    async function loadProcedureCategories() {
+      try {
+        const res = await fetch('/api/procedure-categories');
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            MASTER_PROC_CATEGORIES = [
+              { slug: 'all', name: 'Tất cả lĩnh vực' },
+              ...data.map(c => ({ slug: c.slug, name: c.name }))
+            ];
+          }
+        } else {
+          const jsonRes = await fetch('/data/procedure_categories.json');
+          if (jsonRes.ok) {
+            const data = await jsonRes.json();
+            if (Array.isArray(data) && data.length > 0) {
+              MASTER_PROC_CATEGORIES = [
+                { slug: 'all', name: 'Tất cả lĩnh vực' },
+                ...data.map(c => ({ slug: c.slug, name: c.name }))
+              ];
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Could not load procedure categories, using defaults.', e);
+      }
+      renderProcedureCategoryMenus();
+    }
+
+    function renderProcedureCategoryMenus() {
+      // 1. Procedure Menu
+      const procMenu = document.getElementById('procedure-category-menu');
+      if (procMenu) {
+        procMenu.innerHTML = MASTER_PROC_CATEGORIES.map(cat => {
+          const isActive = cat.slug === currentCat;
+          const label = cat.slug === 'all' ? 'Tất cả thủ tục' : cat.name;
+          const activeClass = 'proc-opt-item active w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold text-[#1d7fe0] dark:text-sky-400 bg-sky-50 dark:bg-sky-950/50 transition-all text-left cursor-pointer';
+          const inactiveClass = 'proc-opt-item w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-[#1d7fe0] dark:hover:text-sky-400 transition-all text-left cursor-pointer';
+
+          return `<button data-value="${cat.slug}" class="${isActive ? activeClass : inactiveClass}"><span>${label}</span></button>`;
+        }).join('');
+
+        const procItems = procMenu.querySelectorAll('.proc-opt-item');
+        const procCatLabel = document.getElementById('procedure-category-selected-label');
+        const procCatArrow = document.getElementById('procedure-category-arrow');
+
+        procItems.forEach(item => {
+          item.addEventListener('click', () => {
+            const val = item.getAttribute('data-value') || 'all';
+            const text = item.querySelector('span:first-child')?.textContent || '';
+            currentCat = val;
+            currentPage = 1;
+            if (procCatLabel) procCatLabel.textContent = text;
+            procMenu.classList.add('hidden');
+            if (procCatArrow) procCatArrow.classList.remove('rotate-180');
+            renderProcedureCategoryMenus();
+            renderProcedures();
+          });
+        });
+      }
+
+      // 2. Video Menu
+      const vidMenu = document.getElementById('video-category-menu');
+      if (vidMenu) {
+        vidMenu.innerHTML = MASTER_PROC_CATEGORIES.map(cat => {
+          const isActive = cat.slug === currentVideoCat;
+          const label = cat.slug === 'all' ? 'Tất cả video hướng dẫn' : cat.name;
+          const activeClass = 'vid-opt-item active w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold text-[#1d7fe0] dark:text-sky-400 bg-sky-50 dark:bg-sky-950/50 transition-all text-left cursor-pointer';
+          const inactiveClass = 'vid-opt-item w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-[#1d7fe0] dark:hover:text-sky-400 transition-all text-left cursor-pointer';
+
+          return `<button data-value="${cat.slug}" class="${isActive ? activeClass : inactiveClass}"><span>${label}</span></button>`;
+        }).join('');
+
+        const vidItems = vidMenu.querySelectorAll('.vid-opt-item');
+        const vidCatLabel = document.getElementById('video-category-selected-label');
+        const vidCatArrow = document.getElementById('video-category-arrow');
+
+        vidItems.forEach(item => {
+          item.addEventListener('click', () => {
+            const val = item.getAttribute('data-value') || 'all';
+            const text = item.querySelector('span:first-child')?.textContent || '';
+            currentVideoCat = val;
+            if (vidCatLabel) vidCatLabel.textContent = text;
+            vidMenu.classList.add('hidden');
+            if (vidCatArrow) vidCatArrow.classList.remove('rotate-180');
+            renderProcedureCategoryMenus();
+            renderVideos();
+          });
+        });
+      }
+
+      // 3. Policy Menu
+      const polMenu = document.getElementById('policy-category-menu');
+      if (polMenu) {
+        polMenu.innerHTML = MASTER_PROC_CATEGORIES.map(cat => {
+          const isActive = cat.slug === currentPolicyCat;
+          const label = cat.slug === 'all' ? 'Tất cả chính sách & văn bản' : cat.name;
+          const activeClass = 'pol-opt-item active w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold text-[#1d7fe0] dark:text-sky-400 bg-sky-50 dark:bg-sky-950/50 transition-all text-left cursor-pointer';
+          const inactiveClass = 'pol-opt-item w-full flex items-center justify-start px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-[#1d7fe0] dark:hover:text-sky-400 transition-all text-left cursor-pointer';
+
+          return `<button data-value="${cat.slug}" class="${isActive ? activeClass : inactiveClass}"><span>${label}</span></button>`;
+        }).join('');
+
+        const polItems = polMenu.querySelectorAll('.pol-opt-item');
+        const polCatLabel = document.getElementById('policy-category-selected-label');
+        const polCatArrow = document.getElementById('policy-category-arrow');
+
+        polItems.forEach(item => {
+          item.addEventListener('click', () => {
+            const val = item.getAttribute('data-value') || 'all';
+            const text = item.querySelector('span:first-child')?.textContent || '';
+            currentPolicyCat = val;
+            if (polCatLabel) polCatLabel.textContent = text;
+            polMenu.classList.add('hidden');
+            if (polCatArrow) polCatArrow.classList.remove('rotate-180');
+            renderProcedureCategoryMenus();
+            renderPolicies();
+          });
+        });
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProcedureCategories();
+
+      const procCatBtn = document.getElementById('procedure-category-btn');
+      const procCatMenu = document.getElementById('procedure-category-menu');
+      const procCatArrow = document.getElementById('procedure-category-arrow');
+
+      if (procCatBtn && procCatMenu) {
+        procCatBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isHidden = procCatMenu.classList.contains('hidden');
+          if (isHidden) {
+            procCatMenu.classList.remove('hidden');
+            if (procCatArrow) procCatArrow.classList.add('rotate-180');
+          } else {
+            procCatMenu.classList.add('hidden');
+            if (procCatArrow) procCatArrow.classList.remove('rotate-180');
+          }
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!procCatMenu.contains(e.target) && !procCatBtn.contains(e.target)) {
+            procCatMenu.classList.add('hidden');
+            if (procCatArrow) procCatArrow.classList.remove('rotate-180');
+          }
+        });
+      }
+
+      const vidCatBtn = document.getElementById('video-category-btn');
+      const vidCatMenu = document.getElementById('video-category-menu');
+      const vidCatArrow = document.getElementById('video-category-arrow');
+
+      if (vidCatBtn && vidCatMenu) {
+        vidCatBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isHidden = vidCatMenu.classList.contains('hidden');
+          if (isHidden) {
+            vidCatMenu.classList.remove('hidden');
+            if (vidCatArrow) vidCatArrow.classList.add('rotate-180');
+          } else {
+            vidCatMenu.classList.add('hidden');
+            if (vidCatArrow) vidCatArrow.classList.remove('rotate-180');
+          }
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!vidCatMenu.contains(e.target) && !vidCatBtn.contains(e.target)) {
+            vidCatMenu.classList.add('hidden');
+            if (vidCatArrow) vidCatArrow.classList.remove('rotate-180');
+          }
+        });
+      }
+
+      const polCatBtn = document.getElementById('policy-category-btn');
+      const polCatMenu = document.getElementById('policy-category-menu');
+      const polCatArrow = document.getElementById('policy-category-arrow');
+
+      if (polCatBtn && polCatMenu) {
+        polCatBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isHidden = polCatMenu.classList.contains('hidden');
+          if (isHidden) {
+            polCatMenu.classList.remove('hidden');
+            if (polCatArrow) polCatArrow.classList.add('rotate-180');
+          } else {
+            polCatMenu.classList.add('hidden');
+            if (polCatArrow) polCatArrow.classList.remove('rotate-180');
+          }
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!polCatMenu.contains(e.target) && !polCatBtn.contains(e.target)) {
+            polCatMenu.classList.add('hidden');
+            if (polCatArrow) polCatArrow.classList.remove('rotate-180');
+          }
+        });
+      }
+
+      // Search Inputs
+      const procSearchInput = document.getElementById('procedure-search-input');
+      if (procSearchInput) {
+        procSearchInput.addEventListener('input', () => {
+          currentPage = 1;
+          renderProcedures();
+        });
+      }
+
+      const vidSearchInput = document.getElementById('video-search-input');
+      if (vidSearchInput) {
+        vidSearchInput.addEventListener('input', renderVideos);
+      }
+
+      const polSearchInput = document.getElementById('policy-search-input');
+      if (polSearchInput) {
+        polSearchInput.addEventListener('input', renderPolicies);
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeProcedureModal();
+          closeVideoModal();
+          closePolicyModal();
+        }
+      });
+    });
+  </script>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>

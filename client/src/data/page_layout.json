@@ -46,7 +46,7 @@
     {
         "id": 5,
         "section_id": "officials_grid",
-        "name": "Danh bạ Cán bộ & CSKV phụ trách",
+        "name": "Danh sách Cán bộ & CSKV phụ trách",
         "is_visible": true,
         "sort_order": 5,
         "type": "system",

@@ -1,0 +1,18 @@
+[
+    {
+        "id": 1,
+        "title": "Video hướng dẫn Nộp hồ sơ Đăng ký tạm trú trực tuyến trên Cổng DVC Bộ Công an",
+        "category": "residence",
+        "categoryText": "Cư trú & Hộ khẩu",
+        "videoUrl": "https:\/\/www.youtube.com\/embed\/e1-HHDIVCp8?controls=1&rel=0&enablejsapi=1",
+        "sort_order": 1
+    },
+    {
+        "id": 2,
+        "title": "Video hướng dẫn Kích hoạt tài khoản Định danh điện tử VNeID Mức 2",
+        "category": "vneid",
+        "categoryText": "Định danh VNeID",
+        "videoUrl": "https:\/\/www.youtube.com\/embed\/V5uJGqQdK54?controls=1&rel=0&enablejsapi=1",
+        "sort_order": 2
+    }
+]

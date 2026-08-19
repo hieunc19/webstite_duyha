@@ -19,18 +19,25 @@ class SettingResource extends Resource
 
     protected static bool $shouldRegisterNavigation = false;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-adjustments-horizontal';
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 
-    protected static ?string $navigationLabel = 'Cấu hình số liệu';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?string $pluralLabel = 'Cấu hình 4 thẻ số liệu trang chủ';
+    protected static ?string $navigationLabel = 'Cấu hình Trang chủ';
 
-    protected static ?string $modelLabel = 'Thẻ số liệu';
+    protected static ?string $pluralLabel = 'Cấu hình Trang chủ';
+
+    protected static ?string $modelLabel = 'Cấu hình';
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Cài đặt';
+        return 'Cấu hình Hệ thống';
     }
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'name';
 

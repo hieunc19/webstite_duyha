@@ -8,4 +8,6 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateOfficial extends CreateRecord
 {
     protected static string $resource = OfficialResource::class;
+
+    protected static bool $canCreateAnother = false;
 }

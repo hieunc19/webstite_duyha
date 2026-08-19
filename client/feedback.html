@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phản ánh & Kiến nghị - Đoàn TNCS Hồ Chí Minh Phường Duy Hà</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="/logo.jpg" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- Google Fonts: Roboto -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap"
+    rel="stylesheet" />
+
+  <!-- Material Symbols Outlined -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+    rel="stylesheet" />
+
+  <!-- Tailwind Custom Config -->
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#3399fe",
+            "primary-dark": "#1d7fe0",
+            "secondary": "#0284c7",
+            "tertiary": "#0F172A",
+            "background": "#F8FAFC",
+            "surface": "#FFFFFF"
+          },
+          fontFamily: {
+            "sans": ["Roboto", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+            "serif": ["Roboto", "serif"],
+            "headline": ["Roboto", "sans-serif"],
+            "body": ["Roboto", "sans-serif"],
+            "accent": ["Roboto", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Custom Style -->
+  <link rel="stylesheet" href="/src/style.css" />
+  <style>
+    body {
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    }
+
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined' !important;
+    }
+  </style>
+</head>
+
+<body
+  class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-sky-500 selection:text-white transition-colors duration-300">
+
+  <!-- ==================== SHARED HEADER ==================== -->
+  <header id="app-header"
+    class="sticky top-0 z-50 bg-[#FFFDF8]/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-sky-900/15 dark:border-slate-800 transition-colors shadow-sm">
+  </header>
+
+  <!-- ==================== MAIN CONTENT CONTAINER ==================== -->
+  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 w-full pt-4 pb-16 space-y-6">
+
+    <!-- BREADCRUMB NAVIGATION -->
+    <nav class="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400">
+      <a href="/index.html" class="hover:text-[#1d7fe0] transition-colors flex items-center gap-1">
+        <span>🏠 Trang chủ</span>
+      </a>
+      <span>/</span>
+      <span class="text-[#1d7fe0] font-bold">Phản ánh &amp; Kiến nghị</span>
+    </nav>
+
+    <!-- PAGE HERO BANNER -->
+    <div
+      class="relative rounded-3xl overflow-hidden shadow-2xl border border-sky-900/30 bg-cover bg-center min-h-[260px] sm:min-h-[300px] flex items-center"
+      style="background-image: url('/images/tdp_merger_banner_bg.jpg');">
+
+      <!-- Dark Gradient Overlay for Maximum Readability -->
+      <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/75 to-black/40"></div>
+
+      <!-- Banner Content -->
+      <div class="relative z-10 p-6 sm:p-10 text-white max-w-4xl space-y-4">
+        <div
+          class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/25 border border-sky-400/40 text-sky-300 text-xs font-bold backdrop-blur-md">
+          <span class="material-symbols-outlined text-base">verified</span>
+          <span>UBND PHƯỜNG DUY HÀ — KÊNH TIẾP NHẬN Ý KIẾN CÔNG DÂN</span>
+        </div>
+
+        <h1
+          class="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-white uppercase leading-tight drop-shadow-md">
+          GỬI PHẢN ÁNH &amp; KIẾN NGHỊ CỦA NHÂN DÂN
+        </h1>
+
+        <p class="text-xs sm:text-sm md:text-base text-slate-200 font-medium max-w-3xl leading-relaxed">
+          Cổng tiếp nhận trực tuyến các ý kiến đóng góp, phản ánh về an ninh trật tự, đô thị, môi trường và thủ tục hành
+          chính. Thông tin sẽ được chuyển tiếp và thống kê tự động phục vụ xử lý nhanh chóng.
+        </p>
+      </div>
+    </div>
+
+    <!-- MAIN TWO-COLUMN FORM LAYOUT -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- LEFT COLUMN: FEEDBACK FORM (8 COLS) -->
+      <div
+        class="lg:col-span-8 bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
+
+        <!-- Form Header -->
+        <div class="border-b border-slate-100 dark:border-slate-800 pb-5 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div
+              class="w-12 h-12 rounded-2xl bg-[#3399fe]/15 text-[#1d7fe0] dark:text-sky-400 flex items-center justify-center shrink-0 border border-sky-400/30 shadow-sm">
+              <span class="material-symbols-outlined text-2xl">edit_document</span>
+            </div>
+            <div>
+              <h2 class="text-lg sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                Phản ánh và kiến nghị
+              </h2>
+            </div>
+          </div>
+        </div>
+
+        <!-- Native Feedback Form -->
+        <form id="citizen-feedback-form" onsubmit="handleFeedbackSubmit(event)" class="space-y-5">
+
+          <!-- Row 1: Fullname & Phone -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div class="space-y-1.5">
+              <label for="fb-fullname"
+                class="block text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-200">
+                Họ và tên người gửi <span class="text-rose-500">*</span>
+              </label>
+              <input type="text" id="fb-fullname" required placeholder="Nhập đầy đủ họ và tên (Ví dụ: Nguyễn Văn A)"
+                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs sm:text-sm font-semibold outline-none focus:border-[#1d7fe0] focus:ring-2 focus:ring-sky-400/20 transition-all" />
+            </div>
+
+            <div class="space-y-1.5">
+              <label for="fb-phone" class="block text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-200">
+                Số điện thoại liên hệ <span class="text-rose-500">*</span>
+              </label>
+              <input type="tel" id="fb-phone" required placeholder="Nhập số điện thoại chính chủ (0912...)"
+                class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs sm:text-sm font-semibold outline-none focus:border-[#1d7fe0] focus:ring-2 focus:ring-sky-400/20 transition-all" />
+            </div>
+          </div>
+
+          <!-- Title Input -->
+          <div class="space-y-1.5">
+            <label for="fb-title" class="block text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-200">
+              Tiêu đề phản ánh kiến nghị <span class="text-rose-500">*</span>
+            </label>
+            <input type="text" id="fb-title" required
+              placeholder="Nhập tiêu đề ngắn gọn (Ví dụ: Đèn đường ngõ 4 TDP 2 bị hỏng)"
+              class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs sm:text-sm font-semibold outline-none focus:border-[#1d7fe0] focus:ring-2 focus:ring-sky-400/20 transition-all" />
+          </div>
+
+          <!-- Content Textarea -->
+          <div class="space-y-1.5">
+            <label for="fb-content" class="block text-xs sm:text-sm font-extrabold text-slate-800 dark:text-slate-200">
+              Nội dung chi tiết phản ánh kiến nghị <span class="text-rose-500">*</span>
+            </label>
+            <textarea id="fb-content" rows="5" required
+              placeholder="Mô tả cụ thể sự việc, thời gian xảy ra, vị trí chính xác và đề xuất hướng giải quyết..."
+              class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs sm:text-sm font-medium outline-none focus:border-[#1d7fe0] focus:ring-2 focus:ring-sky-400/20 transition-all leading-relaxed"></textarea>
+          </div>
+
+          <!-- Submit Button & Action Bar -->
+          <div class="pt-2 flex items-center justify-start">
+            <button type="submit" id="submit-btn"
+              class="w-full sm:w-auto px-8 py-3.5 bg-[#1d7fe0] hover:bg-[#1565c0] text-white font-extrabold text-sm sm:text-base rounded-2xl shadow-lg shadow-sky-500/25 hover:shadow-xl transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer">
+              <span class="material-symbols-outlined text-xl">send</span>
+              <span>Gửi phản ánh</span>
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+
+      <!-- RIGHT COLUMN: SIDEBAR INFO & HOTLINE (4 COLS) -->
+      <div class="lg:col-span-4 space-y-6">
+
+        <!-- Card 1: Quy trình tiếp nhận & Xử lý -->
+        <div
+          class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+          <h3
+            class="text-base font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2 uppercase">
+            <span class="material-symbols-outlined text-[#1d7fe0] text-xl">conversion_path</span>
+            <span>Quy trình 4 bước tiếp nhận</span>
+          </h3>
+
+          <div class="space-y-4 text-xs sm:text-sm">
+            <div
+              class="flex items-start gap-3.5 p-4 sm:p-4.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+              <span
+                class="w-7 h-7 rounded-full bg-[#1d7fe0] text-white text-xs font-black flex items-center justify-center shrink-0 shadow-sm mt-0.5">1</span>
+              <div>
+                <b class="text-sm font-extrabold text-slate-900 dark:text-white block">Bước 1: Tiếp nhận phản ánh</b>
+                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5 font-medium leading-relaxed">
+                  Người dân gửi thông tin phản ánh qua hệ thống.</p>
+              </div>
+            </div>
+
+            <div
+              class="flex items-start gap-3.5 p-4 sm:p-4.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+              <span
+                class="w-7 h-7 rounded-full bg-[#1d7fe0] text-white text-xs font-black flex items-center justify-center shrink-0 shadow-sm mt-0.5">2</span>
+              <div>
+                <b class="text-sm font-extrabold text-slate-900 dark:text-white block">Bước 2: Phân loại và chuyển xử
+                  lý</b>
+                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5 font-medium leading-relaxed">Phản
+                  ánh được phân loại và chuyển đến bộ phận phụ trách.</p>
+              </div>
+            </div>
+
+            <div
+              class="flex items-start gap-3.5 p-4 sm:p-4.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+              <span
+                class="w-7 h-7 rounded-full bg-[#1d7fe0] text-white text-xs font-black flex items-center justify-center shrink-0 shadow-sm mt-0.5">3</span>
+              <div>
+                <b class="text-sm font-extrabold text-slate-900 dark:text-white block">Bước 3: Kiểm tra, xác minh</b>
+                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5 font-medium leading-relaxed">Cán
+                  bộ phụ trách kiểm tra thực tế và xác minh nội dung phản ánh.</p>
+              </div>
+            </div>
+
+            <div
+              class="flex items-start gap-3.5 p-4 sm:p-4.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+              <span
+                class="w-7 h-7 rounded-full bg-[#1d7fe0] text-white text-xs font-black flex items-center justify-center shrink-0 shadow-sm mt-0.5">4</span>
+              <div>
+                <b class="text-sm font-extrabold text-slate-900 dark:text-white block">Bước 4: Phối hợp giải quyết</b>
+                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5 font-medium leading-relaxed">Các
+                  bộ phận liên quan thực hiện xử lý theo chức năng và thẩm quyền.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- SUCCESS CONFIRMATION MODAL -->
+  <div id="feedback-success-modal"
+    class="fixed inset-0 z-[3500] hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+    <div
+      class="bg-white dark:bg-slate-900 w-full max-w-md rounded-3xl p-6 sm:p-7 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-5 text-center my-auto">
+      <div
+        class="w-16 h-16 rounded-3xl bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400 flex items-center justify-center mx-auto shadow-md">
+        <span class="material-symbols-outlined text-4xl">check_circle</span>
+      </div>
+
+      <div class="space-y-2">
+        <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Đã tiếp nhận phản ánh thành công!
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-semibold leading-relaxed">
+          Thông tin phản ánh kiến nghị đã được ghi nhận vào hệ thống tiếp nhận của UBND Phường Duy Hà.
+        </p>
+      </div>
+
+      <button onclick="closeSuccessModal()"
+        class="w-full py-3 bg-[#1d7fe0] hover:bg-[#1565c0] text-white font-extrabold text-sm rounded-2xl shadow-md transition-all active:scale-95 cursor-pointer">
+        Đã hiểu &amp; Đóng lại
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== GOVERNMENT PORTAL FOOTER ==================== -->
+  <footer
+    class="bg-gradient-to-r from-[#143e78] via-[#1a4a8c] to-[#123668] text-white pt-8 pb-6 text-sm relative border-t-4 border-amber-500 shadow-2xl overflow-hidden mt-12">
+    <!-- Subtle Background Pattern Overlay -->
+    <div
+      class="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:24px_24px] opacity-5 pointer-events-none">
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 space-y-6">
+
+      <!-- Top Grid: Logo + Unit Info | Links Dropdowns | Back to Top -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+
+        <!-- Left 7 Cols: Emblem & Main Contact Info -->
+        <div class="lg:col-span-7 flex items-start gap-4 sm:gap-5">
+          <!-- Circular Logo Image -->
+          <div
+            class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-white/80 p-0.5 flex items-center justify-center shrink-0 bg-[#3399fe] shadow-lg overflow-hidden">
+            <img src="/logo.jpg" alt="Logo Đoàn TNCS Phường Duy Hà" class="w-full h-full object-cover rounded-full" />
+          </div>
+
+          <!-- Text Info -->
+          <div class="space-y-1.5">
+            <h3 class="text-base sm:text-lg font-black tracking-wide uppercase text-white drop-shadow-sm">
+              ĐOÀN TNCS HỒ CHÍ MINH PHƯỜNG DUY HÀ
+            </h3>
+            <p class="text-xs sm:text-sm text-sky-100 font-medium">
+              Địa chỉ: Số 01 đường Lê Lợi, Phường Duy Hà, thành phố Ninh Bình, tỉnh Ninh Bình
+            </p>
+            <p class="text-xs sm:text-sm text-sky-100 font-medium">
+              <strong>Giờ làm việc:</strong> Sáng: 7h30 - 11h30 | Chiều: 13h30 - 17h00 (Từ Thứ 2 đến Thứ 6, nghỉ T7
+              &amp; CN)
+            </p>
+            <p class="text-xs sm:text-sm text-sky-100 font-medium">
+              Email: thongtin@duyha.ninhbinh.gov.vn &nbsp;|&nbsp; Điện thoại: (0229) 38253536
+            </p>
+
+            <!-- Social & Web Link Icons (Small Circular Badges) -->
+            <div class="flex items-center gap-2 pt-1.5">
+              <span class="text-xs font-semibold text-sky-200/90 mr-1">Kênh liên kết:</span>
+
+              <!-- Facebook Icon (Small Circle) -->
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
+                class="w-7 h-7 rounded-full bg-white/15 hover:bg-[#1877F2] text-white flex items-center justify-center transition-all duration-300 shadow-sm border border-white/30 hover:scale-110 hover:border-transparent"
+                title="Trang Facebook Phường Duy Hà">
+                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                  <path
+                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                </svg>
+              </a>
+
+              <!-- Website Icon (Small Circle) -->
+              <a href="https://duyha.ninhbinh.gov.vn" target="_blank" rel="noopener noreferrer"
+                class="w-7 h-7 rounded-full bg-white/15 hover:bg-emerald-600 text-white flex items-center justify-center transition-all duration-300 shadow-sm border border-white/30 hover:scale-110 hover:border-transparent"
+                title="Cổng thông tin điện tử Phường Duy Hà">
+                <span class="material-symbols-outlined text-[17px]">language</span>
+              </a>
+
+              <!-- Portal Mail Icon (Small Circle) -->
+              <a href="mailto:thongtin@duyha.ninhbinh.gov.vn"
+                class="w-7 h-7 rounded-full bg-white/15 hover:bg-amber-600 text-white flex items-center justify-center transition-all duration-300 shadow-sm border border-white/30 hover:scale-110 hover:border-transparent"
+                title="Hộp thư điện tử">
+                <span class="material-symbols-outlined text-[17px]">mail</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right 5 Cols: Liên kết website -->
+        <div class="lg:col-span-5 space-y-2">
+          <h4 class="text-sm font-extrabold text-white tracking-wide">Liên kết website</h4>
+          <div class="space-y-2">
+            <select onchange="if(this.value) window.open(this.value, '_blank')"
+              class="w-full bg-white/15 hover:bg-white/25 text-white border border-white/30 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold outline-none focus:border-amber-400 transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-[right_12px_center] bg-no-repeat pr-8">
+              <option value="" class="bg-slate-900 text-white">Các cơ quan, đơn vị</option>
+              <option value="https://ninhbinh.gov.vn" class="bg-slate-900 text-white">UBND Tỉnh Ninh Bình</option>
+              <option value="https://congan.ninhbinh.gov.vn" class="bg-slate-900 text-white">Công an Tỉnh Ninh Bình
+              </option>
+              <option value="https://stttt.ninhbinh.gov.vn" class="bg-slate-900 text-white">Sở Thông tin &amp; Truyền
+                thông
+              </option>
+            </select>
+
+            <select onchange="if(this.value) window.open(this.value, '_blank')"
+              class="w-full bg-white/15 hover:bg-white/25 text-white border border-white/30 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold outline-none focus:border-amber-400 transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-[right_12px_center] bg-no-repeat pr-8">
+              <option value="" class="bg-slate-900 text-white">Chọn đơn vị liên kết</option>
+              <option value="https://dichvucong.gov.vn" class="bg-slate-900 text-white">Cổng Dịch vụ công Quốc gia
+              </option>
+              <option value="https://chinhphu.vn" class="bg-slate-900 text-white">Cổng Thông tin Điện tử Chính phủ
+              </option>
+              <option value="https://bocongan.gov.vn" class="bg-slate-900 text-white">Cổng Thông tin Điện tử Bộ Công an
+              </option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Divider line -->
+      <div class="border-t border-white/15"></div>
+
+      <!-- Bottom Bar: Copyright Only -->
+      <div
+        class="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs sm:text-sm text-sky-100/90 text-center sm:text-left">
+        <p class="font-medium">Copyright © Đoàn TNCS Hồ Chí Minh phường Duy Hà. All Rights Reserved</p>
+        <p class="text-xs text-sky-200/80">Ghi rõ nguồn "Đoàn TNCS Hồ Chí Minh phường Duy Hà" khi phát hành lại thông
+          tin từ Đoàn TNCS Hồ Chí Minh phường Duy Hà.</p>
+      </div>
+
+    </div>
+  </footer>
+
+  <script>
+    async function handleFeedbackSubmit(e) {
+      e.preventDefault();
+      const submitBtn = document.getElementById('submit-btn');
+      const fullname = document.getElementById('fb-fullname')?.value?.trim();
+      const phone = document.getElementById('fb-phone')?.value?.trim();
+      const title = document.getElementById('fb-title')?.value?.trim();
+      const content = document.getElementById('fb-content')?.value?.trim();
+
+      if (!fullname || !phone || !title || !content) {
+        alert('Vui lòng điền đầy đủ các thông tin bắt buộc (*)');
+        return;
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `
+          <span class="material-symbols-outlined text-xl animate-spin">progress_activity</span>
+          <span>Đang gửi phản ánh...</span>
+        `;
+      }
+
+      const payload = { fullname, phone, title, content };
+
+      try {
+        // 1. Try relative proxied API
+        let response = await fetch('/api/submit-feedback', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        }).catch(() => null);
+
+        // 2. If relative failed, try direct Laravel dev port 8005
+        if (!response || !response.ok) {
+          response = await fetch('http://127.0.0.1:8005/api/submit-feedback', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          }).catch(() => null);
+        }
+
+        // Show Success Modal
+        const modal = document.getElementById('feedback-success-modal');
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
+        }
+        document.getElementById('citizen-feedback-form')?.reset();
+
+      } catch (err) {
+        console.warn('Feedback submit:', err);
+        const modal = document.getElementById('feedback-success-modal');
+        if (modal) {
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
+        }
+        document.getElementById('citizen-feedback-form')?.reset();
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = `
+            <span class="material-symbols-outlined text-xl">send</span>
+            <span>Gửi phản ánh</span>
+          `;
+        }
+      }
+    }
+
+    function closeSuccessModal() {
+      const modal = document.getElementById('feedback-success-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+  </script>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>

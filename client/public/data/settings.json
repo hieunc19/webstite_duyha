@@ -1,0 +1,52 @@
+{
+    "cards": [
+        {
+            "key": "stat_1",
+            "name": "Thẻ 1: Tổng số Tổ dân phố",
+            "value": "10",
+            "label": "Tổng số tổ dân phố",
+            "sort_order": 1,
+            "icon": "holiday_village",
+            "bg": "bg-blue-500\/10",
+            "color": "text-blue-600 dark:text-blue-400"
+        },
+        {
+            "key": "stat_2",
+            "name": "Thẻ 2: Tổng số Hộ gia đình",
+            "value": "6.767",
+            "label": "Tổng số hộ gia đình",
+            "sort_order": 2,
+            "icon": "group",
+            "bg": "bg-emerald-500\/10",
+            "color": "text-emerald-600 dark:text-emerald-400"
+        },
+        {
+            "key": "stat_3",
+            "name": "Thẻ 3: Tổng số Nhân khẩu",
+            "value": "23.615",
+            "label": "Tổng số nhân khẩu",
+            "sort_order": 3,
+            "icon": "diversity_3",
+            "bg": "bg-amber-500\/10",
+            "color": "text-amber-600 dark:text-amber-400"
+        },
+        {
+            "key": "stat_4",
+            "name": "Thẻ 4: Diện tích địa bàn",
+            "value": "15,46 km²",
+            "label": "Diện tích (1.546,30 ha)",
+            "sort_order": 4,
+            "icon": "map",
+            "bg": "bg-purple-500\/10",
+            "color": "text-purple-600 dark:text-purple-400"
+        }
+    ],
+    "stat_1_val": "10",
+    "stat_1_lbl": "Tổng số tổ dân phố",
+    "stat_2_val": "6.767",
+    "stat_2_lbl": "Tổng số hộ gia đình",
+    "stat_3_val": "23.615",
+    "stat_3_lbl": "Tổng số nhân khẩu",
+    "stat_4_val": "15,46 km²",
+    "stat_4_lbl": "Diện tích (1.546,30 ha)"
+}

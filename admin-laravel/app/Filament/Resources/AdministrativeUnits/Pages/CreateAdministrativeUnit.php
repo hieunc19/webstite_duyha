@@ -8,4 +8,6 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateAdministrativeUnit extends CreateRecord
 {
     protected static string $resource = AdministrativeUnitResource::class;
+
+    protected static bool $canCreateAnother = false;
 }

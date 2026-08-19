@@ -20,16 +20,18 @@ class MeritoriousFamilyResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-heart';
 
-    protected static ?string $navigationLabel = 'Gia đình có công';
+    protected static ?string $navigationLabel = 'Gia đình Có công';
 
-    protected static ?string $pluralLabel = 'Gia đình có công';
+    protected static ?string $pluralLabel = 'Gia đình Có công';
 
-    protected static ?string $modelLabel = 'Gia đình có công';
+    protected static ?string $modelLabel = 'Gia đình Có công';
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Quản lý địa bàn';
+        return 'Quản lý Địa bàn & Dân cư';
     }
+
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $recordTitleAttribute = 'name';
 

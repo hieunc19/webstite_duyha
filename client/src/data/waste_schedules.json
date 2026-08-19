@@ -1,0 +1,192 @@
+[
+    {
+        "id": 11,
+        "tdp_name": "TDP Duy Minh",
+        "morning_shift": "05h30 - 07h00",
+        "evening_shift": "17h00 - 18h30",
+        "saturday_recycle": "08h00 - 11h00",
+        "main_routes": null,
+        "collection_point": null,
+        "responsible_unit": "Đội vệ sinh môi trường Phường Duy Hà",
+        "contact_phone": null,
+        "is_active": true,
+        "sort_order": 0,
+        "created_at": "2026-08-16T14:54:32.000000Z",
+        "updated_at": "2026-08-16T14:54:32.000000Z",
+        "collection_days": [
+            "thu_2",
+            "thu_5"
+        ]
+    },
+    {
+        "id": 12,
+        "tdp_name": "TDP Động Linh Trang",
+        "morning_shift": "05h30 - 07h00",
+        "evening_shift": "17h00 - 18h30",
+        "saturday_recycle": "08h00 - 11h00",
+        "main_routes": null,
+        "collection_point": null,
+        "responsible_unit": "Đội vệ sinh môi trường Phường Duy Hà",
+        "contact_phone": null,
+        "is_active": true,
+        "sort_order": 0,
+        "created_at": "2026-08-16T14:54:40.000000Z",
+        "updated_at": "2026-08-16T14:54:40.000000Z",
+        "collection_days": [
+            "thu_2",
+            "thu_5"
+        ]
+    },
+    {
+        "id": 2,
+        "tdp_name": "TDP Ngọc Tú",
+        "morning_shift": "06h00 - 07h30",
+        "evening_shift": "17h30 - 19h00",
+        "saturday_recycle": "08h00 - 11h00",
+        "main_routes": null,
+        "collection_point": null,
+        "responsible_unit": "Đội vệ sinh môi trường Phường Duy Hà",
+        "contact_phone": null,
+        "is_active": true,
+        "sort_order": 2,
+        "created_at": "2026-08-16T14:49:07.000000Z",
+        "updated_at": "2026-08-16T14:49:07.000000Z",
+        "collection_days": [
+            "thu_3",
+            "thu_6"
+        ]
+    },
+    {
+        "id": 4,
+        "tdp_name": "TDP Chuông",
+        "morning_shift": "06h00 - 07h30",
+        "evening_shift": "17h00 - 18h30",
+        "saturday_recycle": "08h00 - 11h00",
+        "main_routes": null,
+        "collection_point": null,
+        "responsible_unit": "Đội vệ sinh môi trường Phường Duy Hà",
+        "contact_phone": null,
+        "is_active": true,
+        "sort_order": 4,
+        "created_at": "2026-08-16T14:49:08.000000Z",
+        "updated_at": "2026-08-16T14:49:08.000000Z",
+        "collection_days": [
+            "thu_4",
+            "thu_7"
+        ]
+    },
+    {
+        "id": 5,
+        "tdp_name": "TDP Bạch Xá",
+        "morning_shift": "05h30 - 07h00",
+        "evening_shift": "17h30 - 19h00",
+        "saturday_recycle": "08h00 - 11h00",
+        "main_routes": null,
+        "collection_point": null,
+        "responsible_unit": "Đội vệ sinh môi trường Phường Duy Hà",
+        "contact_phone": null,
+        "is_active": true,
+        "sort_order": 5,
+        "created_at": "2026-08-16T14:49:08.000000Z",
+        "updated_at": "2026-08-16T14:49:08.000000Z",
+        "collection_days": [
+            "thu_3",
+            "thu_6"
+        ]
+    },
+    {
+        "id": 6,
+        "tdp_name": "TDP Hoàng Đông",
+        "morning_shift": "06h00 - 07h30",
+        "evening_shift": "18h00 - 19h30",
+        "saturday_recycle": "08h00 - 11h00",
+        "main_routes": null,
+        "collection_point": null,
+        "responsible_unit": "Đội vệ sinh môi trường Phường Duy Hà",
+        "contact_phone": null,
+        "is_active": true,
+        "sort_order": 6,
+        "created_at": "2026-08-16T14:49:08.000000Z",
+        "updated_at": "2026-08-16T14:49:08.000000Z",
+        "collection_days": [
+            "thu_2",
+            "thu_6"
+        ]
+    },
+    {
+        "id": 7,
+        "tdp_name": "TDP Hương Cát",
+        "morning_shift": "05h00 - 06h30",
+        "evening_shift": "16h30 - 18h00",
+        "saturday_recycle": "08h00 - 11h00",
+        "main_routes": null,
+        "collection_point": null,
+        "responsible_unit": "Đội vệ sinh môi trường Phường Duy Hà",
+        "contact_phone": null,
+        "is_active": true,
+        "sort_order": 7,
+        "created_at": "2026-08-16T14:49:08.000000Z",
+        "updated_at": "2026-08-16T14:49:08.000000Z",
+        "collection_days": [
+            "thu_3",
+            "thu_7"
+        ]
+    },
+    {
+        "id": 8,
+        "tdp_name": "TDP Duy Hải",
+        "morning_shift": "06h00 - 07h30",
+        "evening_shift": "17h30 - 19h00",
+        "saturday_recycle": "08h00 - 11h00",
+        "main_routes": null,
+        "collection_point": null,
+        "responsible_unit": "Đội vệ sinh môi trường Phường Duy Hà",
+        "contact_phone": null,
+        "is_active": true,
+        "sort_order": 8,
+        "created_at": "2026-08-16T14:49:09.000000Z",
+        "updated_at": "2026-08-16T14:49:09.000000Z",
+        "collection_days": [
+            "thu_4",
+            "chu_nhat"
+        ]
+    },
+    {
+        "id": 9,
+        "tdp_name": "TDP Ngọc Động",
+        "morning_shift": "05h30 - 07h00",
+        "evening_shift": "17h00 - 18h30",
+        "saturday_recycle": "08h00 - 11h00",
+        "main_routes": null,
+        "collection_point": null,
+        "responsible_unit": "Đội vệ sinh môi trường Phường Duy Hà",
+        "contact_phone": null,
+        "is_active": true,
+        "sort_order": 9,
+        "created_at": "2026-08-16T14:49:09.000000Z",
+        "updated_at": "2026-08-16T14:49:09.000000Z",
+        "collection_days": [
+            "thu_2",
+            "thu_5"
+        ]
+    },
+    {
+        "id": 10,
+        "tdp_name": "TDP Đông Hải",
+        "morning_shift": "05h00 - 06h30",
+        "evening_shift": "16h30 - 18h00",
+        "saturday_recycle": "08h00 - 11h00",
+        "main_routes": null,
+        "collection_point": null,
+        "responsible_unit": "Đội vệ sinh môi trường Phường Duy Hà",
+        "contact_phone": null,
+        "is_active": true,
+        "sort_order": 10,
+        "created_at": "2026-08-16T14:49:09.000000Z",
+        "updated_at": "2026-08-16T14:49:09.000000Z",
+        "collection_days": [
+            "thu_3",
+            "thu_6"
+        ]
+    }
+]

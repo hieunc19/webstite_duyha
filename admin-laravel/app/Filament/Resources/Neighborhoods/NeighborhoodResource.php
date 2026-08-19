@@ -28,8 +28,10 @@ class NeighborhoodResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Quản lý địa bàn';
+        return 'Quản lý Địa bàn & Dân cư';
     }
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'name';
 

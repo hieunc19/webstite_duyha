@@ -47,6 +47,16 @@ class Neighborhood extends Model
 
     protected static function booted()
     {
+        static::saving(function (Neighborhood $n) {
+            if (!empty($n->cskv_name)) {
+                $n->leader_name = $n->cskv_name;
+                $n->leader_phone = $n->cskv_phone;
+            } elseif (!empty($n->leader_name)) {
+                $n->cskv_name = $n->leader_name;
+                $n->cskv_phone = $n->leader_phone;
+            }
+        });
+
         static::saved(function () {
             @exec('php ' . base_path('dump_to_json.php') . ' > /dev/null 2>&1 &');
         });

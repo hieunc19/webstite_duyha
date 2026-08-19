@@ -8,4 +8,6 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateCelebrationEvent extends CreateRecord
 {
     protected static string $resource = CelebrationEventResource::class;
+
+    protected static bool $canCreateAnother = false;
 }

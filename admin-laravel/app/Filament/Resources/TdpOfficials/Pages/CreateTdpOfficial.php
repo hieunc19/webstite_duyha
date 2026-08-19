@@ -8,4 +8,6 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateTdpOfficial extends CreateRecord
 {
     protected static string $resource = TdpOfficialResource::class;
+
+    protected static bool $canCreateAnother = false;
 }

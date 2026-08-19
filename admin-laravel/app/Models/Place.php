@@ -14,6 +14,7 @@ class Place extends Model
         'name',
         'category',
         'address',
+        'phone',
         'lat',
         'lng',
         'description',
@@ -21,6 +22,16 @@ class Place extends Model
         'administrative_unit_id',
         'status',
     ];
+
+    protected static function booted()
+    {
+        static::saved(function () {
+            @exec('php ' . base_path('dump_to_json.php') . ' > /dev/null 2>&1 &');
+        });
+        static::deleted(function () {
+            @exec('php ' . base_path('dump_to_json.php') . ' > /dev/null 2>&1 &');
+        });
+    }
 
     protected $casts = [
         'lat' => 'double',

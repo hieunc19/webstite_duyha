@@ -1,0 +1,44 @@
+[
+    {
+        "id": 2,
+        "code": "Mẫu TK-CT05",
+        "title": "Tờ khai thông báo lưu trú qua đêm",
+        "name": "Tờ khai thông báo lưu trú qua đêm",
+        "category": "residence",
+        "categoryText": "Cư trú & Hộ khẩu",
+        "desc": "Tiếp nhận thông tin khách -> Ghi nhận Sổ tiếp nhận -> Nộp thông báo qua Cổng DVC \/ VNeID \/ Phần mềm ASM -> Hệ thống tự động chuyển Công an Phường.",
+        "fee": "Miễn phí",
+        "agency": "Công an Phường",
+        "docs": [
+            {
+                "name": "1. Thông tin định danh\/CCCD của người lưu trú\n2. Địa chỉ cơ sở\/hộ gia đình tiếp nhận lưu trú",
+                "quantity": "01 bản chính",
+                "file": "procedure-documents\/logo-hoi-lien-hiep-thanh-nien-viet-nam-thumbnail.jpg",
+                "file_url": "\/storage\/procedure-documents\/logo-hoi-lien-hiep-thanh-nien-viet-nam-thumbnail.jpg"
+            }
+        ],
+        "attachment_url": "\/storage\/procedure-documents\/logo-hoi-lien-hiep-thanh-nien-viet-nam-thumbnail.jpg",
+        "created_at": "16\/08\/2026"
+    },
+    {
+        "id": 1,
+        "code": "Mẫu TK-CT01",
+        "title": "Tờ khai đăng ký tạm trú trực tuyến",
+        "name": "Tờ khai đăng ký tạm trú trực tuyến",
+        "category": "residence",
+        "categoryText": "Cư trú & Hộ khẩu",
+        "desc": "- Bước 1: Cá nhân, tổ chức chuẩn bị hồ sơ theo quy định của pháp luật.\n- Bước 2: Cá nhân, tổ chức nộp hồ sơ tại Công an cấp xã.\n- Bước 3: Khi tiếp nhận hồ sơ đăng ký tạm trú, cơ quan đăng ký cư trú kiểm tra tính pháp lý và nội dung hồ sơ:\n+ Trường hợp hồ sơ đã đầy đủ, hợp lệ thì tiếp nhận hồ sơ và cấp Phiếu tiếp nhận hồ sơ và hẹn trả kết quả (mẫu CT04 ban hành kèm theo Thông tư số 56\/2021\/TT-BCA) cho người đăng ký;\n+ Trường hợp hồ sơ đủ điều kiện nhưng chưa đủ hồ sơ thì hướng dẫn bổ sung, hoàn thiện và cấp Phiếu hướng dẫn bổ sung, hoàn thiện hồ sơ (mẫu CT05 ban hành kèm theo Thông tư số 56\/2021\/TT-BCA) cho người đăng ký;\n+ Trường hợp hồ sơ không đủ điều kiện thì từ chối và cấp Phiếu từ chối tiếp nhận, giải quyết hồ sơ (mẫu CT06 ban hành kèm theo Thông tư số 56\/2021\/TT-BCA) cho người đăng ký.\n- Bước 4: Cá nhân, tổ chức nộp lệ phí đăng ký cư trú theo quy định.\n- Bước 5: Căn cứ theo ngày hẹn trên Phiếu tiếp nhận hồ sơ và hẹn trả kết quả để nhận thông báo kết quả giải quyết thủ tục đăng ký cư trú (nếu có).",
+        "fee": "Miễn phí",
+        "agency": "Công an Phường",
+        "docs": [
+            {
+                "name": "- Tờ khai thay đổi thông tin cư trú (Mẫu CT01 ban hành kèm theo Thông tư số 56\/2021\/TT-BCA); đối với người đăng ký tạm trú là người chưa thành niên thì trong tờ khai phải ghi rõ ý kiến đồng ý của cha, mẹ hoặc người giám hộ, trừ trường hợp đã có ý kiến đồng ý bằng văn bản;\n- Giấy tờ, tài liệu chứng minh chỗ ở hợp pháp.",
+                "quantity": "01 bản chính, 01 bản sao",
+                "file": "procedure-documents\/vanhoc-17676197898811201182047.jpg",
+                "file_url": "\/storage\/procedure-documents\/vanhoc-17676197898811201182047.jpg"
+            }
+        ],
+        "attachment_url": "\/storage\/procedure-documents\/vanhoc-17676197898811201182047.jpg",
+        "created_at": "16\/08\/2026"
+    }
+]

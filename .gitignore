@@ -52,3 +52,12 @@ Thumbs.db
 ERRORS.md
 GEMINI.md
 scratch/
+
+#===================================================================
+# Project Summary & Master Documentation (Local Only)
+#===================================================================
+PROJECT_SUMMARY.md
+SYSTEM_MASTER_GUIDE.md
+*SUMMARY*.md
+*MASTER_GUIDE*.md
+*SYSTEM_GUIDE*.md

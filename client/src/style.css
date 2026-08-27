@@ -862,14 +862,29 @@ body.portal-active {
   }
 }
 
-/* Hide Leaflet & Map Attribution / Watermarks */
-.leaflet-control-attribution,
-.leaflet-bottom.leaflet-right,
-.leaflet-control-container .leaflet-bottom {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
+/* Custom Leaflet Marker Fixes for Mobile & Desktop */
+.custom-leaflet-marker {
+  background: transparent !important;
+  border: none !important;
+  overflow: visible !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.custom-leaflet-marker .group > div:last-child {
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 640px) {
+  .custom-leaflet-marker .group > div:last-child {
+    max-width: 110px;
+    font-size: 10px !important;
+    padding: 2px 6px !important;
+  }
 }
 
 /* =========================================================================

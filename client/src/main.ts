@@ -714,18 +714,20 @@ class PortalApp {
 
       return `
         <div onclick="window.focusMapPlace(${p.id})"
-          class="min-w-[270px] max-w-[310px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl p-3 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xl flex items-center gap-3 shrink-0 cursor-pointer transition-all hover:scale-[1.02] hover:border-[#1d7fe0] hover:shadow-2xl group select-none">
-          <img src="${p.image || 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=200&q=80'}"
-            class="w-16 h-16 rounded-xl object-cover shrink-0 shadow-sm border border-slate-100 dark:border-slate-800 group-hover:brightness-105" alt="${p.name}" />
+          class="w-[270px] sm:w-[320px] max-w-[calc(100vw-95px)] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl p-2.5 sm:p-3.5 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xl flex items-center gap-3 shrink-0 cursor-pointer transition-all hover:scale-[1.02] hover:border-[#1d7fe0] hover:shadow-2xl group select-none snap-center">
+          <div class="w-14 h-14 sm:w-16 sm:h-16 shrink-0 rounded-xl sm:rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 shadow-sm bg-slate-100 dark:bg-slate-800">
+            <img src="${p.image || 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=200&q=80'}"
+              class="w-full h-full object-cover group-hover:brightness-105 transition-all" alt="${p.name}" />
+          </div>
           <div class="flex-1 min-w-0 flex flex-col justify-between py-0.5 space-y-1">
             <div class="flex items-center justify-between gap-1">
-              <span class="inline-block text-[10px] font-black uppercase ${badgeColor} border px-2 py-0.5 rounded-md leading-none">${badgeText}</span>
-              <button onclick="event.stopPropagation(); window.viewPlaceDetail(${p.id})" class="text-[11px] font-bold text-[#1d7fe0] hover:underline flex items-center gap-0.5">
+              <span class="inline-block text-[10px] font-black uppercase ${badgeColor} border px-2 py-0.5 rounded-md leading-none truncate max-w-[110px]">${badgeText}</span>
+              <button onclick="event.stopPropagation(); window.viewPlaceDetail(${p.id})" class="text-[11px] font-bold text-[#1d7fe0] hover:underline flex items-center gap-0.5 shrink-0">
                 <span>Chi tiết</span>
                 <span class="material-symbols-outlined text-xs">arrow_forward</span>
               </button>
             </div>
-            <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white truncate group-hover:text-[#1d7fe0] transition-colors" title="${p.name}">${p.name}</h4>
+            <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white truncate group-hover:text-[#1d7fe0] transition-colors leading-tight" title="${p.name}">${p.name}</h4>
             <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 truncate flex items-center gap-0.5">
               <span class="material-symbols-outlined text-[13px] text-red-500 shrink-0">location_on</span>
               <span class="truncate">${p.address || 'Phường Duy Hà'}</span>
@@ -2365,17 +2367,17 @@ class PortalApp {
         className: 'custom-leaflet-marker',
         html: `
           <div class="relative group cursor-pointer flex flex-col items-center">
-            <div class="w-9 h-9 rounded-full bg-gradient-to-tr ${gradient} text-white shadow-xl border-2 ${borderColor} flex items-center justify-center transition-transform hover:scale-125">
-              <span class="material-symbols-outlined text-lg">${iconName}</span>
+            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr ${gradient} text-white shadow-xl border-2 ${borderColor} flex items-center justify-center transition-transform hover:scale-125">
+              <span class="material-symbols-outlined text-base sm:text-lg">${iconName}</span>
             </div>
-            <div class="mt-1 px-2.5 py-1 rounded-md bg-slate-900/90 backdrop-blur-md text-white font-bold text-xs shadow-md whitespace-nowrap border border-slate-700 pointer-events-none">
+            <div class="mt-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-slate-900/90 backdrop-blur-md text-white font-bold text-[10px] sm:text-xs shadow-md border border-slate-700 pointer-events-none max-w-[110px] sm:max-w-[150px] truncate text-center">
               ${p.name}
             </div>
           </div>
         `,
-        iconSize: [140, 56],
-        iconAnchor: [70, 20],
-        popupAnchor: [0, -22]
+        iconSize: [120, 50],
+        iconAnchor: [60, 16],
+        popupAnchor: [0, -18]
       });
 
       const marker = L.marker([p.lat, p.lng], { icon: customIcon });

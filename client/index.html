@@ -782,12 +782,12 @@
     class="fixed inset-0 top-[65px] sm:top-[73px] z-[2500] hidden bg-white dark:bg-slate-950 flex-col overflow-hidden">
 
     <!-- Floating Map Search Box -->
-    <div class="fixed top-20 sm:top-24 left-3 sm:left-6 z-40 w-72 sm:w-80 max-w-[calc(100vw-2rem)]">
+    <div class="fixed top-18 sm:top-24 left-3 right-3 sm:right-auto sm:left-6 z-40 sm:w-80 max-w-[calc(100vw-1.5rem)]">
       <div
-        class="flex items-center bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl px-4 py-2.5 shadow-xl border border-slate-200 dark:border-slate-800">
-        <span class="material-symbols-outlined text-[#3399fe] mr-2.5 text-xl shrink-0">search</span>
+        class="flex items-center bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl px-3.5 py-2 sm:px-4 sm:py-2.5 shadow-xl border border-slate-200/90 dark:border-slate-800">
+        <span class="material-symbols-outlined text-[#3399fe] mr-2 text-xl shrink-0">search</span>
         <input id="map-search-input"
-          class="bg-transparent border-none focus:ring-0 text-xs sm:text-sm w-full placeholder:text-slate-400 font-medium outline-none text-slate-800 dark:text-white"
+          class="bg-transparent border-none focus:ring-0 text-xs sm:text-sm w-full placeholder:text-slate-400 font-medium outline-none text-slate-800 dark:text-white min-w-0"
           placeholder="Tìm kiếm địa điểm trên bản đồ..." type="text" autocomplete="off" />
       </div>
     </div>
@@ -813,39 +813,39 @@
 
     <!-- Bottom Floating Agencies / Places Dock -->
     <div
-      class="fixed bottom-4 left-2 right-2 sm:left-6 sm:right-6 z-40 flex flex-col gap-2 items-end pointer-events-none">
+      class="fixed bottom-3 sm:bottom-4 left-2 right-2 sm:left-6 sm:right-6 z-40 flex flex-col gap-2 items-center sm:items-end pointer-events-none">
       <!-- Toggle button with agency count badge -->
       <div class="pointer-events-auto flex items-center gap-2">
         <button id="toggle-map-places-btn"
           onclick="window.toggleMapPlacesDock()"
-          class="flex items-center gap-2 bg-[#1d7fe0] hover:bg-[#156bc2] text-white font-extrabold text-xs sm:text-sm px-4 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-2xl transition-all active:scale-95 border border-white/20 backdrop-blur-md cursor-pointer select-none">
+          class="flex items-center gap-1.5 sm:gap-2 bg-[#1d7fe0] hover:bg-[#156bc2] text-white font-extrabold text-[11px] sm:text-xs sm:text-sm px-3.5 sm:px-5 py-1.5 sm:py-2.5 rounded-full shadow-2xl transition-all active:scale-95 border border-white/20 backdrop-blur-md cursor-pointer select-none">
           <span class="material-symbols-outlined text-base sm:text-lg">account_balance</span>
-          <span>DANH SÁCH CƠ QUAN &amp; ĐỊA ĐIỂM</span>
-          <span id="map-places-count-badge" class="px-2 py-0.5 rounded-full bg-white/20 text-[11px] font-bold">--</span>
-          <span id="map-places-toggle-icon" class="material-symbols-outlined text-lg transition-transform duration-200">expand_more</span>
+          <span class="truncate">DANH SÁCH CƠ QUAN &amp; ĐỊA ĐIỂM</span>
+          <span id="map-places-count-badge" class="px-2 py-0.5 rounded-full bg-white/20 text-[10px] sm:text-[11px] font-bold">--</span>
+          <span id="map-places-toggle-icon" class="material-symbols-outlined text-base sm:text-lg transition-transform duration-200">expand_more</span>
         </button>
       </div>
 
       <!-- Places Carousel Container Flanked by Left and Right Arrow Buttons -->
-      <div id="map-places-dock-wrapper" class="w-full pointer-events-auto flex items-center gap-2 sm:gap-3 transition-all duration-300">
+      <div id="map-places-dock-wrapper" class="w-full pointer-events-auto flex items-center gap-1.5 sm:gap-3 transition-all duration-300">
         <!-- Navigation Arrow: Previous / Left (Flanking left side) -->
         <button onclick="window.scrollMapPlacesDock('prev')"
-          class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-800 dark:text-slate-100 hover:text-[#1d7fe0] dark:hover:text-sky-400 hover:bg-sky-50 dark:hover:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xl flex items-center justify-center transition-all active:scale-90 cursor-pointer shrink-0"
+          class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-800 dark:text-slate-100 hover:text-[#1d7fe0] dark:hover:text-sky-400 hover:bg-sky-50 dark:hover:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xl flex items-center justify-center transition-all active:scale-90 cursor-pointer shrink-0"
           title="Cuộn sang trái">
-          <span class="material-symbols-outlined text-2xl sm:text-3xl">chevron_left</span>
+          <span class="material-symbols-outlined text-xl sm:text-3xl">chevron_left</span>
         </button>
 
         <!-- Places Horizontal Smooth Scroll List (Compact, Clean & Glassmorphic) -->
         <div id="map-places-carousel"
-          class="flex-1 overflow-x-auto pb-1 flex items-center gap-3.5 transition-all duration-300 scroll-smooth"
+          class="flex-1 overflow-x-auto pb-1 flex items-center gap-2.5 sm:gap-3.5 transition-all duration-300 scroll-smooth snap-x snap-mandatory"
           style="scrollbar-width: none; -ms-overflow-style: none;">
         </div>
 
         <!-- Navigation Arrow: Next / Right (Flanking right side) -->
         <button onclick="window.scrollMapPlacesDock('next')"
-          class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-800 dark:text-slate-100 hover:text-[#1d7fe0] dark:hover:text-sky-400 hover:bg-sky-50 dark:hover:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xl flex items-center justify-center transition-all active:scale-90 cursor-pointer shrink-0"
+          class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-slate-800 dark:text-slate-100 hover:text-[#1d7fe0] dark:hover:text-sky-400 hover:bg-sky-50 dark:hover:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-2xl flex items-center justify-center transition-all active:scale-90 cursor-pointer shrink-0"
           title="Cuộn sang phải">
-          <span class="material-symbols-outlined text-2xl sm:text-3xl">chevron_right</span>
+          <span class="material-symbols-outlined text-xl sm:text-3xl">chevron_right</span>
         </button>
       </div>
     </div>

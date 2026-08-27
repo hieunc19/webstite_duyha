@@ -174,14 +174,14 @@
             <!-- Header -->
             <div style="border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
                 <span style="font-size: 0.95rem; font-weight: 800; color: #0f172a;" class="dark:text-white">
-                    📅 Cập nhật File ảnh Lịch Tiếp công dân
+                    📅 Cập nhật File Lịch Tiếp công dân (Ảnh hoặc PDF)
                 </span>
             </div>
 
             <!-- Custom Styled Upload Dropzone -->
             <div>
                 <label class="cr-dropzone">
-                    <input type="file" wire:model="imageFile" accept="image/*" class="cr-hidden-file" />
+                    <input type="file" wire:model="imageFile" accept="image/*,.pdf,application/pdf" class="cr-hidden-file" />
                     <div class="cr-dropzone-inner">
                         <div class="cr-dropzone-icon">
                             <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -189,40 +189,70 @@
                             </svg>
                         </div>
                         <div>
-                            <span class="cr-dropzone-main">Bấm vào đây để chọn File ảnh Lịch tiếp công dân</span>
-                            <span class="cr-dropzone-sub">Định dạng hỗ trợ: JPG, PNG, WEBP (Bản scan / ảnh chụp)</span>
+                            <span class="cr-dropzone-main">Bấm vào đây để chọn File Lịch tiếp công dân</span>
+                            <span class="cr-dropzone-sub">Định dạng hỗ trợ: JPG, PNG, WEBP, PDF (Bản scan / ảnh chụp / văn bản PDF)</span>
                         </div>
                     </div>
                 </label>
 
                 <div wire:loading wire:target="imageFile" style="font-size: 0.75rem; color: #0284c7; font-weight: 700; margin-top: 0.4rem;">
-                    ⏳ Đang nạp ảnh lên...
+                    ⏳ Đang nạp tệp lên...
                 </div>
             </div>
 
-            <!-- Live Image Preview Area -->
+            <!-- Live Image / PDF Preview Area -->
             <div class="cr-preview-box">
                 @if($imageFile)
-                    <img src="{{ $imageFile->temporaryUrl() }}" alt="Ảnh vừa chọn" class="cr-preview-img" />
-                    <span style="font-size: 0.75rem; font-weight: 800; color: #0284c7; background: #e0f2fe; padding: 0.2rem 0.6rem; border-radius: 9999px;">
-                        Ảnh mới vừa chọn (Chưa bấm Lưu)
-                    </span>
+                    @if($this->isUploadedPdf)
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1rem; text-align: center;">
+                            <div style="width: 3.5rem; height: 3.5rem; border-radius: 0.75rem; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                                📄
+                            </div>
+                            <span style="font-size: 0.85rem; font-weight: 800; color: #0f172a;" class="dark:text-white">
+                                {{ $imageFile->getClientOriginalName() }}
+                            </span>
+                            <span style="font-size: 0.75rem; font-weight: 800; color: #0284c7; background: #e0f2fe; padding: 0.2rem 0.6rem; border-radius: 9999px;">
+                                File PDF mới vừa chọn (Chưa bấm Lưu)
+                            </span>
+                        </div>
+                    @else
+                        <img src="{{ $imageFile->temporaryUrl() }}" alt="Ảnh vừa chọn" class="cr-preview-img" />
+                        <span style="font-size: 0.75rem; font-weight: 800; color: #0284c7; background: #e0f2fe; padding: 0.2rem 0.6rem; border-radius: 9999px;">
+                            Ảnh mới vừa chọn (Chưa bấm Lưu)
+                        </span>
+                    @endif
                 @elseif(!empty($this->currentImageUrl))
                     <div style="width: 100%; display: flex; align-items: center; justify-content: space-between; padding-bottom: 0.5rem; border-bottom: 1px solid #e2e8f0;" class="dark:border-slate-800">
                         <span style="font-size: 0.75rem; font-weight: 700; color: #64748b;" class="dark:text-slate-400">
-                            Ảnh đang hiển thị trên website:
+                            Tệp đang hiển thị trên website:
                         </span>
                         <div>
-                            <button type="button" wire:click="deleteImage" wire:confirm="Bạn có chắc muốn gỡ ảnh này không?" class="cr-btn-danger">
-                                🗑️ Gỡ ảnh
+                            <button type="button" wire:click="deleteImage" wire:confirm="Bạn có chắc muốn gỡ tệp này không?" class="cr-btn-danger">
+                                🗑️ Gỡ file
                             </button>
                         </div>
                     </div>
-                    <img src="{{ $this->currentImageUrl }}" alt="Ảnh lịch tiếp công dân" class="cr-preview-img" />
+
+                    @if($this->isCurrentPdf)
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.65rem; padding: 1rem; text-align: center;">
+                            <div style="width: 3.5rem; height: 3.5rem; border-radius: 0.75rem; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                                📕
+                            </div>
+                            <span style="font-size: 0.85rem; font-weight: 800; color: #0f172a;" class="dark:text-white">
+                                File Văn bản PDF Lịch tiếp công dân
+                            </span>
+                            <a href="{{ $this->currentImageUrl }}" target="_blank" style="font-size: 0.78rem; font-weight: 700; color: #0284c7; background: #f0f9ff; border: 1px solid #bae6fd; padding: 0.35rem 0.85rem; border-radius: 0.5rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem;">
+                                <span>Xem file PDF trực tiếp</span>
+                                <span>↗</span>
+                            </a>
+                        </div>
+                    @else
+                        <img src="{{ $this->currentImageUrl }}" alt="Ảnh lịch tiếp công dân" class="cr-preview-img" />
+                    @endif
                 @else
                     <div style="text-align: center; padding: 1.5rem 1rem; color: #94a3b8;">
-                        <p style="font-size: 0.85rem; font-weight: 700; color: #64748b; margin: 0 0 0.25rem 0;">Chưa có file ảnh lịch tiếp công dân</p>
-                        <p style="font-size: 0.75rem; margin: 0;">Vui lòng bấm vào khung bên trên để chọn file ảnh và bấm <strong>Lưu &amp; Cập nhật</strong>.</p>
+                        <p style="font-size: 0.85rem; font-weight: 700; color: #64748b; margin: 0 0 0.25rem 0;">Chưa có file lịch tiếp công dân</p>
+                        <p style="font-size: 0.75rem; margin: 0;">Vui lòng bấm vào khung bên trên để chọn file Ảnh hoặc PDF và bấm <strong>Lưu &amp; Cập nhật</strong>.</p>
                     </div>
                 @endif
             </div>
@@ -233,7 +263,7 @@
                     <svg style="width: 1.1rem; height: 1.1rem;" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                     </svg>
-                    <span>Lưu &amp; Cập nhật Lịch tiếp dân</span>
+                    <span>Lưu &amp; Cập nhật File Lịch tiếp dân</span>
                 </button>
             </div>
 

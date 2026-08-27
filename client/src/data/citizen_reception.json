@@ -1,9 +1,15 @@
 {
     "title": "LỊCH TIẾP CÔNG DÂN ĐỊNH KỲ NĂM 2026",
-    "image": "citizen-reception\/9sqeGdJe0XnZharSDI0g0EydQlVdVDWdcoFzXCeH.jpg",
+    "image": "\/storage\/citizen-reception\/PVoubOrp5MFSn0ggnBBnSn5b1Da6nVoSYf3GiUOK.pdf",
     "schedule_time": "Thứ 5 hàng tuần (Sáng: 07h30 - 11h30 | Chiều: 13h30 - 17h00)",
     "location": "Phòng Tiếp công dân — Trụ sở UBND Phường Duy Hà (Số 01 đường Lê Lợi, TP. Ninh Bình)",
     "officer": "Đồng chí Chủ tịch UBND Phường và các Phó Chủ tịch UBND Phường",
     "notes": "Công dân khi đến khiếu nại, tố cáo, kiến nghị, phản ánh cần xuất trình Căn cước công dân và các giấy tờ, tài liệu liên quan đến nội dung phản ánh.",
-    "updated_at": "2026-08-19 05:47:54"
+    "rules": [
+        "Xuất trình giấy tờ tùy thân (Căn cước công dân hoặc VNeID Mức 2) khi vào phòng tiếp dân.",
+        "Trình bày nội dung rõ ràng, trung thực và cung cấp chứng cứ, tài liệu liên quan đến vụ việc.",
+        "Giữ gìn trật tự, trang phục lịch sự, chấp hành hướng dẫn của cán bộ tiếp dân.",
+        "Nghiêm cấm mang theo vũ khí, chất cháy nổ hoặc các vật dụng gây nguy hiểm vào trụ sở."
+    ],
+    "updated_at": "2026-08-27 03:33:43"
 }

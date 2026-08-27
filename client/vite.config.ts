@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 export default defineConfig({
+  cacheDir: './node_modules/.vite_app',
   plugins: [
     {
       name: 'redirect-admin',
@@ -33,6 +34,9 @@ export default defineConfig({
       }
     }
   },
+  optimizeDeps: {
+    include: ['leaflet', 'leaflet.markercluster', 'swiper', 'leaflet-routing-machine'],
+  },
   build: {
     rollupOptions: {
       input: {
@@ -41,7 +45,6 @@ export default defineConfig({
         meritorious_families: resolve(__dirname, './meritorious-families.html'),
         officials: resolve(__dirname, './officials.html'),
         waste_schedule: resolve(__dirname, './waste-schedule.html'),
-        forms: resolve(__dirname, './forms.html'),
         agencies: resolve(__dirname, './agencies.html'),
         procedures: resolve(__dirname, './procedures.html'),
         video_guides: resolve(__dirname, './video-guides.html'),

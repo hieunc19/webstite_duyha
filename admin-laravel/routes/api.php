@@ -258,6 +258,19 @@ Route::get('/homepage-sections', function () {
     });
 });
 
+Route::get('/subpage-banners', function () {
+    $setting = \App\Models\Setting::where('key', 'subpage_banners')->first();
+    if ($setting && !empty($setting->value)) {
+        $decoded = json_decode($setting->value, true);
+        if (is_array($decoded)) {
+            return response()->json($decoded);
+        }
+    }
+
+    $page = new \App\Filament\Pages\ManageSubpageBanners();
+    return response()->json($page->defaultBanners());
+});
+
 Route::get('/celebration-events/active', function (Request $request) {
     $event = \App\Models\CelebrationEvent::where('is_featured', true)
         ->where('status', 'active')
@@ -388,6 +401,20 @@ Route::get('/feedback-config', function () {
     ]);
 });
 
+Route::get('/feedback-process', function () {
+    $fbProcessRaw = \App\Models\Setting::where('key', 'feedback_process_guide')->value('value');
+    $fbProcessData = $fbProcessRaw ? json_decode($fbProcessRaw, true) : [
+        'title' => 'QUY TRÌNH 4 BƯỚC TIẾP NHẬN',
+        'steps' => [
+            ['title' => 'Bước 1: Tiếp nhận phản ánh', 'desc' => 'Người dân gửi thông tin phản ánh qua hệ thống.'],
+            ['title' => 'Bước 2: Phân loại và chuyển xử lý', 'desc' => 'Phản ánh được phân loại và chuyển đến bộ phận phụ trách.'],
+            ['title' => 'Bước 3: Kiểm tra, xác minh', 'desc' => 'Cán bộ phụ trách kiểm tra thực tế và xác minh nội dung phản ánh.'],
+            ['title' => 'Bước 4: Phối hợp giải quyết', 'desc' => 'Các bộ phận liên quan thực hiện xử lý theo chức năng và thẩm quyền.'],
+        ],
+    ];
+    return response()->json($fbProcessData);
+});
+
 
 Route::post('/submit-feedback', function (Request $request) {
     $validated = $request->validate([
@@ -511,6 +538,13 @@ Route::get('/citizen-reception', function () {
     $location = \App\Models\Setting::where('key', 'citizen_reception_location')->value('value') ?? 'Phòng Tiếp công dân — Trụ sở UBND Phường Duy Hà (Số 01 đường Lê Lợi, TP. Ninh Bình)';
     $officer = \App\Models\Setting::where('key', 'citizen_reception_officer')->value('value') ?? 'Đồng chí Chủ tịch UBND Phường và các Phó Chủ tịch UBND Phường';
     $notes = \App\Models\Setting::where('key', 'citizen_reception_notes')->value('value') ?? 'Công dân khi đến khiếu nại, tố cáo, kiến nghị, phản ánh cần xuất trình Căn cước công dân và các giấy tờ, tài liệu liên quan đến nội dung phản ánh.';
+    $rulesRaw = \App\Models\Setting::where('key', 'citizen_reception_rules')->value('value');
+    $rules = $rulesRaw ? json_decode($rulesRaw, true) : [
+        'Xuất trình giấy tờ tùy thân (Căn cước công dân hoặc VNeID Mức 2) khi vào phòng tiếp dân.',
+        'Trình bày nội dung rõ ràng, trung thực và cung cấp chứng cứ, tài liệu liên quan đến vụ việc.',
+        'Giữ gìn trật tự, trang phục lịch sự, chấp hành hướng dẫn của cán bộ tiếp dân.',
+        'Nghiêm cấm mang theo vũ khí, chất cháy nổ hoặc các vật dụng gây nguy hiểm vào trụ sở.',
+    ];
 
     $imageUrl = null;
     if (!empty($rawImage)) {
@@ -525,110 +559,39 @@ Route::get('/citizen-reception', function () {
         'location' => $location,
         'officer' => $officer,
         'notes' => $notes,
+        'rules' => $rules,
     ]);
 });
 
-Route::get('/procedures', function () {
-    return response()->json(
-        \App\Models\Procedure::where('is_active', true)
-            ->orderBy('id', 'desc')
-            ->get()
-            ->map(function($p) {
-                $attachmentUrl = null;
-                if ($p->attachment) {
-                    $attachmentUrl = \Illuminate\Support\Str::startsWith($p->attachment, 'http') ? $p->attachment : url('/api/storage/' . $p->attachment);
-                }
-                $categoryMap = [
-                    'residence' => 'Cư trú & Hộ khẩu',
-                    'civil' => 'Hộ tịch & Tư pháp',
-                    'land' => 'Địa chính & Đất đai',
-                    'vneid' => 'Định danh VNeID',
-                    'social' => 'An sinh xã hội & Trợ cấp',
-                    'tax' => 'Thuế & Tài chính',
-                    'other' => 'Thủ tục khác',
-                ];
+Route::get('/waste-classification-guide', function () {
+    $wasteGuideRaw = \App\Models\Setting::where('key', 'waste_classification_guide')->value('value');
+    $wasteGuideData = $wasteGuideRaw ? json_decode($wasteGuideRaw, true) : [
+        'title' => 'Hướng dẫn phân loại rác tại nguồn',
+        'subtitle' => 'Thực hiện Luật Bảo vệ môi trường — Chung tay xây dựng Phường Duy Hà Xanh - Sạch - Văn minh',
+        'categories' => [
+            [
+                'title' => '1. RÁC HỮU CƠ (DỄ PHÂN HỦY)',
+                'desc' => 'Thức ăn thừa, rau củ quả thải loại, vỏ trái cây, bã chè, lá cây nhỏ...',
+                'icon' => 'compost',
+                'theme' => 'emerald',
+            ],
+            [
+                'title' => '2. RÁC TÁI CHẾ (PHẾ LIỆU)',
+                'desc' => 'Bìa carton, giấy báo cũ, chai lọ nhựa, vỏ lon kim loại, đồ nhựa gia dụng...',
+                'icon' => 'inventory_2',
+                'theme' => 'amber',
+            ],
+            [
+                'title' => '3. RÁC THẢI CÒN LẠI (VÔ CƠ)',
+                'desc' => 'Túi nilon bẩn, hộp xốp, tã bỉm, gốm sứ vỡ, rác quét nhà, cành cây tỉa...',
+                'icon' => 'delete_sweep',
+                'theme' => 'slate',
+            ],
+        ],
+        'regulation' => 'Bỏ rác đúng giờ trước khi xe đến 15-30 phút. Hành vi vứt rác bừa bãi ra vỉa hè, lòng đường bị phạt tiền từ 500.000đ — 2.000.000đ theo Nghị định 45/2022/NĐ-CP.',
+    ];
 
-                $docsList = collect($p->docs ?? [])->map(function($doc) {
-                    if (is_array($doc)) {
-                        $file = $doc['file'] ?? null;
-                        $fileUrl = null;
-                        if ($file) {
-                            $fileUrl = \Illuminate\Support\Str::startsWith($file, 'http') ? $file : url('/api/storage/' . $file);
-                        }
-                        return [
-                            'name' => $doc['name'] ?? '',
-                            'quantity' => $doc['quantity'] ?? '01 bản chính',
-                            'file' => $file,
-                            'file_url' => $fileUrl,
-                        ];
-                    }
-                    return [
-                        'name' => (string) $doc,
-                        'quantity' => '01 bản chính',
-                        'file' => null,
-                        'file_url' => null,
-                    ];
-                })->values();
-
-                return [
-                    'id' => $p->id,
-                    'code' => $p->code ?? ('TTHC-' . str_pad($p->id, 3, '0', STR_PAD_LEFT)),
-                    'title' => $p->title,
-                    'category' => $p->category,
-                    'categoryText' => $categoryMap[$p->category] ?? 'Thủ tục khác',
-                    'desc' => $p->desc,
-                    'agency' => $p->agency,
-                    'docs' => $docsList,
-                    'created_at' => $p->created_at ? $p->created_at->format('d/m/Y') : null,
-                ];
-            })
-    );
-});
-
-Route::get('/procedure-videos', function () {
-    return response()->json(
-        \App\Models\ProcedureVideo::where('is_active', true)
-            ->orderBy('sort_order', 'asc')
-            ->orderBy('id', 'desc')
-            ->get()
-            ->map(function($v) {
-                $categoryMap = [
-                    'residence' => 'Cư trú & Hộ khẩu',
-                    'vneid' => 'Định danh VNeID',
-                    'civil' => 'Hộ tịch & Chứng thực',
-                    'land' => 'Đất đai & Xây dựng',
-                    'social' => 'An sinh xã hội',
-                    'other' => 'Lĩnh vực khác',
-                ];
-
-                $url = trim($v->video_url ?? '');
-                if (!empty($url)) {
-                    // Google Drive auto-convert
-                    if (str_contains($url, 'drive.google.com')) {
-                        if (!str_contains($url, '/preview')) {
-                            if (preg_match('/\/file\/d\/([a-zA-Z0-9_-]+)/', $url, $m) || preg_match('/[?&]id=([a-zA-Z0-9_-]+)/', $url, $m)) {
-                                $url = 'https://drive.google.com/file/d/' . $m[1] . '/preview';
-                            }
-                        }
-                    }
-                    // YouTube auto-convert
-                    elseif (!str_contains($url, 'youtube.com/embed/')) {
-                        if (preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([\w-]{11})/', $url, $m)) {
-                            $url = 'https://www.youtube.com/embed/' . $m[1] . '?controls=1&rel=0&enablejsapi=1';
-                        }
-                    }
-                }
-
-                return [
-                    'id' => $v->id,
-                    'title' => $v->title,
-                    'category' => $v->category,
-                    'categoryText' => $categoryMap[$v->category] ?? 'Lĩnh vực khác',
-                    'videoUrl' => $url,
-                    'sort_order' => $v->sort_order,
-                ];
-            })
-    );
+    return response()->json($wasteGuideData);
 });
 
 Route::get('/policies', function () {

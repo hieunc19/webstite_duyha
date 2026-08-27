@@ -184,18 +184,6 @@
     </style>
 
     <div class="builder-container">
-        <!-- Top Toolbar Actions -->
-        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem; background: #ffffff; padding: 1rem 1.25rem; border-radius: 0.75rem; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);" class="dark:bg-slate-900 dark:border-slate-800">
-            <div>
-                <div style="font-size: 1.1rem; font-weight: 800; color: #0f172a;" class="dark:text-white">Bố cục Khối Trang chủ (Page Builder)</div>
-                <div style="font-size: 0.82rem; color: #64748b;" class="dark:text-slate-400">Sử dụng nút ⬆️ ⬇️ để thay đổi thứ tự hiển thị, bật/tắt hoặc chỉnh sửa nội dung từng khối</div>
-            </div>
-            <button wire:click="createCustomBlock" class="btn-ui" style="background: #0284c7; color: #fff; padding: 0.6rem 1.1rem; font-size: 0.88rem;">
-                <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                <span>+ Thêm khối nội dung mới</span>
-            </button>
-        </div>
-
         <!-- Section Cards List -->
         <div style="display: flex; flex-direction: column; gap: 1rem;">
             @foreach($sections as $index => $sec)
@@ -629,55 +617,22 @@
                                 </div>
                             @endif
 
-                            <!-- Căn chỉnh Kích thước & Khung hình Banner -->
-                            <div style="border-top: 1px solid #e2e8f0; padding-top: 0.85rem; display: flex; flex-direction: column; gap: 0.75rem;">
-                                <div style="font-size: 0.85rem; font-weight: 800; color: #0284c7;">📐 Căn chỉnh Khung hình & Kích thước Banner (Tránh bị cắt xén)</div>
-
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                                    <!-- Chiều cao Banner -->
-                                    <div>
-                                        <label style="font-size: 0.78rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.3rem;">
-                                            Chiều cao Banner
-                                        </label>
-                                        <select wire:model="heroHeight" class="modal-input" style="font-size: 0.82rem; font-weight: 600;">
-                                            <option value="compact">Gọn nhẹ (~280px)</option>
-                                            <option value="standard">Tiêu chuẩn (~420px) [Khuyên dùng]</option>
-                                            <option value="cinematic">Rộng lớn / Điện ảnh (~560px)</option>
-                                            <option value="auto_16_9">Tự căn theo tỷ lệ chuẩn 16:9</option>
-                                        </select>
-                                    </div>
-
-                                    <!-- Chế độ hiển thị khung hình -->
-                                    <div>
-                                        <label style="font-size: 0.78rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.3rem;">
-                                            Chế độ phủ hình / Video
-                                        </label>
-                                        <select wire:model="heroFit" class="modal-input" style="font-size: 0.82rem; font-weight: 600;">
-                                            <option value="cover">Tràn viền toàn cảnh (Cover - Đẹp nhất)</option>
-                                            <option value="contain">Giữ trọn 100% không cắt (Contain)</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <!-- Vị trí căn chỉnh tiêu điểm -->
-                                <div>
-                                    <label style="font-size: 0.78rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.3rem;">
-                                        Tiêu điểm căn chỉnh (Tránh bị cắt mất nóc nhà / người / cảnh trên)
-                                    </label>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem;">
-                                        <button type="button" wire:click="$set('heroPosition', 'top')" 
-                                            style="padding: 0.45rem 0.5rem; border-radius: 0.4rem; font-size: 0.78rem; font-weight: 700; border: 1px solid #cbd5e1; cursor: pointer; {{ $heroPosition === 'top' ? 'background: #e0f2fe; color: #0284c7; border-color: #38bdf8;' : 'background: #fff; color: #475569;' }}">
-                                            ⬆️ Ưu tiên Phía trên
-                                        </button>
-                                        <button type="button" wire:click="$set('heroPosition', 'center')" 
-                                            style="padding: 0.45rem 0.5rem; border-radius: 0.4rem; font-size: 0.78rem; font-weight: 700; border: 1px solid #cbd5e1; cursor: pointer; {{ $heroPosition === 'center' ? 'background: #e0f2fe; color: #0284c7; border-color: #38bdf8;' : 'background: #fff; color: #475569;' }}">
-                                            ⏺️ Căn chính giữa
-                                        </button>
-                                        <button type="button" wire:click="$set('heroPosition', 'bottom')" 
-                                            style="padding: 0.45rem 0.5rem; border-radius: 0.4rem; font-size: 0.78rem; font-weight: 700; border: 1px solid #cbd5e1; cursor: pointer; {{ $heroPosition === 'bottom' ? 'background: #e0f2fe; color: #0284c7; border-color: #38bdf8;' : 'background: #fff; color: #475569;' }}">
-                                            ⬇️ Ưu tiên Phía dưới
-                                        </button>
-                                    </div>
+                            <!-- Căn chỉnh Kích thước Banner -->
+                            <div style="border-top: 1px solid #e2e8f0; padding-top: 0.85rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                                <label class="modal-field-label">Kích thước Banner</label>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem;">
+                                    <button type="button" wire:click="$set('heroHeight', 'compact')" 
+                                        style="padding: 0.55rem 0.65rem; border-radius: 0.5rem; font-size: 0.85rem; font-weight: 700; border: 1.5px solid #cbd5e1; cursor: pointer; transition: all 0.2s; {{ $heroHeight === 'compact' ? 'background: #e0f2fe; color: #0284c7; border-color: #0284c7; box-shadow: 0 1px 2px rgba(0,0,0,0.05);' : 'background: #fff; color: #475569;' }}">
+                                        Nhỏ
+                                    </button>
+                                    <button type="button" wire:click="$set('heroHeight', 'standard')" 
+                                        style="padding: 0.55rem 0.65rem; border-radius: 0.5rem; font-size: 0.85rem; font-weight: 700; border: 1.5px solid #cbd5e1; cursor: pointer; transition: all 0.2s; {{ $heroHeight === 'standard' || empty($heroHeight) ? 'background: #e0f2fe; color: #0284c7; border-color: #0284c7; box-shadow: 0 1px 2px rgba(0,0,0,0.05);' : 'background: #fff; color: #475569;' }}">
+                                        Vừa
+                                    </button>
+                                    <button type="button" wire:click="$set('heroHeight', 'cinematic')" 
+                                        style="padding: 0.55rem 0.65rem; border-radius: 0.5rem; font-size: 0.85rem; font-weight: 700; border: 1.5px solid #cbd5e1; cursor: pointer; transition: all 0.2s; {{ $heroHeight === 'cinematic' ? 'background: #e0f2fe; color: #0284c7; border-color: #0284c7; box-shadow: 0 1px 2px rgba(0,0,0,0.05);' : 'background: #fff; color: #475569;' }}">
+                                        To
+                                    </button>
                                 </div>
                             </div>
 

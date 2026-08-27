@@ -1,0 +1,112 @@
+{
+    "procedures": {
+        "page_code": "procedures",
+        "page_name": "Thủ tục hành chính",
+        "group_name": "Dịch vụ công & Thủ tục",
+        "page_url": "\/procedures.html?tab=procedures",
+        "badge_text": "Cổng Dịch vụ công trực tuyến",
+        "badge_icon": "assignment",
+        "title": "Thủ tục Hành chính Phường Duy Hà",
+        "subtitle": "Tra cứu quy trình giải quyết, thành phần hồ sơ, thời hạn và lệ phí các thủ tục hành chính cấp phường.",
+        "bg_image": "\/storage\/banners\/subpage_banner_procedures_1787282472.png"
+    },
+    "policies": {
+        "page_code": "policies",
+        "page_name": "Chính sách & Quy định",
+        "group_name": "Dịch vụ công & Thủ tục",
+        "page_url": "\/procedures.html?tab=policies",
+        "badge_text": "Phổ biến giáo dục pháp luật",
+        "badge_icon": "gavel",
+        "title": "Văn bản Chính sách & Quy định mới",
+        "subtitle": "Tra cứu các nghị quyết, quyết định, kế hoạch chỉ đạo điều hành của Đảng ủy, HĐND và UBND Phường Duy Hà.",
+        "bg_image": "\/storage\/banners\/subpage_banner_policies_1787131037.jfif"
+    },
+    "video_guides": {
+        "page_code": "video_guides",
+        "page_name": "Video hướng dẫn thủ tục",
+        "group_name": "Dịch vụ công & Thủ tục",
+        "page_url": "\/procedures.html?tab=videos",
+        "badge_text": "Hướng dẫn trực quan sinh động",
+        "badge_icon": "play_circle",
+        "title": "Video Hướng dẫn Thủ tục Hành chính & Tiện ích",
+        "subtitle": "Tổng hợp các video hướng dẫn chi tiết từng bước thực hiện dịch vụ công trực tuyến và sử dụng bản đồ số.",
+        "bg_image": "\/storage\/banners\/subpage_banner_video_guides_1787131042.jfif"
+    },
+    "citizen_reception": {
+        "page_code": "citizen_reception",
+        "page_name": "Lịch tiếp công dân định kỳ",
+        "group_name": "Lịch công tác & Tiếp dân",
+        "page_url": "\/citizen-reception.html",
+        "badge_text": "Công khai — Minh bạch — Kịp thời",
+        "badge_icon": "calendar_month",
+        "title": "Lịch Tiếp công dân định kỳ UBND Phường Duy Hà",
+        "subtitle": "Thông tin lịch trực tiếp công dân của Lãnh đạo Đảng ủy, HĐND, UBND và Ban chỉ huy Công an phường.",
+        "bg_image": "\/storage\/banners\/subpage_banner_citizen_reception_1787131061.jfif"
+    },
+    "waste_schedule": {
+        "page_code": "waste_schedule",
+        "page_name": "Lịch thu gom rác sinh hoạt",
+        "group_name": "Lịch công tác & Tiếp dân",
+        "page_url": "\/waste-schedule.html",
+        "badge_text": "Vệ sinh môi trường đô thị",
+        "badge_icon": "delete",
+        "title": "Lịch thu gom Rác thải sinh hoạt Phường Duy Hà",
+        "subtitle": "Tra cứu khung giờ xe gom rác, ngày thu gom định kỳ và các điểm tập kết rác thải theo từng Tổ dân phố.",
+        "bg_image": "\/storage\/banners\/subpage_banner_waste_schedule_1787131068.jfif"
+    },
+    "agencies": {
+        "page_code": "agencies",
+        "page_name": "Danh sách Cơ quan hành chính",
+        "group_name": "Tổ chức & Chính quyền",
+        "page_url": "\/agencies.html",
+        "badge_text": "Trụ sở làm việc & Cơ sở công lập",
+        "badge_icon": "apartment",
+        "title": "Danh sách Cơ quan & Đơn vị trên địa bàn",
+        "subtitle": "Địa chỉ, số điện thoại liên hệ, bản đồ vị trí và hình ảnh các cơ quan Đảng, chính quyền, công an, trường học, trạm y tế trên địa bàn Phường Duy Hà.",
+        "bg_image": "\/storage\/banners\/subpage_banner_agencies_1787131074.jfif"
+    },
+    "officials": {
+        "page_code": "officials",
+        "page_name": "Danh sách Cán bộ Phường",
+        "group_name": "Tổ chức & Chính quyền",
+        "page_url": "\/officials.html",
+        "badge_text": "Danh sách Cán bộ Phường ",
+        "badge_icon": "contacts",
+        "title": "Danh sách Cán bộ Phường ",
+        "subtitle": "Tra cứu thông tin Bí thư Đảng ủy, Chủ tịch UBND, Công an phụ trách địa bàn và các đồng chí Bí thư Phường Duy Hà.",
+        "bg_image": "\/storage\/banners\/subpage_banner_officials_1787131079.jfif"
+    },
+    "tdp_merger": {
+        "page_code": "tdp_merger",
+        "page_name": "Tổ dân phố & Cán bộ TDP",
+        "group_name": "Tổ chức & Chính quyền",
+        "page_url": "\/tdp-merger.html",
+        "badge_text": "Thông tin sáp nhập Đơn vị Hành chính 2026",
+        "badge_icon": "call_merge",
+        "title": "Phương án Sáp nhập & Tra cứu Tổ dân phố Phường Duy Hà",
+        "subtitle": "Bảng số liệu chính thức so sánh hiện trạng 16 Tổ dân phố cũ và 10 Tổ dân phố mới dự kiến sau sáp nhập. Tra cứu thông tin hộ dân, nhân khẩu, diện tích và danh sách cán bộ phụ trách.",
+        "bg_image": "\/storage\/banners\/subpage_banner_tdp_merger_1787131084.jfif"
+    },
+    "meritorious_families": {
+        "page_code": "meritorious_families",
+        "page_name": "Gia đình chính sách & Người có công",
+        "group_name": "An sinh xã hội & Tra cứu",
+        "page_url": "\/meritorious-families.html",
+        "badge_text": "Đền ơn đáp nghĩa — Uống nước nhớ nguồn",
+        "badge_icon": "military_tech",
+        "title": "Danh sách Người có công & Gia đình chính sách",
+        "subtitle": "Thông tin tri ân các Mẹ Việt Nam Anh hùng, Anh hùng LLVT, Thương bệnh binh và Gia đình Liệt sĩ trên địa bàn Phường Duy Hà.",
+        "bg_image": "\/storage\/banners\/subpage_banner_meritorious_families_1787131090.jfif"
+    },
+    "feedback": {
+        "page_code": "feedback",
+        "page_name": "Gửi Phản ánh & Kiến nghị",
+        "group_name": "An sinh xã hội & Tra cứu",
+        "page_url": "\/feedback.html",
+        "badge_text": "Tiếp nhận ý kiến Nhân dân",
+        "badge_icon": "rate_review",
+        "title": "Kênh Tiếp nhận Phản ánh & Kiến nghị trực tuyến",
+        "subtitle": "Gửi phản ánh, đóng góp ý kiến về an ninh trật tự, vệ sinh môi trường, văn minh đô thị và thủ tục hành chính.",
+        "bg_image": "\/storage\/banners\/subpage_banner_feedback_1787131096.jfif"
+    }
+}

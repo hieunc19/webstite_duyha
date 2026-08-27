@@ -8,7 +8,7 @@
         "phone": "02263835112",
         "lat": 20.6478448,
         "lng": 105.914737,
-        "image": "places\/01M07A8BTSW91599C1M9EPQKZK.jpg",
+        "image": "\/storage\/places\/01M07A8BTSW91599C1M9EPQKZK.jpg",
         "administrative_unit_id": null,
         "description": "Trụ sở làm việc chính thức của Ủy ban nhân dân và Hội đồng nhân dân phường Duy Hà, nơi tiếp nhận và giải quyết các thủ tục hành chính, dịch vụ công cộng cho người dân trên địa bàn."
     },
@@ -21,7 +21,7 @@
         "phone": "02263835112",
         "lat": 20.6479,
         "lng": 105.9135,
-        "image": "places\/01M07AAAY8ERAWP4GKBH891Z91.jpg",
+        "image": "\/storage\/places\/01M07AAAY8ERAWP4GKBH891Z91.jpg",
         "administrative_unit_id": null,
         "description": "Cơ quan công an cấp cơ sở thực hiện chức năng bảo vệ an ninh quốc gia, giữ gìn trật tự an toàn xã hội, quản lý cư trú và hỗ trợ phòng chống tội phạm trên địa bàn phường Duy Hà."
     },
@@ -34,7 +34,7 @@
         "phone": "0123456789",
         "lat": 20.6477765,
         "lng": 105.9017232,
-        "image": "places\/01M078SZW00WZE5JN81F4674VG.jfif",
+        "image": "\/storage\/places\/01M078SZW00WZE5JN81F4674VG.jfif",
         "administrative_unit_id": null,
         "description": null
     },
@@ -47,7 +47,7 @@
         "phone": "0123456789",
         "lat": 20.6481735,
         "lng": 105.9003725,
-        "image": "places\/01M0793QYBGTNDNBZC9KTRND99.jfif",
+        "image": "\/storage\/places\/01M0793QYBGTNDNBZC9KTRND99.jfif",
         "administrative_unit_id": null,
         "description": null
     },
@@ -60,7 +60,7 @@
         "phone": null,
         "lat": 20.6263899,
         "lng": 105.9167791,
-        "image": "places\/01M079HCDG0WGY9NYYWETX860B.jfif",
+        "image": "\/storage\/places\/01M079HCDG0WGY9NYYWETX860B.jfif",
         "administrative_unit_id": null,
         "description": "Trường tiểu học công lập đạt chuẩn quốc gia cấp độ 1, với cơ sở vật chất khang trang, đáp ứng nhu cầu giáo dục tiểu học chất lượng cao cho con em trong khu vực."
     },
@@ -73,7 +73,7 @@
         "phone": null,
         "lat": 20.6225274,
         "lng": 105.9213728,
-        "image": "places\/01M0798DP70PF35KDZTE09GP72.jpg",
+        "image": "\/storage\/places\/01M0798DP70PF35KDZTE09GP72.jpg",
         "administrative_unit_id": null,
         "description": "Trường Trung học cơ sở Duy Hà có đội ngũ giáo viên giàu kinh nghiệm, đạt nhiều thành tích xuất sắc trong công tác bồi dưỡng học sinh giỏi và giáo dục toàn diện."
     },
@@ -86,7 +86,7 @@
         "phone": null,
         "lat": 20.62485,
         "lng": 105.917686,
-        "image": "places\/01M079EK94TWVKX0DH7V28PKDR.jfif",
+        "image": "\/storage\/places\/01M079EK94TWVKX0DH7V28PKDR.jfif",
         "administrative_unit_id": null,
         "description": null
     },
@@ -99,7 +99,7 @@
         "phone": null,
         "lat": 20.612935,
         "lng": 105.928704,
-        "image": "places\/01M079M0VDBQYCT64CT5W7D2QB.jfif",
+        "image": "\/storage\/places\/01M079M0VDBQYCT64CT5W7D2QB.jfif",
         "administrative_unit_id": null,
         "description": null
     },
@@ -112,7 +112,7 @@
         "phone": null,
         "lat": 20.6128441,
         "lng": 105.9262735,
-        "image": "places\/01M079SQMX46DN1PKNXS43P5MA.jfif",
+        "image": "\/storage\/places\/01M079SQMX46DN1PKNXS43P5MA.jfif",
         "administrative_unit_id": null,
         "description": null
     },
@@ -125,7 +125,7 @@
         "phone": null,
         "lat": 20.618192,
         "lng": 105.925831,
-        "image": "places\/01M07A128D0MSNCNY7G26T8HM5.jfif",
+        "image": "\/storage\/places\/01M07A128D0MSNCNY7G26T8HM5.jfif",
         "administrative_unit_id": null,
         "description": null
     },
@@ -138,7 +138,7 @@
         "phone": null,
         "lat": 20.644675,
         "lng": 105.91548,
-        "image": "places\/01M07A3XV9F16YZW9W98BPVXQ5.jfif",
+        "image": "\/storage\/places\/01M07A3XV9F16YZW9W98BPVXQ5.jfif",
         "administrative_unit_id": null,
         "description": null
     },
@@ -151,7 +151,7 @@
         "phone": null,
         "lat": 20.647766,
         "lng": 105.914387,
-        "image": "places\/01M07A73G3TZE653T9MY502F49.jfif",
+        "image": "\/storage\/places\/01M07A73G3TZE653T9MY502F49.jfif",
         "administrative_unit_id": null,
         "description": null
     }

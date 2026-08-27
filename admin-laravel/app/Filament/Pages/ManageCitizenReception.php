@@ -16,7 +16,7 @@ class ManageCitizenReception extends Page
 
     protected static ?string $navigationLabel = 'Lịch tiếp công dân';
 
-    protected static ?string $title = 'Quản lý File ảnh Lịch Tiếp công dân';
+    protected static ?string $title = 'Quản lý File Lịch Tiếp công dân (Ảnh / PDF)';
 
     public static function getNavigationGroup(): ?string
     {
@@ -38,6 +38,18 @@ class ManageCitizenReception extends Page
     public function loadSettings()
     {
         $this->currentImage = Setting::where('key', 'citizen_reception_image')->value('value') ?? '';
+    }
+
+    public function getIsCurrentPdfProperty(): bool
+    {
+        return !empty($this->currentImage) && str_ends_with(strtolower($this->currentImage), '.pdf');
+    }
+
+    public function getIsUploadedPdfProperty(): bool
+    {
+        if (!$this->imageFile) return false;
+        $ext = strtolower($this->imageFile->getClientOriginalExtension());
+        return $ext === 'pdf';
     }
 
     public function getCurrentImageUrlProperty(): ?string
@@ -70,14 +82,14 @@ class ManageCitizenReception extends Page
         $this->dumpData();
 
         Notification::make()
-            ->title('Đã gỡ ảnh lịch tiếp công dân!')
+            ->title('Đã gỡ file lịch tiếp công dân!')
             ->success()
             ->send();
     }
 
     public function save()
     {
-        // 1. Handle uploaded image file if any
+        // 1. Handle uploaded image/pdf file if any
         if ($this->imageFile) {
             $path = $this->imageFile->store('citizen-reception', 'public');
             $this->currentImage = $path;
@@ -87,13 +99,13 @@ class ManageCitizenReception extends Page
         // 2. Save settings
         Setting::updateOrCreate(
             ['key' => 'citizen_reception_image'],
-            ['name' => 'File ảnh Lịch tiếp công dân', 'value' => trim($this->currentImage), 'label' => 'Ảnh lịch tiếp dân', 'group' => 'citizen_reception', 'sort_order' => 1, 'is_visible' => 1]
+            ['name' => 'File Lịch tiếp công dân (Ảnh / PDF)', 'value' => trim($this->currentImage), 'label' => 'Tệp lịch tiếp dân', 'group' => 'citizen_reception', 'sort_order' => 1, 'is_visible' => 1]
         );
 
         $this->dumpData();
 
         Notification::make()
-            ->title('Đã cập nhật File ảnh Lịch tiếp công dân thành công!')
+            ->title('Đã cập nhật File Lịch tiếp công dân thành công!')
             ->success()
             ->send();
     }

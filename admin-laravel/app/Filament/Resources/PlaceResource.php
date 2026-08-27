@@ -108,11 +108,6 @@ class PlaceResource extends Resource
                                                     ->downloadable()
                                                     ->columnSpanFull()
                                                     ->default(null),
-                                                Textarea::make('description')
-                                                    ->label('Mô tả chức năng nhiệm vụ')
-                                                    ->rows(4)
-                                                    ->columnSpanFull()
-                                                    ->default(null),
                                             ]),
                                         Section::make('Vị trí & Bản đồ')
                                             ->columnSpan(1)

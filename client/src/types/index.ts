@@ -24,6 +24,7 @@ export interface Official {
     avatar_color?: string;
     avatar?: string;
     department?: string;
+    status?: string;
 }
 
 export interface Place {

@@ -27,15 +27,19 @@ class OfficialsTable
                 TextColumn::make('phone')
                     ->label('Số điện thoại')
                     ->searchable(),
-                TextColumn::make('neighborhood_name')
-                    ->label('Đơn vị / Cơ quan trực thuộc')
+                TextColumn::make('department')
+                    ->label('Phòng ban / Ban ngành trực thuộc')
                     ->badge()
+                    ->formatStateUsing(function ($state): string {
+                        $dep = Department::where('code', $state)->first();
+                        return $dep ? $dep->name : ($state ?: 'Chưa phân công');
+                    })
                     ->color(function ($record): string {
                         $state = $record->department;
                         $dep = Department::where('code', $state)->first();
-                        return $dep ? $dep->color : match ($state) {
+                        return $dep ? ($dep->color ?: 'info') : match ($state) {
                             'cong_an' => 'warning',
-                            'dang_uy' => 'primary',
+                            'dang_uy' => 'danger',
                             'chinh_quyen' => 'success',
                             'ttpvhcc' => 'info',
                             default => 'gray',

@@ -297,7 +297,6 @@ class ManageHomepageLayout extends Page
                 '/procedures.html' => 'Thủ tục hành chính (Tra cứu TTHC)',
                 '/procedures.html?tab=videos' => 'Video hướng dẫn dịch vụ công',
                 '/procedures.html?tab=policies' => 'Chính sách & Văn bản quy định',
-                '/forms.html' => 'Kho biểu mẫu tải xuống',
             ],
             'Tiếp dân & Lịch trình' => [
                 '/citizen-reception.html' => 'Lịch tiếp công dân định kỳ',
@@ -328,7 +327,6 @@ class ManageHomepageLayout extends Page
             '/procedures.html' => 'Thủ tục hành chính',
             '/procedures.html?tab=videos' => 'Video hướng dẫn',
             '/procedures.html?tab=policies' => 'Chính sách & Quy định',
-            '/forms.html' => 'Kho biểu mẫu',
             '/citizen-reception.html' => 'Lịch tiếp dân',
             '/waste-schedule.html' => 'Lịch thu gom rác',
             '/officials.html' => 'Cán bộ Phường',

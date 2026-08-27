@@ -93,12 +93,6 @@ class PolicyResource extends Resource
                             ->maxSize(51200)
                             ->columnSpanFull(),
 
-                        Textarea::make('summary')
-                            ->label('Trích yếu / Tóm tắt nội dung chính')
-                            ->placeholder('Tóm tắt ngắn gọn mục đích và phạm vi điều chỉnh của văn bản...')
-                            ->rows(3)
-                            ->columnSpanFull(),
-
                         Toggle::make('is_active')
                             ->label('Hiển thị trên Cổng thông tin')
                             ->default(true),

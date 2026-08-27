@@ -10,18 +10,14 @@
 
   <!-- Favicon -->
   <link rel="icon" type="image/jpeg" href="/logo.jpg" />
+  <!-- Preload banner image for faster LCP -->
+  <link rel="preload" as="image" href="/storage/banners/subpage_banner_procedures_1787282472.webp" fetchpriority="high" />
 
   <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="/vendor/tailwindcss.js"></script>
 
-  <!-- Google Fonts: Roboto -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap"
-    rel="stylesheet" />
-
-  <!-- Material Symbols Outlined -->
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-    rel="stylesheet" />
+  <!-- Local Self-Hosted Fonts (Inter & Material Symbols) -->
+  <link rel="stylesheet" href="/fonts/fonts.css" />
 
   <!-- Tailwind Custom Config -->
   <script id="tailwind-config">
@@ -38,11 +34,11 @@
             "surface": "#FFFFFF"
           },
           fontFamily: {
-            "sans": ["Roboto", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
-            "serif": ["Roboto", "serif"],
-            "headline": ["Roboto", "sans-serif"],
-            "body": ["Roboto", "sans-serif"],
-            "accent": ["Roboto", "sans-serif"]
+            "sans": ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+            "serif": ["Inter", "serif"],
+            "headline": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "accent": ["Inter", "sans-serif"]
           }
         }
       }
@@ -52,12 +48,15 @@
   <link rel="stylesheet" href="/src/style.css" />
   <style>
     body {
-      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
     }
 
     .material-symbols-outlined {
       font-family: 'Material Symbols Outlined' !important;
     }
+    /* FOUC Prevention */
+    main { opacity: 0; transition: opacity 0.15s ease-out; }
+    body.js-hydrated main { opacity: 1; }
   </style>
   <script>
       (function () {
@@ -109,7 +108,7 @@
 </head>
 
 <body
-  class="portal-active bg-[#FFFDF5] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-['Roboto'] font-sans antialiased selection:bg-[#3399fe] selection:text-white transition-colors duration-300">
+  class="portal-active bg-[#FFFDF5] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-['Inter'] font-sans antialiased selection:bg-[#3399fe] selection:text-white transition-colors duration-300">
 
   <!-- Header Section (injected by sharedHeader.ts) -->
   <header id="app-header"
@@ -131,20 +130,20 @@
 
     <!-- SHARED PAGE HERO BANNER -->
     <div
-      class="relative rounded-3xl overflow-hidden shadow-2xl border border-sky-900/30 bg-cover bg-center min-h-[220px] sm:min-h-[260px] flex items-center"
+      class="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-sky-900/30 bg-cover bg-center min-h-[180px] sm:min-h-[240px] md:min-h-[280px] flex items-center"
       style="background-image: url('/images/tdp_merger_banner_bg.jpg');">
-      <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/75 to-black/40"></div>
-      <div class="relative z-10 p-6 sm:p-10 text-white max-w-4xl space-y-3">
+      <div class="absolute inset-0 bg-gradient-to-r from-black/40 via-black/15 to-transparent z-0"></div>
+      <div class="relative z-10 p-5 sm:p-8 md:p-12 text-white max-w-4xl space-y-2 sm:space-y-3">
         <div
-          class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/25 border border-sky-400/40 text-sky-300 text-xs font-bold backdrop-blur-md">
-          <span class="material-symbols-outlined text-base" id="hero-banner-icon">verified</span>
+          class="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-sky-500/25 border border-sky-400/40 text-sky-300 text-[11px] sm:text-xs font-bold backdrop-blur-md">
+          <span class="material-symbols-outlined text-sm" id="hero-banner-icon">verified</span>
           <span id="hero-banner-badge">UBND PHƯỜNG DUY HÀ — CỔNG HƯỚNG DẪN DỊCH VỤ CÔNG</span>
         </div>
         <h1 id="hero-banner-title"
-          class="text-2xl sm:text-4xl font-black tracking-tight text-white uppercase leading-tight drop-shadow-md">
+          class="text-xl sm:text-3xl md:text-5xl font-black tracking-tight text-white uppercase leading-tight drop-shadow-md">
           HƯỚNG DẪN THỦ TỤC HÀNH CHÍNH
         </h1>
-        <p id="hero-banner-desc" class="text-xs sm:text-sm text-slate-200 font-medium max-w-3xl leading-relaxed">
+        <p id="hero-banner-desc" class="text-xs sm:text-sm md:text-base text-slate-200 font-medium max-w-3xl leading-relaxed">
           Tra cứu chi tiết quy trình thực hiện, hồ sơ giấy tờ cần chuẩn bị và tải mẫu biểu trực tiếp phục vụ công dân
           Phường Duy Hà.
         </p>
@@ -266,12 +265,12 @@
           <table class="w-full text-left border-collapse min-w-[1000px]">
             <thead>
               <tr
-                class="bg-gradient-to-r from-[#143e78] via-[#1a4a8c] to-[#143e78] text-white text-xs sm:text-sm font-extrabold uppercase tracking-wider">
-                <th class="py-4 px-4 border-r border-sky-800/60 w-16 text-center">STT</th>
-                <th class="py-4 px-5 border-r border-sky-800/60 min-w-[320px]">TÊN THỦ TỤC HÀNH CHÍNH</th>
-                <th class="py-4 px-4 border-r border-sky-800/60 w-52 text-center">LĨNH VỰC</th>
-                <th class="py-4 px-4 border-r border-sky-800/60 w-52 text-center">CƠ QUAN TIẾP NHẬN</th>
-                <th class="py-4 px-4 text-center w-52">THAO TÁC</th>
+                class="bg-gradient-to-r from-[#3399fe] via-[#268df5] to-[#1d7fe0] text-white text-xs sm:text-sm font-extrabold uppercase tracking-wider shadow-xs">
+                <th class="py-4 px-4 border-r border-white/20 w-16 text-center">STT</th>
+                <th class="py-4 px-5 border-r border-white/20 min-w-[320px]">TÊN THỦ TỤC HÀNH CHÍNH</th>
+                <th class="py-4 px-4 border-r border-white/20 w-52 text-center">LĨNH VỰC</th>
+                <th class="py-4 px-4 border-r border-white/20 w-52 text-center">CƠ QUAN TIẾP NHẬN</th>
+                <th class="py-4 px-4 text-center w-52">XEM TẤT CẢ</th>
               </tr>
             </thead>
             <tbody id="procedures-table-body"
@@ -468,13 +467,13 @@
           <table class="w-full text-left border-collapse min-w-[1000px]">
             <thead>
               <tr
-                class="bg-gradient-to-r from-[#143e78] via-[#1a4a8c] to-[#143e78] text-white text-xs sm:text-sm font-extrabold uppercase tracking-wider">
-                <th class="py-4 px-4 border-r border-sky-800/60 w-16 text-center">STT</th>
-                <th class="py-4 px-4 border-r border-sky-800/60 w-44 text-center">SỐ HIỆU VĂN BẢN</th>
-                <th class="py-4 px-5 border-r border-sky-800/60 min-w-[300px]">TÊN CHÍNH SÁCH &amp; VĂN BẢN</th>
-                <th class="py-4 px-4 border-r border-sky-800/60 w-52 text-center">LĨNH VỰC</th>
-                <th class="py-4 px-4 border-r border-sky-800/60 w-48 text-center">CƠ QUAN BAN HÀNH</th>
-                <th class="py-4 px-4 text-center w-52">THAO TÁC</th>
+                class="bg-gradient-to-r from-[#3399fe] via-[#268df5] to-[#1d7fe0] text-white text-xs sm:text-sm font-extrabold uppercase tracking-wider shadow-xs">
+                <th class="py-4 px-4 border-r border-white/20 w-16 text-center">STT</th>
+                <th class="py-4 px-4 border-r border-white/20 w-44 text-center">SỐ HIỆU VĂN BẢN</th>
+                <th class="py-4 px-5 border-r border-white/20 min-w-[300px]">TÊN CHÍNH SÁCH &amp; VĂN BẢN</th>
+                <th class="py-4 px-4 border-r border-white/20 w-52 text-center">LĨNH VỰC</th>
+                <th class="py-4 px-4 border-r border-white/20 w-48 text-center">CƠ QUAN BAN HÀNH</th>
+                <th class="py-4 px-4 text-center w-52">XEM TẤT CẢ</th>
               </tr>
             </thead>
             <tbody id="policies-table-body"
@@ -499,7 +498,7 @@
 
       <!-- Modal Header -->
       <div
-        class="flex items-center justify-between p-5 sm:p-6 bg-gradient-to-r from-[#1d7fe0] via-[#1b65c2] to-[#143e78] text-white">
+        class="flex items-center justify-between p-5 sm:p-6 bg-gradient-to-r from-[#3399fe] via-[#268df5] to-[#1d7fe0] text-white">
         <div class="flex items-center gap-3 min-w-0 pr-4">
           <div>
             <span id="modal-proc-cat" class="text-[11px] font-black uppercase text-amber-200 tracking-wider">Lĩnh
@@ -575,7 +574,7 @@
       class="relative max-w-4xl w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl space-y-0 my-auto"
       onclick="event.stopPropagation()">
       <div
-        class="flex items-center justify-between p-4 sm:p-5 bg-gradient-to-r from-[#1d7fe0] via-[#1b65c2] to-[#143e78] text-white">
+        class="flex items-center justify-between p-4 sm:p-5 bg-gradient-to-r from-[#3399fe] via-[#268df5] to-[#1d7fe0] text-white">
         <div class="flex items-center gap-3 min-w-0 pr-4">
           <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
             <span class="material-symbols-outlined text-2xl">play_circle</span>
@@ -618,64 +617,77 @@
     </div>
   </div>
 
-  <!-- POLICY DETAIL MODAL -->
+  <!-- POLICY DETAIL MODAL (PRO FULL VIEWER) -->
   <div id="policy-detail-modal"
-    class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/85 backdrop-blur-md p-2 sm:p-4 overflow-y-auto"
+    class="fixed inset-0 z-[3500] hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-2 sm:p-4 md:p-6"
     onclick="closePolicyModal()">
     <div
-      class="relative max-w-5xl w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl space-y-0 my-auto"
+      class="relative w-full max-w-6xl h-[94vh] max-h-[960px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl flex flex-col my-auto"
       onclick="event.stopPropagation()">
-      <!-- Modal Header -->
+
+      <!-- Modal Header Bar -->
       <div
-        class="flex items-center justify-between p-4 sm:p-5 bg-gradient-to-r from-[#1d7fe0] via-[#1b65c2] to-[#143e78] text-white">
-        <div class="flex items-center gap-3 min-w-0 pr-4">
-          <div class="truncate">
-            <span id="modal-policy-code" class="text-[11px] font-black uppercase text-amber-200 tracking-wider">Số hiệu
-              văn bản</span>
-            <h3 id="modal-policy-title" class="text-base sm:text-lg font-black text-white leading-snug truncate">
-              Tên chính sách quy định
+        class="flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4 bg-gradient-to-r from-[#3399fe] via-[#268df5] to-[#1d7fe0] text-white shrink-0 shadow-md">
+        <div class="flex items-center gap-3 min-w-0 pr-3">
+          <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center shrink-0 shadow-inner">
+            <span class="material-symbols-outlined text-2xl text-white">description</span>
+          </div>
+          <div class="min-w-0 flex-1">
+            <h3 id="modal-policy-title-display" class="text-sm sm:text-base font-black text-white leading-snug truncate" title="">
+              Xem văn bản chính sách &amp; quy định
             </h3>
           </div>
         </div>
+
+        <!-- Action Controls -->
         <div class="flex items-center gap-2 shrink-0">
-          <button onclick="openCurrentPolicyFile()"
-            class="px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all flex items-center gap-1 shadow-sm active:scale-95">
-            <span class="material-symbols-outlined text-sm">open_in_new</span>
-            <span class="hidden sm:inline">Mở tab mới</span>
+          <button onclick="window.downloadCurrentPolicyFile()"
+            class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
+            title="Tải tệp tin về máy">
+            <span class="material-symbols-outlined text-base">download</span>
+            <span>Tải về</span>
           </button>
-          <button onclick="downloadCurrentPolicyFile()"
-            class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all flex items-center gap-1 shadow-sm active:scale-95">
-            <span class="material-symbols-outlined text-sm">download</span>
-            <span class="hidden sm:inline">Tải PDF</span>
+
+          <button onclick="window.openCurrentPolicyFile()"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
+            title="Mở toàn màn hình trong tab mới">
+            <span class="material-symbols-outlined text-base">open_in_new</span>
+            <span class="hidden sm:inline">Mở rộng</span>
           </button>
+
           <button onclick="closePolicyModal()"
-            class="w-9 h-9 rounded-xl bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors">
+            class="w-9 h-9 rounded-xl bg-white/20 hover:bg-red-600 text-white flex items-center justify-center transition-all shadow-sm active:scale-95 cursor-pointer ml-1"
+            title="Đóng văn bản">
             <span class="material-symbols-outlined text-xl">close</span>
           </button>
         </div>
       </div>
 
-      <!-- Modal Body (Direct PDF Display) -->
-      <div class="p-3 sm:p-4">
+      <!-- Modal Body (PDF Viewer & Fallback) -->
+      <div class="flex-1 w-full bg-slate-100 dark:bg-slate-950 overflow-hidden relative flex flex-col">
         <!-- EMBEDDED PDF VIEWER -->
-        <div id="modal-policy-pdf-container" class="w-full">
-          <div
-            class="relative w-full h-[72vh] min-h-[500px] rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-950 shadow-inner">
-            <iframe id="modal-policy-pdf-iframe" class="w-full h-full border-0" src="about:blank"
-              title="Xem văn bản PDF"></iframe>
-          </div>
+        <div id="modal-policy-pdf-container" class="w-full h-full flex-1">
+          <iframe id="modal-policy-pdf-iframe" class="w-full h-full border-0 bg-white" src="about:blank"
+            title="Xem văn bản PDF"></iframe>
         </div>
 
         <!-- NOTICE WHEN NO VALID PDF FILE -->
         <div id="modal-policy-pdf-empty"
-          class="p-12 text-center bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 space-y-3 hidden">
-          <span class="material-symbols-outlined text-5xl text-slate-400">picture_as_pdf</span>
-          <p class="text-base font-bold text-slate-800 dark:text-slate-200">
-            Văn bản này hiện chưa có tệp PDF đính kèm.
-          </p>
-          <p class="text-xs text-slate-500 dark:text-slate-400">
-            Vui lòng vào trang Quản trị Admin để tải tệp PDF văn bản lên hệ thống.
-          </p>
+          class="p-10 text-center my-auto mx-auto max-w-md bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4 hidden">
+          <div class="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto text-3xl">
+            <span class="material-symbols-outlined text-4xl">picture_as_pdf</span>
+          </div>
+          <div class="space-y-1">
+            <p class="text-base font-bold text-slate-800 dark:text-slate-200">
+              Văn bản này hiện chưa có tệp PDF đính kèm.
+            </p>
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+              Vui lòng vào trang Quản trị Admin để tải tệp PDF văn bản lên hệ thống.
+            </p>
+          </div>
+          <button onclick="closePolicyModal()" class="px-5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-200 transition-colors">
+            Đóng lại
+          </button>
         </div>
       </div>
     </div>
@@ -691,7 +703,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
         <div class="lg:col-span-7 flex items-start gap-4 sm:gap-5">
           <div
-            class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-white/80 p-0.5 flex items-center justify-center shrink-0 bg-[#3399fe] shadow-lg overflow-hidden">
+            class="w-16 h-16 sm:w-20 sm:h-20 shrink-0 flex items-center justify-center">
             <img src="/logo.jpg" alt="Logo Phường Duy Hà" class="w-full h-full object-cover" />
           </div>
           <div class="space-y-1">
@@ -709,7 +721,7 @@
             </p>
           </div>
         </div>
-        <div class="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3">
+        <div class="lg:col-span-5 flex flex-col sm:flex-row lg:flex-col gap-3">
           <div class="relative w-full">
             <select onchange="if(this.value) window.open(this.value, '_blank')"
               class="w-full bg-white/10 hover:bg-white/15 text-white text-xs sm:text-sm font-bold py-2.5 px-4 rounded-xl border border-white/20 outline-none focus:ring-2 focus:ring-amber-400 transition-all cursor-pointer appearance-none">
@@ -719,13 +731,6 @@
               </option>
             </select>
           </div>
-        </div>
-        <div class="lg:col-span-1 flex justify-start lg:justify-end">
-          <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
-            class="w-10 h-10 rounded-full bg-white/10 hover:bg-amber-500 hover:text-slate-900 text-white flex items-center justify-center transition-all shadow-md active:scale-90"
-            title="Cuộn lên đầu trang">
-            <span class="material-symbols-outlined text-xl">arrow_upward</span>
-          </button>
         </div>
       </div>
       <div class="border-t border-white/15"></div>
@@ -806,6 +811,10 @@
       const url = new URL(window.location.href);
       url.searchParams.set('tab', tab);
       window.history.replaceState(null, '', url.toString());
+
+      if (window.renderCurrentSubpageBanner) {
+        window.renderCurrentSubpageBanner();
+      }
 
       if (tab === 'videos') {
         renderVideos();
@@ -985,11 +994,15 @@
 
       tableBody.innerHTML = paginatedItems.map((p, idx) => {
         const stt = startIndex + idx + 1;
-        let categoryPillClass = "bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-300 border-rose-200 dark:border-rose-900/60";
-        if (p.category === 'land') {
-          categoryPillClass = "bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-900/60";
-        } else if (p.category === 'vneid') {
-          categoryPillClass = "bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 border-sky-200 dark:border-sky-900/60";
+        let categoryPillClass = "bg-slate-50 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700";
+        if (p.category === 'social') {
+          categoryPillClass = "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800";
+        } else if (p.category === 'civil') {
+          categoryPillClass = "bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border-rose-200 dark:border-rose-800";
+        } else if (p.category === 'residence' || p.category === 'vneid') {
+          categoryPillClass = "bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 border-sky-200 dark:border-sky-800";
+        } else if (p.category === 'land') {
+          categoryPillClass = "bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-800";
         }
 
         // Check if procedure has attachment_url or any file in docs
@@ -1312,7 +1325,6 @@
             </td>
             <td class="py-4 px-5 border-r border-slate-200 dark:border-slate-800">
               <b class="text-slate-900 dark:text-white font-extrabold text-sm sm:text-base block leading-snug">${p.title}</b>
-              <span class="text-xs text-slate-500 dark:text-slate-400 mt-1 block font-medium leading-relaxed">${p.summary}</span>
             </td>
             <td class="py-4 px-4 text-center border-r border-slate-200 dark:border-slate-800">
               <span class="px-3 py-1 rounded-xl text-xs font-bold border ${categoryPillClass} inline-block whitespace-nowrap">
@@ -1368,16 +1380,11 @@
       const item = POLICIES_DATA.find(p => p.id === pid);
       if (!item) return;
 
-      const codeElem = document.getElementById('modal-policy-code');
-      if (codeElem) codeElem.textContent = item.code || '';
-      const titleElem = document.getElementById('modal-policy-title');
-      if (titleElem) titleElem.textContent = item.title || '';
-      const agencyElem = document.getElementById('modal-policy-agency');
-      if (agencyElem) agencyElem.textContent = item.agency || 'UBND Phường Duy Hà';
-      const statusElem = document.getElementById('modal-policy-status');
-      if (statusElem) statusElem.textContent = item.status || 'Đang có hiệu lực';
-      const summaryElem = document.getElementById('modal-policy-summary');
-      if (summaryElem) summaryElem.textContent = item.summary || 'Chưa có thông tin trích yếu văn bản.';
+      const titleElem = document.getElementById('modal-policy-title-display');
+      if (titleElem) {
+        titleElem.textContent = item.title || 'Xem văn bản chính sách & quy định';
+        titleElem.title = item.title || '';
+      }
 
       currentPolicyTitle = item.title || '';
 
@@ -1402,7 +1409,8 @@
       const hasValidPdf = fileUrl && fileUrl !== '#' && fileUrl !== '/';
 
       if (hasValidPdf) {
-        if (pdfIframe) pdfIframe.src = fileUrl;
+        const embedUrl = fileUrl.includes('#') ? fileUrl : (fileUrl + '#toolbar=1&navpanes=0&view=FitH');
+        if (pdfIframe) pdfIframe.src = embedUrl;
         if (pdfContainer) pdfContainer.style.display = 'block';
         if (pdfEmpty) pdfEmpty.style.display = 'none';
       } else {
@@ -1415,6 +1423,7 @@
       if (modal) {
         modal.classList.remove('hidden');
         modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
       }
     }
     window.openPolicyModal = openPolicyModal;
@@ -1428,6 +1437,7 @@
       if (modal) {
         modal.classList.add('hidden');
         modal.classList.remove('flex');
+        document.body.style.overflow = '';
       }
     }
     window.closePolicyModal = closePolicyModal;
@@ -1435,100 +1445,63 @@
     // Dynamic load procedures from API
     async function loadProceduresData() {
       try {
-        let data = null;
-        try {
-          const res = await fetch('/api/procedures');
-          if (res.ok) data = await res.json();
-        } catch (e) { }
+        let res = await fetch('/api/procedures').catch(() => null);
+        if (!res || !res.ok) res = await fetch('/src/data/procedures.json').catch(() => null);
+        if (!res || !res.ok) res = await fetch('/data/procedures.json').catch(() => null);
 
-        if (!data || !Array.isArray(data) || data.length === 0) {
-          try {
-            const fallbackRes = await fetch('/data/procedures.json');
-            if (fallbackRes.ok) data = await fallbackRes.json();
-          } catch (e) { }
-        }
-
-        if (!data || !Array.isArray(data) || data.length === 0) {
-          try {
-            const fallbackRes = await fetch('/src/data/procedures.json');
-            if (fallbackRes.ok) data = await fallbackRes.json();
-          } catch (e) { }
-        }
-
-        if (Array.isArray(data) && data.length > 0) {
-          PROCEDURES_DATA = data;
+        if (res && res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            PROCEDURES_DATA = data;
+            renderProcedures();
+          }
         }
       } catch (e) {
         console.warn('Could not fetch procedures data:', e);
       }
-      renderProcedures();
     }
 
     // Dynamic load procedure videos from API
     async function loadVideosData() {
       try {
-        let data = null;
-        try {
-          const res = await fetch('/api/procedure-videos');
-          if (res.ok) data = await res.json();
-        } catch (e) { }
+        let res = await fetch('/api/procedure-videos').catch(() => null);
+        if (!res || !res.ok) res = await fetch('/src/data/procedure_videos.json').catch(() => null);
+        if (!res || !res.ok) res = await fetch('/data/procedure_videos.json').catch(() => null);
 
-        if (!data || !Array.isArray(data) || data.length === 0) {
-          try {
-            const fallbackRes = await fetch('/data/procedure_videos.json');
-            if (fallbackRes.ok) data = await fallbackRes.json();
-          } catch (e) { }
-        }
-
-        if (!data || !Array.isArray(data) || data.length === 0) {
-          try {
-            const fallbackRes = await fetch('/src/data/procedure_videos.json');
-            if (fallbackRes.ok) data = await fallbackRes.json();
-          } catch (e) { }
-        }
-
-        if (Array.isArray(data) && data.length > 0) {
-          VIDEOS_DATA = data;
+        if (res && res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            VIDEOS_DATA = data;
+            isVideosLoaded = true;
+            renderVideos();
+          }
         }
       } catch (e) {
         console.warn('Could not fetch procedure videos data:', e);
       } finally {
         isVideosLoaded = true;
-        renderVideos();
       }
     }
 
     // Dynamic load policies from API
     async function loadPoliciesData() {
       try {
-        let data = null;
-        try {
-          const res = await fetch('/api/policies');
-          if (res.ok) data = await res.json();
-        } catch (e) { }
+        let res = await fetch('/api/policies').catch(() => null);
+        if (!res || !res.ok) res = await fetch('/src/data/policies.json').catch(() => null);
+        if (!res || !res.ok) res = await fetch('/data/policies.json').catch(() => null);
 
-        if (!data || !Array.isArray(data) || data.length === 0) {
-          try {
-            const fallbackRes = await fetch('/data/policies.json');
-            if (fallbackRes.ok) data = await fallbackRes.json();
-          } catch (e) { }
-        }
-
-        if (!data || !Array.isArray(data) || data.length === 0) {
-          try {
-            const fallbackRes = await fetch('/src/data/policies.json');
-            if (fallbackRes.ok) data = await fallbackRes.json();
-          } catch (e) { }
-        }
-
-        if (Array.isArray(data) && data.length > 0) {
-          POLICIES_DATA = data;
+        if (res && res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            POLICIES_DATA = data;
+            isPoliciesLoaded = true;
+            renderPolicies();
+          }
         }
       } catch (e) {
         console.warn('Could not fetch policies data:', e);
       } finally {
         isPoliciesLoaded = true;
-        renderPolicies();
       }
     }
 
@@ -1543,7 +1516,7 @@
       }
 
       loadProcedureCategories();
-      loadProceduresData();
+      loadProceduresData().then(() => document.body.classList.add('js-hydrated'));
       loadVideosData();
       loadPoliciesData();
     });

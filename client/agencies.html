@@ -10,18 +10,14 @@
 
   <!-- Favicon -->
   <link rel="icon" type="image/jpeg" href="/logo.jpg" />
+  <!-- Preload banner image for faster LCP -->
+  <link rel="preload" as="image" href="/storage/banners/subpage_banner_agencies_1787131074.jfif" fetchpriority="high" />
 
   <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="/vendor/tailwindcss.js"></script>
 
-  <!-- Google Fonts: Roboto -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap"
-    rel="stylesheet" />
-
-  <!-- Material Symbols Outlined -->
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-    rel="stylesheet" />
+  <!-- Local Self-Hosted Fonts (Inter & Material Symbols) -->
+  <link rel="stylesheet" href="/fonts/fonts.css" />
 
   <!-- Tailwind Custom Config -->
   <script id="tailwind-config">
@@ -38,11 +34,11 @@
             "surface": "#FFFFFF"
           },
           fontFamily: {
-            "sans": ["Roboto", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
-            "serif": ["Roboto", "serif"],
-            "headline": ["Roboto", "sans-serif"],
-            "body": ["Roboto", "sans-serif"],
-            "accent": ["Roboto", "sans-serif"]
+            "sans": ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+            "serif": ["Inter", "serif"],
+            "headline": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "accent": ["Inter", "sans-serif"]
           }
         }
       }
@@ -53,11 +49,14 @@
   <link rel="stylesheet" href="/src/style.css" />
   <style>
     body {
-      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
     }
     .material-symbols-outlined {
       font-family: 'Material Symbols Outlined' !important;
     }
+    /* FOUC Prevention */
+    main { opacity: 0; transition: opacity 0.15s ease-out; }
+    body.js-hydrated main { opacity: 1; }
   </style>
   <script>
     window.toggleMobileMenu = function() {
@@ -68,7 +67,7 @@
 </head>
 
 <body
-  class="portal-active bg-[#FFFDF5] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-['Roboto'] font-sans antialiased selection:bg-[#3399fe] selection:text-white transition-colors duration-300">
+  class="portal-active bg-[#FFFDF5] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-['Inter'] font-sans antialiased selection:bg-[#3399fe] selection:text-white transition-colors duration-300">
 
   <!-- Header Section (injected by sharedHeader.ts) -->
   <header id="app-header"
@@ -89,21 +88,21 @@
 
     <!-- PAGE HERO BANNER -->
     <div
-      class="text-white rounded-3xl p-8 sm:p-14 min-h-[280px] flex items-center shadow-2xl border border-sky-500/30 relative overflow-hidden bg-cover bg-center"
+      class="text-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-12 min-h-[180px] sm:min-h-[240px] md:min-h-[280px] flex items-center shadow-2xl border border-sky-500/30 relative overflow-hidden bg-cover bg-center"
       style="background-image: url('/hero-bg.jpg');">
       <!-- Dark overlay for high text legibility -->
-      <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/70 to-slate-950/40 z-0"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-black/40 via-black/15 to-transparent z-0"></div>
 
-      <div class="relative z-10 max-w-3xl space-y-3">
+      <div class="relative z-10 max-w-3xl space-y-2 sm:space-y-3">
         <div
-          class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/25 text-sky-300 border border-sky-400/40 text-xs font-black uppercase tracking-wider backdrop-blur-md shadow-sm">
+          class="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-blue-500/25 text-sky-300 border border-sky-400/40 text-[11px] sm:text-xs font-black uppercase tracking-wider backdrop-blur-md shadow-sm">
           <span class="material-symbols-outlined text-sm">corporate_fare</span>
           <span>TRỤ SỞ CƠ QUAN &amp; ĐƠN VỊ CÔNG LẬP</span>
         </div>
-        <h2 class="text-2xl sm:text-4xl font-black tracking-tight text-white leading-tight" style="text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);">
+        <h2 class="text-xl sm:text-3xl md:text-4xl font-black tracking-tight text-white leading-tight" style="text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);">
           Danh sách Cơ quan hành chính &amp; Đơn vị công lập
         </h2>
-        <p class="text-sm sm:text-base text-white/90 leading-relaxed font-semibold" style="text-shadow: 0 1.5px 6px rgba(0, 0, 0, 0.95);">
+        <p class="text-xs sm:text-sm md:text-base text-white/90 leading-relaxed font-semibold" style="text-shadow: 0 1.5px 6px rgba(0, 0, 0, 0.95);">
           Tra cứu thông tin vị trí trụ sở làm việc, số điện thoại hotline trực ban và bản đồ chỉ đường các cơ quan công quyền, đơn vị công an, y tế, trường học tại Phường Duy Hà, tỉnh Ninh Bình.
         </p>
       </div>
@@ -111,7 +110,7 @@
 
     <!-- MAIN TABLE SECTION CONTAINER (Matching Image 2 Style) -->
     <section
-      class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
+      class="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-5 sm:space-y-6">
 
       <!-- Section Header & Filter Toolbar -->
       <div
@@ -184,14 +183,14 @@
       <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md">
         <table class="w-full text-left border-collapse">
           <thead>
-            <tr class="bg-[#1a4a8c] text-white text-xs sm:text-sm uppercase tracking-wider">
-              <th class="py-3.5 px-3 text-center w-14 font-extrabold border-r border-blue-800">STT</th>
-              <th class="py-3.5 px-3 text-center w-28 font-extrabold border-r border-blue-800">Hình ảnh</th>
-              <th class="py-3.5 px-4 w-44 font-extrabold border-r border-blue-800">Phân loại</th>
-              <th class="py-3.5 px-4 font-extrabold border-r border-blue-800 min-w-[220px]">Tên Cơ quan / Đơn vị</th>
-              <th class="py-3.5 px-4 font-extrabold border-r border-blue-800">Địa chỉ / Vị trí</th>
-              <th class="py-3.5 px-4 text-center w-44 font-extrabold border-r border-blue-800">Hotline / Liên hệ</th>
-              <th class="py-3.5 px-4 text-center w-36 font-extrabold">Thao tác</th>
+            <tr class="bg-gradient-to-r from-[#3399fe] via-[#268df5] to-[#1d7fe0] text-white text-xs sm:text-sm uppercase tracking-wider shadow-xs">
+              <th class="py-3.5 px-3 text-center w-14 font-extrabold border-r border-white/20">STT</th>
+              <th class="py-3.5 px-3 text-center w-28 font-extrabold border-r border-white/20">Hình ảnh</th>
+              <th class="py-3.5 px-4 w-44 font-extrabold border-r border-white/20">Phân loại</th>
+              <th class="py-3.5 px-4 font-extrabold border-r border-white/20 min-w-[220px]">Tên Cơ quan / Đơn vị</th>
+              <th class="py-3.5 px-4 font-extrabold border-r border-white/20">Địa chỉ / Vị trí</th>
+              <th class="py-3.5 px-4 text-center w-44 font-extrabold border-r border-white/20">Hotline / Liên hệ</th>
+              <th class="py-3.5 px-4 text-center w-36 font-extrabold">Xem tất cả</th>
             </tr>
           </thead>
           <tbody id="agencies-page-table-body" class="divide-y divide-slate-200 dark:divide-slate-800 text-xs sm:text-sm font-medium">
@@ -235,8 +234,8 @@
         <div class="lg:col-span-7 flex items-start gap-4 sm:gap-5">
           <!-- Circular Logo Image -->
           <div
-            class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-white/80 p-0.5 flex items-center justify-center shrink-0 bg-[#3399fe] shadow-lg overflow-hidden">
-            <img src="/logo.jpg" alt="Logo Đoàn TNCS Phường Duy Hà" class="w-full h-full object-cover rounded-full" />
+            class="w-16 h-16 sm:w-20 sm:h-20 shrink-0 flex items-center justify-center">
+            <img src="/logo.jpg" alt="Logo Đoàn TNCS Phường Duy Hà" class="w-full h-full object-contain filter drop-shadow-md" />
           </div>
 
           <!-- Text Info -->
@@ -328,6 +327,14 @@
 
   <!-- AGENCIES PAGE DYNAMIC SCRIPT -->
   <script>
+    function formatStorageUrl(path) {
+      if (!path) return '/hero-bg.jpg';
+      if (path.startsWith('http://') || path.startsWith('https://')) return path;
+      if (path.startsWith('/storage/')) return path;
+      if (path.startsWith('/')) return path;
+      return '/storage/' + path.replace(/^\/+/, '');
+    }
+
     let allAgencies = [];
     let currentCat = 'all';
     let isAgenciesLoaded = false;
@@ -350,21 +357,37 @@
 
     async function loadAgencies() {
       try {
-        let res = await fetch('/api/places');
-        if (!res.ok) {
-          res = await fetch('/src/data/places.json');
+        // Fast local fallback first
+        let res = await fetch('/src/data/places.json').catch(() => null);
+        if (!res || !res.ok) {
+          res = await fetch('/api/places').catch(() => null);
         }
-        if (res.ok) {
+        if (res && res.ok) {
           const data = await res.json();
           if (Array.isArray(data)) {
-            allAgencies = data.filter(p => p.category !== 'neighborhood');
+            allAgencies = data.filter(p => p.category !== 'neighborhood').map(p => ({
+              ...p,
+              image: formatStorageUrl(p.image)
+            }));
+            renderAgenciesTable();
           }
         }
+
+        // Silent API update in background
+        fetch('/api/places').then(r => r.ok ? r.json() : null).then(data => {
+          if (Array.isArray(data) && data.length > 0) {
+            allAgencies = data.filter(p => p.category !== 'neighborhood').map(p => ({
+              ...p,
+              image: formatStorageUrl(p.image)
+            }));
+            renderAgenciesTable();
+          }
+        }).catch(() => {});
       } catch (e) {
         console.warn('Could not load places data:', e);
       } finally {
         isAgenciesLoaded = true;
-        renderAgenciesTable();
+        document.body.classList.add('js-hydrated');
       }
     }
 

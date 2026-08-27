@@ -85,16 +85,11 @@ class WasteScheduleResource extends Resource
                             ->columnSpanFull(),
 
                         TextInput::make('morning_shift')
-                            ->label('Ca Sáng hàng ngày')
-                            ->placeholder('Ví dụ: 05h30 - 07h00')
-                            ->default('05h30 - 07h00')
-                            ->required(),
-
-                        TextInput::make('evening_shift')
-                            ->label('Ca Chiều tối hàng ngày')
-                            ->placeholder('Ví dụ: 17h00 - 18h30')
-                            ->default('17h00 - 18h30')
-                            ->required(),
+                            ->label('Khung giờ thu gom rác hàng ngày')
+                            ->placeholder('Ví dụ: 06h00 - 07h30 hoặc 17h00 - 18h30')
+                            ->helperText('Thời gian xe thu gom rác hoạt động trong ngày tại Tổ dân phố.')
+                            ->columnSpanFull()
+                            ->nullable(),
 
                         CheckboxList::make('collection_days')
                             ->label('Các ngày thu gom rác trong tuần')
@@ -133,10 +128,9 @@ class WasteScheduleResource extends Resource
                     ->sortable(),
 
                 TextColumn::make('morning_shift')
-                    ->label('Ca sáng'),
-
-                TextColumn::make('evening_shift')
-                    ->label('Ca chiều'),
+                    ->label('Khung giờ thu gom')
+                    ->placeholder('—')
+                    ->formatStateUsing(fn ($record) => $record->morning_shift ?: $record->evening_shift ?: '—'),
 
                 TextColumn::make('collection_days')
                     ->label('Các ngày thu gom')

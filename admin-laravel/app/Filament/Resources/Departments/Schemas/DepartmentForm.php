@@ -17,11 +17,6 @@ class DepartmentForm
                     ->label('Tên Đơn vị / Khối công tác')
                     ->placeholder('Ví dụ: Cảnh sát khu vực (CSKV)')
                     ->required(),
-                TextInput::make('code')
-                    ->label('Mã khối / Mã viết tắt')
-                    ->placeholder('Ví dụ: cskv, cong_an, dang_uy...')
-                    ->required()
-                    ->unique(ignoreRecord: true),
                 Select::make('color')
                     ->label('Màu nhãn hiển thị (Badge)')
                     ->options([
@@ -40,12 +35,6 @@ class DepartmentForm
                     ->default(0)
                     ->placeholder('Ví dụ: 1')
                     ->helperText('Số nhỏ hơn sẽ hiển thị trước trên trang chủ (Ví dụ: 1 hiển thị trên cùng).'),
-                Textarea::make('description')
-                    ->label('Mô tả / Chức năng nhiệm vụ')
-                    ->placeholder('Nhập thông tin mô tả chi tiết chức năng nhiệm vụ của Đơn vị / Khối công tác...')
-                    ->rows(3)
-                    ->columnSpanFull()
-                    ->nullable(),
                 Select::make('status')
                     ->label('Trạng thái')
                     ->options([

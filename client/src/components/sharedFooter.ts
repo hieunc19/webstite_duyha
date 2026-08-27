@@ -91,14 +91,13 @@ export function renderFooter(): string {
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
 
         <!-- Left 7 Cols: Logo & Org Details -->
-        <div class="lg:col-span-7 flex items-start gap-4 sm:gap-5">
-          <!-- Logo Circle -->
-          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-white/80 p-0.5 flex items-center justify-center shrink-0 bg-[#3399fe] shadow-lg overflow-hidden">
-            <img src="${logoSrc}" alt="Logo ${cfg.orgName}" class="w-full h-full object-cover rounded-full" onerror="this.onerror=null; this.src='/logo.jpg';" />
+        <div class="lg:col-span-7 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-5">
+          <div class="w-14 h-14 sm:w-20 sm:h-20 shrink-0 flex items-center justify-center">
+            <img src="${logoSrc}" alt="Logo ${cfg.orgName}" class="w-full h-full object-contain filter drop-shadow-md" onerror="this.onerror=null; this.src='/logo.jpg';" />
           </div>
 
           <!-- Text Info -->
-          <div class="space-y-1.5">
+          <div class="space-y-1.5 flex flex-col items-center sm:items-start">
             <h3 class="text-base sm:text-lg font-black tracking-wide uppercase text-white drop-shadow-sm">
               ${cfg.orgName}
             </h3>
@@ -113,7 +112,7 @@ export function renderFooter(): string {
             </p>
 
             <!-- Social & Web Link Icons (Small Circular Badges) -->
-            <div class="flex items-center gap-2 pt-1.5">
+            <div class="flex items-center gap-2 pt-1.5 justify-center sm:justify-start">
               <span class="text-xs font-semibold text-sky-200/90 mr-1">Kênh liên kết:</span>
 
               <!-- Facebook Icon (Small Circle) -->
@@ -143,8 +142,8 @@ export function renderFooter(): string {
           </div>
         </div>
 
-        <!-- Right 4 Cols: Liên kết website -->
-        <div class="lg:col-span-4 space-y-2">
+        <!-- Right 5 Cols: Liên kết website -->
+        <div class="lg:col-span-5 space-y-2">
           <h4 class="text-sm font-extrabold text-white tracking-wide">Liên kết website</h4>
           <div class="space-y-2">
             <select onchange="if(this.value) window.open(this.value, '_blank')"
@@ -163,15 +162,6 @@ export function renderFooter(): string {
               <option value="https://bocongan.gov.vn" class="bg-slate-900 text-white">Cổng Thông tin Điện tử Bộ Công an</option>
             </select>
           </div>
-        </div>
-
-        <!-- Right 1 Col: Scroll Up Button -->
-        <div class="lg:col-span-1 flex justify-start lg:justify-end">
-          <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
-            class="w-10 h-10 rounded-full bg-white/10 hover:bg-amber-500 hover:text-slate-900 text-white flex items-center justify-center transition-all shadow-md active:scale-90"
-            title="Cuộn lên đầu trang">
-            <span class="material-symbols-outlined text-xl">arrow_upward</span>
-          </button>
         </div>
 
       </div>

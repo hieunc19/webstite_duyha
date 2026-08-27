@@ -23,6 +23,8 @@ class FormDocumentResource extends Resource
 {
     protected static ?string $model = FormDocument::class;
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-arrow-down';
 
     protected static ?string $navigationLabel = 'Kho Biểu mẫu thủ tục';

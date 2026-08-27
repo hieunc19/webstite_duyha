@@ -49,11 +49,11 @@
         "is_visible": true,
         "sort_order": 1,
         "settings": {
-            "logo_doan_url": "\/logo-doan.png",
+            "logo_doan_url": "\/storage\/logos\/logo_doan_1787297939_1780.png",
             "bg_type": "video",
-            "hero_bg_url": "\/storage\/logos\/hero_bg_1787112200_4005.png",
+            "hero_bg_url": "\/storage\/banners\/hero_bg_1787301070_7442.jfif",
             "hero_video_url": "\/storage\/banners\/hero_video_1787112870_9712.mp4",
-            "hero_height": "standard",
+            "hero_height": "compact",
             "hero_fit": "cover",
             "hero_position": "center"
         }
@@ -72,7 +72,7 @@
                 "label": "Tổng số tổ dân phố"
             },
             "stat_2": {
-                "value": "6.767",
+                "value": "6.000",
                 "label": "Tổng số hộ gia đình"
             },
             "stat_3": {

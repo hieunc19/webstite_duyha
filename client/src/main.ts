@@ -13,7 +13,6 @@ import neighborhoodsData from './data/neighborhoods.json';
 const NEIGHBORHOODS: Neighborhood[] = neighborhoodsData as Neighborhood[];
 import { DUY_HA_BOUNDARY } from './data/duyHaBoundary';
 import { initWeatherWidget } from './services/weather';
-import { initFormsView } from './services/forms';
 import meritoriousFamiliesData from './data/meritorious_families.json';
 import settingsData from './data/settings.json';
 import homepageSectionsData from './data/homepage_sections.json';
@@ -23,11 +22,16 @@ import proceduresData from './data/procedures.json';
 import procedureVideosData from './data/procedure_videos.json';
 import policiesData from './data/policies.json';
 import { CSKV_MAP } from './data/tdpOfficials';
-import { applySharedHeaderConfig, initSharedHeader } from './components/sharedHeader';
+import { applySharedHeaderConfig, initSharedHeader, applyThemeState } from './components/sharedHeader';
 import { applySharedFooterConfig, initSharedFooter } from './components/sharedFooter';
+import { initSubpageBanners } from './components/sharedSubpageBanner';
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
+import * as XLSX from 'xlsx';
 
 declare global {
   interface Window {
+    Swal: typeof Swal;
     showPortalTab: (tabName: 'home' | 'neighborhoods' | 'merger' | 'officials' | 'meritorious') => void;
     toggleMapView: () => void;
     viewPlaceDetail: (id: number) => void;
@@ -46,6 +50,7 @@ declare global {
     filterMeritoriousByEvent: (eventId: number | 'all') => void;
     filterPortalCategory: (category: string) => void;
     filterOfficialsByNeighborhood: (neighborhood: string) => void;
+    renderOfficialsGrid: () => void;
     toggleMobileMenu: () => void;
     toggleMapPlacesDock: () => void;
     scrollMapPlacesDock: (direction: 'prev' | 'next' | 'left' | 'right') => void;
@@ -62,6 +67,18 @@ function formatStorageUrl(path: string | null | undefined): string {
   if (path.startsWith('/storage/')) return path;
   if (path.startsWith('/')) return path;
   return `/storage/${path.replace(/^\/+/, '')}`;
+}
+
+function getLocalFileUrl(urlOrPath: string | null | undefined): string {
+  if (!urlOrPath) return '';
+  if (urlOrPath.includes('/storage/')) {
+    const idx = urlOrPath.indexOf('/storage/');
+    return urlOrPath.substring(idx);
+  }
+  if (urlOrPath.startsWith('http://') || urlOrPath.startsWith('https://')) {
+    return urlOrPath;
+  }
+  return formatStorageUrl(urlOrPath);
 }
 
 // Chuẩn hóa dữ liệu ban đầu từ database JSON xuất xưởng (0ms delay, không có dữ liệu mock)
@@ -88,19 +105,31 @@ class PortalApp {
   private policiesList: any[] = policiesData as any[];
   private activeCategory: string = 'all';
   private currentPlace: Place | null = null;
-  private isDarkMode: boolean = false;
   private procedureActiveTab = 'popular';
   private selectedAgencyIds: number[] = [];
+
+  // Meritorious Live Document & Spreadsheet Viewer State
+  private selectedMeritoriousId: number | null = null;
+  private meritoriousSheetIndex: number = 0;
+  private meritoriousPage: number = 1;
+  private meritoriousRowsPerPage: number = 50;
+  private meritoriousWorkbookCache: Map<string, any> = new Map();
+  private meritoriousParsedWorkbook: any = null;
 
   // Leaflet Map state
   private map: L.Map | null = null;
 
   constructor() {
     this.initTheme();
-    this.initPortalData();
-    this.fetchProceduresData();
-    this.initSearch();
-    this.initEventListeners();
+
+    // 0ms Immediate Synchronous Render from pre-bundled data (Eliminates 1s mock flash and layout shift)
+    if (settingsData && (settingsData as any).cards) {
+      this.renderStatCardsList((settingsData as any).cards);
+    }
+    if (homepageSectionsData && Array.isArray(homepageSectionsData)) {
+      this.applyHomepageLayout(homepageSectionsData);
+    }
+
     this.renderPortalGrid();
     this.renderOfficialsGrid();
     this.populateOfficialNeighborhoodSelect();
@@ -108,7 +137,18 @@ class PortalApp {
     this.renderMeritoriousSection();
     this.renderProceduresSection();
 
+    this.initSearch();
+    this.initEventListeners();
+
+    // FOUC Prevention: Reveal content now that all synchronous renders are complete
+    document.body.classList.add('js-hydrated');
+
+    // Background asynchronous re-fetch to sync any real-time DB changes
+    this.initPortalData();
+    this.fetchProceduresData();
+
     // Wire global window methods
+    window.Swal = Swal;
     window.showPortalTab = this.showPortalTab.bind(this);
     window.toggleMapView = this.toggleMapView.bind(this);
     window.viewPlaceDetail = this.viewPlaceDetail.bind(this);
@@ -122,12 +162,24 @@ class PortalApp {
     window.openAllAgenciesModal = this.openAllAgenciesModal.bind(this);
     window.closeAllAgenciesModal = this.closeAllAgenciesModal.bind(this);
     window.showMeritoriousDetail = this.showMeritoriousDetail.bind(this);
-    window.closeMeritoriousModal = this.closeMeritoriousModal.bind(this);
+    window.closeMeritoriousModal = () => {};
     window.filterMeritoriousByEvent = (_eventId: number | 'all') => {
       this.renderMeritoriousSection();
     };
     window.filterPortalCategory = this.filterPortalCategory.bind(this);
     window.filterOfficialsByNeighborhood = this.filterOfficialsByNeighborhood.bind(this);
+    window.renderOfficialsGrid = () => this.renderOfficialsGrid();
+    window.addEventListener('spa:navigated', () => {
+      this.renderPortalGrid();
+      this.renderOfficialsGrid();
+      this.populateOfficialNeighborhoodSelect();
+      this.renderTdpModalTables();
+      this.renderMeritoriousSection();
+      this.renderProceduresSection();
+      this.initSearch();
+      this.initEventListeners();
+      triggerStatCardsCountUp();
+    });
     window.toggleMobileMenu = () => {
       const menu = document.getElementById('mobile-nav-menu');
       if (menu) menu.classList.toggle('hidden');
@@ -255,41 +307,7 @@ class PortalApp {
   }
 
   private initTheme() {
-    const savedTheme = localStorage.getItem('portal_theme');
-    if (savedTheme === 'dark') {
-      this.isDarkMode = true;
-      document.documentElement.classList.add('dark');
-      document.body.classList.add('dark-mode', 'dark');
-      document.documentElement.setAttribute('data-theme', 'dark');
-      const icon = document.getElementById('theme-icon');
-      if (icon) icon.textContent = 'light_mode';
-    } else {
-      this.isDarkMode = false;
-      document.documentElement.classList.remove('dark');
-      document.body.classList.remove('dark-mode', 'dark');
-      document.documentElement.setAttribute('data-theme', 'light');
-      const icon = document.getElementById('theme-icon');
-      if (icon) icon.textContent = 'dark_mode';
-    }
-  }
-
-  private toggleTheme() {
-    this.isDarkMode = !this.isDarkMode;
-    if (this.isDarkMode) {
-      document.documentElement.classList.add('dark');
-      document.body.classList.add('dark-mode', 'dark');
-      document.documentElement.setAttribute('data-theme', 'dark');
-      localStorage.setItem('portal_theme', 'dark');
-      const icon = document.getElementById('theme-icon');
-      if (icon) icon.textContent = 'light_mode';
-    } else {
-      document.documentElement.classList.remove('dark');
-      document.body.classList.remove('dark-mode', 'dark');
-      document.documentElement.setAttribute('data-theme', 'light');
-      localStorage.setItem('portal_theme', 'light');
-      const icon = document.getElementById('theme-icon');
-      if (icon) icon.textContent = 'dark_mode';
-    }
+    applyThemeState(false);
   }
 
   private async initPortalData() {
@@ -319,22 +337,23 @@ class PortalApp {
 
       if (departmentsRes && departmentsRes.ok) {
         const dData = await departmentsRes.json();
-        if (Array.isArray(dData) && dData.length > 0) {
+        if (Array.isArray(dData)) {
           this.departments = dData.sort((a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0));
         }
       }
 
       if (officialsRes && officialsRes.ok) {
         const officialsData = await officialsRes.json();
-        if (Array.isArray(officialsData) && officialsData.length > 0) {
+        if (Array.isArray(officialsData)) {
           this.officials = officialsData.map(o => ({
             ...o,
             avatar: formatStorageUrl(o.avatar)
           }));
-          this.renderOfficialsGrid();
-          this.populateOfficialNeighborhoodSelect();
         }
       }
+
+      this.renderOfficialsGrid();
+      this.populateOfficialNeighborhoodSelect();
 
       if (neighborhoodsRes && neighborhoodsRes.ok) {
         const nData = await neighborhoodsRes.json();
@@ -582,13 +601,13 @@ class PortalApp {
     const container = document.getElementById('stats-cards-container');
     if (container) {
       container.innerHTML = cards.map((c: any) => `
-        <div class="stat-card flex items-center gap-4">
-          <div class="w-14 h-14 rounded-2xl ${c.bg} ${c.color} flex items-center justify-center text-3xl font-bold shrink-0">
-            <span class="material-symbols-outlined">${c.icon}</span>
+        <div class="stat-card">
+          <div class="w-11 h-11 sm:w-13 sm:h-13 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl ${c.bg} ${c.color} flex items-center justify-center text-2xl sm:text-3xl lg:text-4xl font-bold shrink-0">
+            <span class="material-symbols-outlined text-2xl sm:text-3xl lg:text-4xl">${c.icon}</span>
           </div>
-          <div>
-            <b class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white leading-none block">${c.value}</b>
-            <span class="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">${c.label}</span>
+          <div class="min-w-0 flex-1">
+            <b class="text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[2.6rem] font-black text-slate-900 dark:text-white leading-none block truncate">${c.value}</b>
+            <span class="text-[11px] sm:text-xs lg:text-sm xl:text-base font-semibold text-slate-500 dark:text-slate-400 stat-label mt-0.5 lg:mt-1">${c.label}</span>
           </div>
         </div>
       `).join('');
@@ -602,23 +621,11 @@ class PortalApp {
     if (preloadStyle) preloadStyle.remove();
 
     const mainView = document.getElementById('portal-main-view');
-    const formsView = document.getElementById('portal-forms-view');
     const mapContainer = document.getElementById('map-view-container');
 
-    if (tabName === 'forms') {
+    if (tabName === 'map') {
+      window.location.hash = '#map-view';
       if (mainView) mainView.classList.add('hidden');
-      if (mapContainer) {
-        mapContainer.classList.add('hidden');
-        mapContainer.classList.remove('flex');
-      }
-      if (formsView) {
-        formsView.classList.remove('hidden');
-        initFormsView();
-      }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else if (tabName === 'map') {
-      if (mainView) mainView.classList.add('hidden');
-      if (formsView) formsView.classList.add('hidden');
       if (mapContainer) {
         mapContainer.classList.remove('hidden');
         mapContainer.classList.add('flex');
@@ -629,7 +636,9 @@ class PortalApp {
         }
       }
     } else {
-      if (formsView) formsView.classList.add('hidden');
+      if (window.location.hash.includes('map')) {
+        history.replaceState(null, '', window.location.pathname);
+      }
       if (mapContainer) {
         mapContainer.classList.add('hidden');
         mapContainer.classList.remove('flex');
@@ -653,18 +662,9 @@ class PortalApp {
       }
     }
 
-    const navHome = document.getElementById('nav-tab-home');
-    const navForms = document.getElementById('nav-tab-forms');
-    const navProc = document.getElementById('nav-tab-procedures');
-    const navMap = document.getElementById('nav-tab-map');
-
-    const activeClass = 'px-5 sm:px-6 py-2.5 rounded-full transition-all bg-[#1d7fe0] text-white font-bold shadow-md shadow-sky-500/20 whitespace-nowrap shrink-0';
-    const inactiveClass = 'px-5 sm:px-6 py-2.5 rounded-full transition-all text-slate-700 dark:text-slate-200 font-bold hover:text-[#1d7fe0] dark:hover:text-sky-400 hover:bg-sky-100/70 dark:hover:bg-slate-700/60 whitespace-nowrap shrink-0';
-
-    if (navHome) navHome.className = (tabName === 'home') ? activeClass : inactiveClass;
-    if (navProc) navProc.className = (tabName === 'procedures') ? activeClass : inactiveClass;
-    if (navForms) navForms.className = (tabName === 'forms') ? activeClass : inactiveClass;
-    if (navMap) navMap.className = (tabName === 'map') ? activeClass : inactiveClass;
+    if (typeof (window as any).initSharedHeader === 'function') {
+      (window as any).initSharedHeader();
+    }
   }
 
   private renderMapPlacesCarousel(query: string = '') {
@@ -1046,8 +1046,8 @@ class PortalApp {
         : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(p.name + ' Phường Duy Hà')}`;
 
       return `
-        <div onclick="window.viewPlaceDetail(${p.id})"
-          class="relative rounded-3xl overflow-hidden shadow-xl min-h-[270px] sm:min-h-[290px] flex flex-col justify-between p-6 sm:p-8 border border-amber-400/20 dark:border-slate-800 group text-white cursor-pointer transition-all duration-300 hover:shadow-2xl">
+        <div onclick="window.location.href='/agencies.html'"
+          class="relative rounded-3xl overflow-hidden shadow-xl min-h-[270px] sm:min-h-[290px] flex flex-col justify-between p-6 sm:p-8 border border-amber-400/20 dark:border-slate-800 group text-white cursor-pointer transition-all duration-300 hover:shadow-2xl hover:scale-[1.01]">
           <!-- Background Image with Soft Gradient Overlay -->
           <img src="${placeImg}"
             alt="${p.name}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -1107,16 +1107,16 @@ class PortalApp {
     const pageNewTotalPeopleEl = document.getElementById('page-new-total-people');
 
     const groupStyles: Record<string, { label: string; badgeClass: string; highlightClass: string }> = {
-      'ngoc-dong': { label: 'TDP Ngọc Động', badgeClass: 'bg-red-50 text-red-800 border-red-200 dark:bg-red-950/60 dark:text-red-300 dark:border-red-800', highlightClass: '' },
-      'chuong': { label: 'TDP Chuồng', badgeClass: 'bg-amber-50 text-amber-900 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800', highlightClass: '' },
-      'bach-xa': { label: 'TDP Bạch Xá', badgeClass: 'bg-orange-50 text-orange-900 border-orange-200 dark:bg-orange-950/60 dark:text-orange-300 dark:border-orange-800', highlightClass: '' },
-      'dong-hai': { label: 'TDP Đông Hải', badgeClass: 'bg-blue-50 text-blue-900 border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800', highlightClass: '' },
-      'huong-cat': { label: 'TDP Hương Cát', badgeClass: 'bg-teal-50 text-teal-900 border-teal-200 dark:bg-teal-950/60 dark:text-teal-300 dark:border-teal-800', highlightClass: '' },
-      'hoang-dong': { label: 'TDP Hoàng Đồng', badgeClass: 'bg-yellow-50 text-yellow-900 border-yellow-300 dark:bg-yellow-950/60 dark:text-yellow-300 dark:border-yellow-800', highlightClass: '' },
-      'ngoc-tu': { label: 'TDP Ngọc Tú', badgeClass: 'bg-rose-50 text-rose-900 border-rose-200 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800', highlightClass: '' },
-      'duy-hai': { label: 'TDP Duy Hải', badgeClass: 'bg-emerald-50 text-emerald-900 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800', highlightClass: '' },
-      'dong-linh-trang': { label: 'TDP Đông Linh Trang', badgeClass: 'bg-purple-50 text-purple-900 border-purple-200 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-800', highlightClass: '' },
-      'duy-minh': { label: 'TDP Duy Minh', badgeClass: 'bg-amber-100 text-amber-900 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800', highlightClass: '' },
+      'bach-xa': { label: 'TDP Bạch Xá', badgeClass: 'bg-orange-50 text-orange-800 border-orange-200 dark:bg-orange-950/60 dark:text-orange-300 dark:border-orange-800', highlightClass: '' },
+      'chuong': { label: 'TDP Chuồng', badgeClass: 'bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800', highlightClass: '' },
+      'duy-hai': { label: 'TDP Duy Hải', badgeClass: 'bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800', highlightClass: '' },
+      'duy-minh': { label: 'TDP Duy Minh', badgeClass: 'bg-indigo-50 text-indigo-800 border-indigo-200 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-800', highlightClass: '' },
+      'dong-hai': { label: 'TDP Đông Hải', badgeClass: 'bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-800', highlightClass: '' },
+      'dong-linh-trang': { label: 'TDP Động Linh Trang', badgeClass: 'bg-purple-50 text-purple-800 border-purple-200 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-800', highlightClass: '' },
+      'hoang-dong': { label: 'TDP Hoàng Đồng', badgeClass: 'bg-sky-50 text-sky-800 border-sky-300 dark:bg-sky-950/60 dark:text-sky-300 dark:border-sky-800', highlightClass: '' },
+      'huong-cat': { label: 'TDP Hương Cát', badgeClass: 'bg-teal-50 text-teal-800 border-teal-200 dark:bg-teal-950/60 dark:text-teal-300 dark:border-teal-800', highlightClass: '' },
+      'ngoc-dong': { label: 'TDP Ngọc Động', badgeClass: 'bg-rose-50 text-rose-800 border-rose-200 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800', highlightClass: '' },
+      'ngoc-tu': { label: 'TDP Ngọc Tú', badgeClass: 'bg-red-50 text-red-800 border-red-200 dark:bg-red-950/60 dark:text-red-300 dark:border-red-800', highlightClass: '' },
     };
 
     // Helper to extract sortable name without prefix
@@ -1165,20 +1165,20 @@ class PortalApp {
       oldTotalArea += n.area_ha || 0;
       const gStyle = groupStyles[n.group_code] || { label: 'TDP Mới', badgeClass: 'bg-slate-100 text-slate-700', borderClass: 'border-l-4 border-slate-400', highlightClass: '' };
       return `
-        <tr data-group-code="${n.group_code}" class="tdp-merger-row transition-all duration-300 cursor-pointer hover:bg-amber-50 dark:hover:bg-slate-800">
-          <td class="py-2.5 px-2 text-center text-slate-400 font-bold">${idx + 1}</td>
-          <td class="py-2.5 px-2 font-bold text-slate-800 dark:text-slate-100">
+        <tr data-group-code="${n.group_code}" class="tdp-merger-row transition-all duration-300 cursor-pointer hover:bg-amber-50/80 dark:hover:bg-slate-800/80">
+          <td class="py-2 px-1.5 text-center text-slate-400 font-bold">${idx + 1}</td>
+          <td class="py-2 px-1.5">
             <div class="flex items-center gap-1.5 flex-wrap">
-              <span class="font-bold text-slate-800 dark:text-slate-100">TDP ${n.name.replace(/^(TDP|Tổ dân phố)\s+/gi, '').trim()}</span>
-              <span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${gStyle.badgeClass}">
-                <span class="material-symbols-outlined text-[12px]">arrow_right_alt</span>
+              <span class="text-xs font-bold text-slate-800 dark:text-slate-100 whitespace-nowrap">TDP ${n.name.replace(/^(TDP|Tổ dân phố)\s+/gi, '').trim()}</span>
+              <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10.5px] font-bold border ${gStyle.badgeClass} whitespace-nowrap shadow-2xs">
+                <span class="material-symbols-outlined text-[12px] opacity-75">arrow_right_alt</span>
                 <span>${gStyle.label}</span>
               </span>
             </div>
           </td>
-          <td class="py-2.5 px-2 text-right font-bold text-slate-800 dark:text-slate-200">${n.households.toLocaleString('vi-VN')}</td>
-          <td class="py-2.5 px-2 text-right font-bold text-slate-800 dark:text-slate-200">${n.people.toLocaleString('vi-VN')}</td>
-          <td class="py-2.5 px-2 text-right font-extrabold text-slate-900 dark:text-slate-100">${n.area_ha ? n.area_ha.toFixed(2).replace('.', ',') : '--'}</td>
+          <td class="py-2 px-1.5 text-right font-bold text-slate-800 dark:text-slate-200">${n.households.toLocaleString('vi-VN')}</td>
+          <td class="py-2 px-1.5 text-right font-bold text-slate-800 dark:text-slate-200">${n.people.toLocaleString('vi-VN')}</td>
+          <td class="py-2 px-1.5 text-right font-bold text-slate-900 dark:text-slate-100">${n.area_ha ? n.area_ha.toFixed(2).replace('.', ',') : '--'}</td>
         </tr>
       `;
     }).join('');
@@ -1208,19 +1208,19 @@ class PortalApp {
       newTotalArea += area;
       const gStyle = groupStyles[n.group_code] || { label: 'TDP Mới', badgeClass: 'bg-slate-100 text-slate-700', borderClass: 'border-l-4 border-slate-400', highlightClass: '' };
       return `
-        <tr data-group-code="${n.group_code}" class="tdp-merger-row transition-all duration-300 cursor-pointer hover:bg-amber-50 dark:hover:bg-slate-800">
-          <td class="py-2.5 px-2 text-center text-slate-400 font-bold">${idx + 1}</td>
-          <td class="py-2.5 px-2 font-bold text-slate-800 dark:text-slate-100">
-            <span class="inline-flex items-center px-2.5 py-1 rounded-xl text-xs font-extrabold border ${gStyle.badgeClass}">
+        <tr data-group-code="${n.group_code}" class="tdp-merger-row transition-all duration-300 cursor-pointer hover:bg-amber-50/80 dark:hover:bg-slate-800/80">
+          <td class="py-2 px-1.5 text-center text-slate-400 font-bold">${idx + 1}</td>
+          <td class="py-2 px-1.5">
+            <span class="inline-flex items-center justify-center px-2.5 py-0.5 rounded text-xs font-bold border ${gStyle.badgeClass} whitespace-nowrap shadow-2xs">
               ${gStyle.label}
             </span>
           </td>
-          <td class="py-2.5 px-2 text-right font-bold text-slate-800 dark:text-slate-200">${n.households.toLocaleString('vi-VN')}</td>
-          <td class="py-2.5 px-2 text-right font-bold text-slate-800 dark:text-slate-200">${n.people.toLocaleString('vi-VN')}</td>
-          <td class="py-2.5 px-2 text-right font-extrabold text-slate-900 dark:text-slate-100">${area ? area.toFixed(2).replace('.', ',') : '--'}</td>
-          <td class="py-2.5 px-2 text-center">
-            <button onclick="event.stopPropagation(); window.openAllOfficialsModalForTdp('${n.name.replace('TDP ', '')}')" class="inline-flex items-center justify-center px-3.5 py-1.5 bg-sky-50 dark:bg-sky-950/50 hover:bg-[#3399fe] text-[#3399fe] hover:text-white text-xs font-extrabold rounded-xl border border-sky-300/60 dark:border-sky-800 transition-all shadow-sm active:scale-95 whitespace-nowrap" title="Xem danh sách cán bộ ${n.name}">
-              <span>Xem chi tiết</span>
+          <td class="py-2 px-1.5 text-right font-bold text-slate-800 dark:text-slate-200">${n.households.toLocaleString('vi-VN')}</td>
+          <td class="py-2 px-1.5 text-right font-bold text-slate-800 dark:text-slate-200">${n.people.toLocaleString('vi-VN')}</td>
+          <td class="py-2 px-1.5 text-right font-bold text-slate-900 dark:text-slate-100">${area ? area.toFixed(2).replace('.', ',') : '--'}</td>
+          <td class="py-2 px-1.5 text-center">
+            <button onclick="event.stopPropagation(); window.openAllOfficialsModalForTdp('${n.name.replace('TDP ', '')}')" class="inline-flex items-center justify-center px-2 py-0.5 bg-sky-50 dark:bg-sky-950/50 hover:bg-[#3399fe] text-[#1d7fe0] dark:text-sky-300 hover:text-white text-xs font-bold rounded border border-sky-300/60 dark:border-sky-800 transition-all shadow-2xs active:scale-95 whitespace-nowrap" title="Xem danh sách cán bộ ${n.name}">
+              <span>Chi tiết</span>
             </button>
           </td>
         </tr>
@@ -1390,15 +1390,15 @@ class PortalApp {
       const cskvPhone = item.cskvPhone || (item as any).cskv_phone || cskvInfo.phone || '';
 
       return `
-        <tr class="hover:bg-blue-50/80 dark:hover:bg-slate-800/90 transition-colors border-b border-slate-300 dark:border-slate-700 even:bg-slate-50/60 dark:even:bg-slate-800/30">
-          <td class="py-3.5 px-3 font-extrabold text-[#1a4a8c] dark:text-sky-300 border-r border-slate-300 dark:border-slate-700 bg-sky-50/50 dark:bg-slate-800/60 text-sm sm:text-base">${item.tdp}</td>
+        <tr class="hover:bg-sky-50/80 dark:hover:bg-slate-800/90 transition-colors border-b border-slate-300 dark:border-slate-700 even:bg-slate-50/60 dark:even:bg-slate-800/30">
+          <td class="py-3.5 px-3 font-extrabold text-[#1d7fe0] dark:text-sky-300 border-r border-slate-300 dark:border-slate-700 bg-sky-50/50 dark:bg-slate-800/60 text-sm sm:text-base">${item.tdp}</td>
           <td class="py-3.5 px-3 border-r border-slate-300 dark:border-slate-700">
             <div class="font-extrabold text-slate-900 dark:text-white text-sm sm:text-base">${item.biThuName}</div>
-            ${item.biThuPhone ? `<a href="tel:${item.biThuPhone.replace(/\s+/g, '')}" class="text-xs sm:text-sm font-bold text-blue-700 dark:text-blue-400 hover:underline flex items-center gap-1 mt-1"><span class="material-symbols-outlined text-sm">call</span>${item.biThuPhone}</a>` : ''}
+            ${item.biThuPhone ? `<a href="tel:${item.biThuPhone.replace(/\s+/g, '')}" class="text-xs sm:text-sm font-bold text-sky-600 dark:text-sky-400 hover:underline flex items-center gap-1 mt-1"><span class="material-symbols-outlined text-sm">call</span>${item.biThuPhone}</a>` : ''}
           </td>
           <td class="py-3.5 px-3 border-r border-slate-300 dark:border-slate-700">
             <div class="font-extrabold text-slate-900 dark:text-white text-sm sm:text-base">${item.toTruongName}</div>
-            ${item.toTruongPhone ? `<a href="tel:${item.toTruongPhone.replace(/\s+/g, '')}" class="text-xs sm:text-sm font-bold text-blue-700 dark:text-blue-400 hover:underline flex items-center gap-1 mt-1"><span class="material-symbols-outlined text-sm">call</span>${item.toTruongPhone}</a>` : ''}
+            ${item.toTruongPhone ? `<a href="tel:${item.toTruongPhone.replace(/\s+/g, '')}" class="text-xs sm:text-sm font-bold text-sky-600 dark:text-sky-400 hover:underline flex items-center gap-1 mt-1"><span class="material-symbols-outlined text-sm">call</span>${item.toTruongPhone}</a>` : ''}
           </td>
           <td class="py-3.5 px-3 border-r border-slate-300 dark:border-slate-700">
             <div class="font-extrabold text-indigo-900 dark:text-indigo-300 text-sm sm:text-base">${cskvName || '--'}</div>
@@ -1406,7 +1406,7 @@ class PortalApp {
           </td>
           <td class="py-3.5 px-3 border-r border-slate-300 dark:border-slate-700">
             <div class="font-extrabold text-slate-900 dark:text-white text-sm sm:text-base">${item.matTanName}</div>
-            ${item.matTanPhone ? `<a href="tel:${item.matTanPhone.replace(/\s+/g, '')}" class="text-xs sm:text-sm font-bold text-blue-700 dark:text-blue-400 hover:underline flex items-center gap-1 mt-1"><span class="material-symbols-outlined text-sm">call</span>${item.matTanPhone}</a>` : ''}
+            ${item.matTanPhone ? `<a href="tel:${item.matTanPhone.replace(/\s+/g, '')}" class="text-xs sm:text-sm font-bold text-sky-600 dark:text-sky-400 hover:underline flex items-center gap-1 mt-1"><span class="material-symbols-outlined text-sm">call</span>${item.matTanPhone}</a>` : ''}
           </td>
           <td class="py-3.5 px-3 border-r border-slate-300 dark:border-slate-700">
             <div class="font-semibold text-slate-800 dark:text-slate-200 text-sm sm:text-[15px]">${item.nguoiCaoTuoi}</div>
@@ -1702,9 +1702,6 @@ class PortalApp {
                   <h4 class="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white group-hover:text-[#1d7fe0] transition-colors leading-snug">
                     ${doc.title}
                   </h4>
-                  <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed font-medium">
-                    ${doc.summary || ''}
-                  </p>
                 </div>
                 <a href="${docLink}" ${docLink.startsWith('http') || docLink.endsWith('.pdf') ? 'target="_blank" rel="noopener noreferrer"' : ''} onclick="event.stopPropagation()"
                   class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-[#1d7fe0] text-slate-700 dark:text-slate-200 hover:text-white text-xs font-extrabold transition-all shrink-0 self-end sm:self-center">
@@ -1740,111 +1737,378 @@ class PortalApp {
     container.innerHTML = html;
   }
 
-  private meritoriousSearchQuery = '';
-
   private renderMeritoriousSection() {
     const container = document.getElementById('meritorious-events-container');
     if (!container) return;
 
-    (window as any).handleMeritoriousSearch = (e: Event) => {
-      this.meritoriousSearchQuery = (e.target as HTMLInputElement).value.toLowerCase();
-      this.renderMeritoriousGridOnly();
+    (window as any).selectMeritoriousBatch = (id: number) => {
+      this.selectedMeritoriousId = id;
+      this.meritoriousSheetIndex = 0;
+      this.meritoriousPage = 1;
+      this.renderMeritoriousSection();
     };
 
-    let html = `
-      <!-- Search & Info Bar -->
-      <div class="space-y-4 mb-6">
-        <div class="flex flex-col sm:flex-row gap-3 items-center justify-between">
-          <!-- Search box -->
-          <div class="relative flex-1 w-full">
-            <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
-            <input 
-              type="text" 
-              placeholder="Tìm kiếm đợt danh sách chính sách, quà tặng, trợ cấp..." 
-              value="${this.meritoriousSearchQuery}"
-              oninput="window.handleMeritoriousSearch(event)"
-              class="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 text-sm font-bold focus:outline-none focus:border-amber-500 focus:bg-white dark:focus:bg-slate-950 transition-all shadow-inner"
-            />
+    (window as any).switchMeritoriousSheet = (sheetIdx: number) => {
+      this.meritoriousSheetIndex = sheetIdx;
+      this.meritoriousPage = 1;
+      this.renderCurrentMeritoriousSheet();
+    };
+
+    (window as any).changeMeritoriousPage = (page: number) => {
+      this.meritoriousPage = page;
+      this.renderCurrentMeritoriousSheet();
+    };
+
+    (window as any).changeMeritoriousRowsPerPage = (rows: number) => {
+      this.meritoriousRowsPerPage = rows;
+      this.meritoriousPage = 1;
+      this.renderCurrentMeritoriousSheet();
+    };
+
+    const batches = (this.meritoriousFamilies as any[]).filter(f => f.status === 'active' || f.status !== 'inactive');
+
+    if (batches.length === 0) {
+      container.innerHTML = `
+        <div class="text-center py-16 bg-slate-50 dark:bg-slate-800/40 rounded-3xl border border-slate-200 dark:border-slate-700 space-y-3">
+          <div class="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto text-3xl">
+            <span class="material-symbols-outlined text-4xl">folder_off</span>
           </div>
-        </div>
-      </div>
-
-      <!-- Grid container for Excel batch cards -->
-      <div id="meritorious-grid-only"></div>
-    `;
-
-    container.innerHTML = html;
-    this.renderMeritoriousGridOnly();
-  }
-
-  private renderMeritoriousGridOnly() {
-    const gridContainer = document.getElementById('meritorious-grid-only');
-    if (!gridContainer) return;
-
-    const batches = (this.meritoriousFamilies as any[]).filter(f => f.status === 'active');
-    const filtered = batches.filter(f => {
-      const nameMatch = f.name && f.name.toLowerCase().includes(this.meritoriousSearchQuery);
-      const descMatch = f.description && f.description.toLowerCase().includes(this.meritoriousSearchQuery);
-      return nameMatch || descMatch;
-    });
-
-    if (filtered.length === 0) {
-      gridContainer.innerHTML = `
-        <div class="text-center py-16 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700">
-          <span class="material-symbols-outlined text-4xl text-amber-500 mb-2">folder_off</span>
-          <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Không tìm thấy đợt danh sách chính sách nào phù hợp.</p>
-          <p class="text-xs text-slate-400 mt-1">Vui lòng thử tìm kiếm bằng từ khóa khác.</p>
+          <p class="text-base font-bold text-slate-700 dark:text-slate-200">Chưa có danh sách gia đình chính sách nào được đăng tải.</p>
+          <p class="text-xs text-slate-400">Vui lòng cập nhật danh sách tại trang quản trị Admin.</p>
         </div>
       `;
       return;
     }
 
-    gridContainer.innerHTML = `
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        ${filtered.map((f: any) => {
-      const downloadUrl = f.file_url || (f.file_path ? (f.file_path.startsWith('http') ? f.file_path : `http://127.0.0.1:8005/api/storage/${f.file_path}`) : '#');
-      const fileName = f.file_name || 'Danh-sach-chinh-sach.xlsx';
-      return `
-            <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-md space-y-4 flex flex-col justify-between hover:border-emerald-500 hover:shadow-xl transition-all duration-300 group">
-              <div>
-                <div class="flex items-center justify-between gap-2 mb-3">
-                  <span class="inline-flex items-center gap-1.5 text-[11px] font-extrabold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-900/40">
-                    <span class="material-symbols-outlined text-xs">table_chart</span>
-                    <span>TỆP EXCEL (.XLSX)</span>
-                  </span>
-                  <span class="text-[11px] font-bold text-slate-400 flex items-center gap-1">
-                    <span class="material-symbols-outlined text-xs">event</span>
-                    <span>${f.created_at || f.period_date || 'Mới nhất'}</span>
-                  </span>
-                </div>
-                <h4 class="text-base sm:text-lg font-black text-slate-900 dark:text-white leading-snug group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                  ${f.name}
-                </h4>
-                <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 line-clamp-3 leading-relaxed">
-                  ${f.description || 'Danh sách chi tiết đối tượng gia đình chính sách, người có công.'}
-                </p>
-              </div>
+    // Default select first batch if none selected or not in list
+    if (!this.selectedMeritoriousId || !batches.some(b => b.id === this.selectedMeritoriousId)) {
+      this.selectedMeritoriousId = batches[0].id;
+    }
 
-              <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
-                <a href="${downloadUrl}" download="${fileName}" target="_blank"
-                  class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-sm active:scale-95">
-                  <span class="material-symbols-outlined text-base">download</span>
-                  <span>Tải về file Excel</span>
-                </a>
-              </div>
-            </div>
-          `;
-    }).join('')}
+    const currentBatch = batches.find(b => b.id === this.selectedMeritoriousId) || batches[0];
+    const fileUrl = getLocalFileUrl(currentBatch.file_path || currentBatch.file_url);
+    const fileName = currentBatch.file_name || currentBatch.name || 'Danh_sach_chinh_sach.xlsx';
+    const isExcel = /\.(xlsx|xls|csv)$/i.test(fileName) || /\.(xlsx|xls|csv)$/i.test(currentBatch.file_path || '');
+    const isPdf = /\.pdf$/i.test(fileName) || /\.pdf$/i.test(currentBatch.file_path || '');
+
+    let html = `
+      <!-- BATCH SELECTOR (IF MULTIPLE BATCHES) -->
+      ${batches.length > 1 ? `
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-slate-100 dark:border-slate-800">
+          <span class="text-xs font-bold text-slate-400 shrink-0 mr-1 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">filter_list</span>
+            <span>Chọn đợt:</span>
+          </span>
+          ${batches.map(b => `
+            <button onclick="window.selectMeritoriousBatch(${b.id})"
+              class="px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-2 border cursor-pointer ${b.id === this.selectedMeritoriousId ? 'bg-amber-500 text-white border-amber-600 shadow-md scale-102' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200'}">
+              <span class="material-symbols-outlined text-sm">${/\.pdf$/i.test(b.file_name || b.file_path || '') ? 'picture_as_pdf' : 'table_chart'}</span>
+              <span>${b.name}</span>
+            </button>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      <!-- CURRENT BATCH HEADER & CONTROLS -->
+      <div class="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent dark:from-amber-950/30 dark:via-slate-900 dark:to-slate-900 p-5 sm:p-6 rounded-2xl border border-amber-500/20 dark:border-amber-900/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="space-y-1.5 min-w-0 flex-1">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="inline-flex items-center gap-1 text-[11px] font-extrabold ${isExcel ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-100/70 dark:bg-emerald-950/80 border-emerald-300 dark:border-emerald-800' : (isPdf ? 'text-rose-700 dark:text-rose-400 bg-rose-100/70 dark:bg-rose-950/80 border-rose-300 dark:border-rose-800' : 'text-blue-700 dark:text-blue-400 bg-blue-100/70 dark:bg-blue-950/80 border-blue-300 dark:border-blue-800')} px-2.5 py-0.5 rounded-full border">
+              <span class="material-symbols-outlined text-xs">${isExcel ? 'table_chart' : (isPdf ? 'picture_as_pdf' : 'draft')}</span>
+              <span>${isExcel ? 'TỆP EXCEL (.XLSX)' : (isPdf ? 'TỆP PDF' : 'TÀI LIỆU')}</span>
+            </span>
+            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1">
+              <span class="material-symbols-outlined text-xs">calendar_today</span>
+              <span>${currentBatch.created_at || currentBatch.period_date || 'Mới cập nhật'}</span>
+            </span>
+            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 hidden sm:inline-flex items-center gap-1 truncate max-w-xs" title="${fileName}">
+              <span class="material-symbols-outlined text-xs">attach_file</span>
+              <span class="truncate">${fileName}</span>
+            </span>
+          </div>
+          <h4 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">
+            ${currentBatch.name}
+          </h4>
+          ${currentBatch.description ? `
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
+              ${currentBatch.description}
+            </p>
+          ` : ''}
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0 self-end md:self-center">
+          ${fileUrl ? `
+            <a href="${fileUrl}" download="${fileName}" target="_blank"
+              class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer"
+              title="Tải về máy tính">
+              <span class="material-symbols-outlined text-base">download</span>
+              <span>Tải về</span>
+            </a>
+            <a href="${fileUrl}" target="_blank"
+              class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer"
+              title="Mở trong tab mới">
+              <span class="material-symbols-outlined text-base">open_in_new</span>
+              <span class="hidden sm:inline">Mở tab mới</span>
+            </a>
+          ` : ''}
+        </div>
+      </div>
+
+      <!-- LIVE VIEWER CONTAINER -->
+      <div id="meritorious-live-viewer-box" class="w-full">
+        <!-- Injected by loadAndDisplayMeritoriousFile -->
+      </div>
+    `;
+
+    container.innerHTML = html;
+    this.loadAndDisplayMeritoriousFile(currentBatch);
+  }
+
+  private async loadAndDisplayMeritoriousFile(batch: any) {
+    const viewerBox = document.getElementById('meritorious-live-viewer-box');
+    if (!viewerBox) return;
+
+    const fileUrl = getLocalFileUrl(batch.file_path || batch.file_url);
+    const fileName = batch.file_name || batch.name || '';
+    const isExcel = /\.(xlsx|xls|csv)$/i.test(fileName) || /\.(xlsx|xls|csv)$/i.test(batch.file_path || '');
+    const isPdf = /\.pdf$/i.test(fileName) || /\.pdf$/i.test(batch.file_path || '');
+
+    if (!fileUrl || fileUrl === '#' || fileUrl === '/') {
+      viewerBox.innerHTML = `
+        <div class="text-center py-12 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-2">
+          <span class="material-symbols-outlined text-3xl text-amber-500">warning</span>
+          <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Đợt danh sách này chưa có tệp tin đính kèm.</p>
+        </div>
+      `;
+      return;
+    }
+
+    if (isPdf) {
+      viewerBox.innerHTML = `
+        <div class="w-full h-[750px] bg-slate-100 dark:bg-slate-950 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-md">
+          <iframe src="${fileUrl}#view=FitH" class="w-full h-full border-0 bg-white" title="Xem danh sách PDF"></iframe>
+        </div>
+      `;
+      return;
+    }
+
+    if (isExcel) {
+      viewerBox.innerHTML = `
+        <div class="flex flex-col items-center justify-center py-16 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
+          <div class="animate-spin rounded-full h-8 w-8 border-4 border-emerald-600 border-t-transparent"></div>
+          <p class="text-xs font-bold text-slate-600 dark:text-slate-400">Đang đọc và tải dữ liệu bảng tính...</p>
+        </div>
+      `;
+
+      try {
+        let wb = this.meritoriousWorkbookCache.get(fileUrl);
+        if (!wb) {
+          let res = await fetch(fileUrl).catch(() => null);
+          if (!res || !res.ok) {
+            const altUrl = batch.file_url || formatStorageUrl(batch.file_path);
+            if (altUrl && altUrl !== fileUrl) {
+              res = await fetch(altUrl).catch(() => null);
+            }
+          }
+          if (!res || !res.ok) throw new Error('Không thể nạp tệp tin từ máy chủ');
+          const arrayBuffer = await res.arrayBuffer();
+          wb = XLSX.read(arrayBuffer, { type: 'array' });
+          this.meritoriousWorkbookCache.set(fileUrl, wb);
+        }
+
+        this.meritoriousParsedWorkbook = wb;
+        this.meritoriousSheetIndex = 0;
+        this.renderCurrentMeritoriousSheet();
+      } catch (err) {
+        console.error('Failed to parse Excel spreadsheet:', err);
+        viewerBox.innerHTML = `
+          <div class="text-center py-12 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
+            <span class="material-symbols-outlined text-3xl text-amber-500">error</span>
+            <p class="text-sm font-bold text-slate-700 dark:text-slate-300">Không thể mở xem trực tiếp bảng tính này trên trình duyệt.</p>
+            <a href="${fileUrl}" download="${fileName}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold shadow-sm">
+              <span class="material-symbols-outlined text-base">download</span>
+              <span>Bấm vào đây để tải file về máy</span>
+            </a>
+          </div>
+        `;
+      }
+      return;
+    }
+
+    // Default fallback (Images / Other)
+    viewerBox.innerHTML = `
+      <div class="w-full flex justify-center bg-slate-100 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+        <img src="${fileUrl}" alt="Danh sách chính sách" class="max-w-full max-h-[800px] object-contain rounded-xl shadow" />
       </div>
     `;
   }
 
-  private closeMeritoriousModal() {
-    const modal = document.getElementById('meritorious-modal');
-    if (modal) {
-      modal.classList.add('hidden');
-      modal.classList.remove('flex');
+  private renderCurrentMeritoriousSheet() {
+    const viewerBox = document.getElementById('meritorious-live-viewer-box');
+    if (!viewerBox || !this.meritoriousParsedWorkbook) return;
+
+    const wb = this.meritoriousParsedWorkbook;
+    const sheetNames = wb.SheetNames || [];
+    if (sheetNames.length === 0) {
+      viewerBox.innerHTML = `<div class="p-8 text-center text-xs font-bold text-slate-400">Bảng tính không có dữ liệu.</div>`;
+      return;
     }
+
+    if (this.meritoriousSheetIndex >= sheetNames.length) {
+      this.meritoriousSheetIndex = 0;
+    }
+
+    const currentSheetName = sheetNames[this.meritoriousSheetIndex];
+    const ws = wb.Sheets[currentSheetName];
+    const rawRows: any[][] = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+
+    // Filter out completely blank rows
+    const allRows = rawRows.filter(row => Array.isArray(row) && row.some(cell => String(cell || '').trim() !== ''));
+
+    if (allRows.length === 0) {
+      viewerBox.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar border-b border-slate-100 dark:border-slate-800">
+            ${sheetNames.map((sName: string, idx: number) => `
+              <button onclick="window.switchMeritoriousSheet(${idx})"
+                class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer border ${idx === this.meritoriousSheetIndex ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200'}">
+                <span class="material-symbols-outlined text-sm">grid_on</span>
+                <span>${sName}</span>
+              </button>
+            `).join('')}
+          </div>
+          <div class="p-12 text-center text-xs font-bold text-slate-400 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border">
+            Sheet "${currentSheetName}" không có dữ liệu hiển thị.
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    // Find the header row (first row with at least 2 non-empty cells)
+    let headerRowIdx = 0;
+    for (let i = 0; i < Math.min(allRows.length, 10); i++) {
+      const nonEmpties = allRows[i].filter(c => String(c || '').trim() !== '');
+      if (nonEmpties.length >= 2) {
+        headerRowIdx = i;
+        break;
+      }
+    }
+
+    const headerRow = allRows[headerRowIdx] || [];
+    const dataRows = allRows.slice(headerRowIdx + 1);
+
+    // Determine valid columns that actually contain data or headers
+    const rawMaxCols = Math.max(headerRow.length, ...dataRows.map(r => r.length), 1);
+    const validColIndices: number[] = [];
+    for (let c = 0; c < rawMaxCols; c++) {
+      const headerHasVal = headerRow[c] !== undefined && String(headerRow[c] || '').trim() !== '';
+      const dataHasVal = dataRows.some(row => row[c] !== undefined && String(row[c] || '').trim() !== '');
+      if (headerHasVal || dataHasVal) {
+        validColIndices.push(c);
+      }
+    }
+    if (validColIndices.length === 0) validColIndices.push(0);
+
+    // Normalize header row cells
+    const normalizedHeaders: string[] = validColIndices.map((col, idx) => {
+      return String(headerRow[col] || '').trim() || `Cột ${idx + 1}`;
+    });
+
+    // Pagination
+    const totalRows = dataRows.length;
+    const perPage = this.meritoriousRowsPerPage;
+    const totalPages = Math.ceil(totalRows / perPage) || 1;
+    if (this.meritoriousPage > totalPages) this.meritoriousPage = totalPages;
+    const startIdx = (this.meritoriousPage - 1) * perPage;
+    const pageRows = dataRows.slice(startIdx, startIdx + perPage);
+
+    viewerBox.innerHTML = `
+      <div class="space-y-4 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-4 sm:p-6 shadow-md">
+        <!-- SHEET TABS (IF MULTIPLE SHEETS) -->
+        ${sheetNames.length > 1 ? `
+          <div class="flex items-center gap-1.5 overflow-x-auto max-w-full pb-3 border-b border-slate-100 dark:border-slate-800 no-scrollbar">
+            ${sheetNames.map((sName: string, idx: number) => `
+              <button onclick="window.switchMeritoriousSheet(${idx})"
+                class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-1.5 cursor-pointer border ${idx === this.meritoriousSheetIndex ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-200'}">
+                <span class="material-symbols-outlined text-sm">grid_on</span>
+                <span>${sName}</span>
+              </button>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        <!-- DATA TABLE CONTAINER WITH STICKY HEADER -->
+        <div class="overflow-x-auto max-h-[620px] rounded-2xl border border-slate-200 dark:border-slate-700 shadow-inner bg-slate-50/50 dark:bg-slate-950/50">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead class="sticky top-0 z-10 bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-xs">
+              <tr>
+                <th class="py-2.5 px-3 text-center w-12 font-black text-slate-600 dark:text-slate-300 uppercase tracking-wider border-r border-slate-200 dark:border-slate-700">STT</th>
+                ${normalizedHeaders.map((h) => `
+                  <th class="py-2.5 px-3 font-extrabold text-slate-700 dark:text-slate-200 whitespace-nowrap border-r border-slate-200/60 dark:border-slate-700/60 last:border-r-0">
+                    ${h}
+                  </th>
+                `).join('')}
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200/70 dark:divide-slate-800/70 font-medium text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-900">
+              ${pageRows.length === 0 ? `
+                <tr>
+                  <td colspan="${validColIndices.length + 1}" class="text-center py-12 text-slate-400 font-bold">
+                    Không có dữ liệu hiển thị.
+                  </td>
+                </tr>
+              ` : pageRows.map((row, rIdx) => {
+                const globalRowIdx = startIdx + rIdx + 1;
+                const isTotalRow = row.some(cell => String(cell || '').toLowerCase().includes('tổng cộng'));
+                return `
+                  <tr class="hover:bg-amber-50/80 dark:hover:bg-slate-800/80 transition-colors ${isTotalRow ? 'bg-amber-100/60 dark:bg-amber-950/40 font-black text-amber-950 dark:text-amber-200' : ''}">
+                    <td class="py-2 px-3 text-center text-slate-400 font-bold border-r border-slate-200/60 dark:border-slate-800/60">${globalRowIdx}</td>
+                    ${validColIndices.map((origColIdx) => {
+                      const val = row[origColIdx] !== undefined && row[origColIdx] !== null ? String(row[origColIdx]) : '';
+                      const isNum = val && !isNaN(Number(val.replace(/[,\.]/g, ''))) && val.trim() !== '';
+                      return `
+                        <td class="py-2 px-3 ${isNum && val.length < 10 ? 'text-right' : ''} border-r border-slate-200/60 dark:border-slate-800/60 last:border-r-0 whitespace-nowrap">
+                          ${val || '—'}
+                        </td>
+                      `;
+                    }).join('')}
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- PAGINATION & ROW COUNT FOOTER -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 text-xs text-slate-500 dark:text-slate-400">
+          <div class="font-semibold">
+            Hiển thị <span class="font-black text-slate-800 dark:text-slate-200">${totalRows > 0 ? startIdx + 1 : 0} - ${Math.min(startIdx + perPage, totalRows)}</span> trong tổng số <span class="font-black text-slate-800 dark:text-slate-200">${totalRows}</span> dòng
+          </div>
+
+          <!-- Pagination buttons -->
+          <div class="flex items-center gap-1.5">
+            <button onclick="window.changeMeritoriousPage(${this.meritoriousPage - 1})"
+              ${this.meritoriousPage <= 1 ? 'disabled class="opacity-40 cursor-not-allowed px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 font-bold transition-all"' : 'class="hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 font-bold transition-all"'}
+              >
+              <span class="material-symbols-outlined text-sm align-middle">chevron_left</span>
+              <span>Trước</span>
+            </button>
+
+            <span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg font-black text-slate-800 dark:text-slate-200">
+              ${this.meritoriousPage} / ${totalPages}
+            </span>
+
+            <button onclick="window.changeMeritoriousPage(${this.meritoriousPage + 1})"
+              ${this.meritoriousPage >= totalPages ? 'disabled class="opacity-40 cursor-not-allowed px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 font-bold transition-all"' : 'class="hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 font-bold transition-all"'}
+              >
+              <span>Sau</span>
+              <span class="material-symbols-outlined text-sm align-middle">chevron_right</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   private populateOfficialNeighborhoodSelect() {
@@ -1863,20 +2127,21 @@ class PortalApp {
     const grid = document.getElementById('officials-list-grid');
     if (!grid) return;
 
-    const excludedCodes = ['cskv', 'cong_an'];
+    // Lấy tất cả phòng ban đang có trạng thái hoạt động (active)
     const activeDepartments = this.departments.filter(dept => 
-      dept.status !== 'inactive' && !excludedCodes.includes(dept.code)
+      dept.status === 'active' || dept.status !== 'inactive'
     );
 
-    const validDeptIdentifiers = new Set<string>();
-    activeDepartments.forEach(d => {
-      if (d.code) validDeptIdentifiers.add(d.code);
-      if (d.name) validDeptIdentifiers.add(d.name);
-    });
-
-    let items = this.officials.filter(o => o.department && validDeptIdentifiers.has(o.department));
+    let items = this.officials.filter(o => o.status === 'active' || o.status !== 'inactive');
     if (filterDept !== 'all') {
-      items = items.filter(o => o.department === filterDept || (Array.isArray(o.neighborhood_name) ? o.neighborhood_name.includes(filterDept) : o.neighborhood_name === filterDept));
+      const fDept = filterDept.toLowerCase().trim();
+      items = items.filter(o => {
+        const oDept = (o.department || '').toLowerCase().trim();
+        const oNb = Array.isArray(o.neighborhood_name) 
+          ? o.neighborhood_name.map(n => String(n).toLowerCase().trim()).join(' ')
+          : String(o.neighborhood_name || '').toLowerCase().trim();
+        return oDept === fDept || oNb.includes(fDept);
+      });
     }
 
     const renderCard = (o: Official) => {
@@ -1898,8 +2163,11 @@ class PortalApp {
     };
 
     const getDeptStyle = (color?: string, code?: string) => {
-      if (code === 'dang_uy' || color === 'danger' || color === 'primary') {
+      if (code === 'dang_uy' || color === 'danger' || color === 'red') {
         return { text: 'text-red-600 dark:text-red-400', dot: 'bg-red-600' };
+      }
+      if (code === 'cong_an' || color === 'warning' || color === 'amber') {
+        return { text: 'text-amber-600 dark:text-amber-400', dot: 'bg-amber-600' };
       }
       if (code === 'chinh_quyen' || color === 'success' || color === 'emerald') {
         return { text: 'text-emerald-600 dark:text-emerald-400', dot: 'bg-emerald-600' };
@@ -1912,9 +2180,27 @@ class PortalApp {
 
     let html = '';
 
-    // Render theo thứ tự từng đơn vị được phép hiển thị (Đảng ủy, UBND / Chính quyền, Hành chính công)
+    // Render theo thứ tự từng đơn vị được phép hiển thị
     activeDepartments.forEach((dept, index) => {
-      const deptOfficials = items.filter(o => o.department === dept.code || o.department === dept.name);
+      const dCode = (dept.code || '').toLowerCase().trim();
+      const dName = (dept.name || '').toLowerCase().trim();
+
+      const deptOfficials = items.filter(o => {
+        const oDept = (o.department || '').toLowerCase().trim();
+        if (oDept && (oDept === dCode || oDept === dName)) return true;
+        
+        if (Array.isArray(o.neighborhood_name)) {
+          return o.neighborhood_name.some((n: string) => {
+            const nStr = String(n).toLowerCase().trim();
+            return nStr.includes(dName) || (dCode && nStr.includes(dCode));
+          });
+        } else if (typeof o.neighborhood_name === 'string') {
+          const nStr = o.neighborhood_name.toLowerCase().trim();
+          return nStr.includes(dName) || (dCode && nStr.includes(dCode));
+        }
+        return false;
+      });
+
       if (deptOfficials.length === 0) return;
 
       const style = getDeptStyle(dept.color, dept.code);
@@ -1934,6 +2220,15 @@ class PortalApp {
         </div>
       `;
     });
+
+    if (html.trim() === '') {
+      html = `
+        <div class="col-span-full py-12 text-center text-slate-400 dark:text-slate-500 font-semibold">
+          <span class="material-symbols-outlined text-4xl mb-2 text-slate-300">folder_open</span>
+          <p>Chưa có thông tin cán bộ cho các phòng ban đang hoạt động.</p>
+        </div>
+      `;
+    }
 
     grid.innerHTML = html;
   }
@@ -1997,16 +2292,9 @@ class PortalApp {
 
     const isHidden = mapContainer.classList.contains('hidden');
     if (isHidden) {
-      mapContainer.classList.remove('hidden');
-      mapContainer.classList.add('flex');
-      if (!this.map) {
-        this.initLeafletMap();
-      } else {
-        setTimeout(() => this.map?.invalidateSize(), 200);
-      }
+      this.showPortalTab('map');
     } else {
-      mapContainer.classList.add('hidden');
-      mapContainer.classList.remove('flex');
+      this.showPortalTab('home');
     }
   }
 
@@ -2080,26 +2368,26 @@ class PortalApp {
             <div class="w-9 h-9 rounded-full bg-gradient-to-tr ${gradient} text-white shadow-xl border-2 ${borderColor} flex items-center justify-center transition-transform hover:scale-125">
               <span class="material-symbols-outlined text-lg">${iconName}</span>
             </div>
-            <div class="mt-1 px-2 py-0.5 rounded-md bg-slate-900/90 backdrop-blur-md text-white font-bold text-[10px] shadow-md whitespace-nowrap border border-slate-700 pointer-events-none">
+            <div class="mt-1 px-2.5 py-1 rounded-md bg-slate-900/90 backdrop-blur-md text-white font-bold text-xs shadow-md whitespace-nowrap border border-slate-700 pointer-events-none">
               ${p.name}
             </div>
           </div>
         `,
-        iconSize: [120, 50],
-        iconAnchor: [60, 18],
+        iconSize: [140, 56],
+        iconAnchor: [70, 20],
         popupAnchor: [0, -22]
       });
 
       const marker = L.marker([p.lat, p.lng], { icon: customIcon });
       marker.bindPopup(`
-        <div style="font-family:'Roboto',sans-serif; padding:6px; min-width:180px;">
-          <div style="font-size:10px; font-weight:800; text-transform:uppercase; color:#1D4ED8; margin-bottom:2px;">
+        <div style="font-family:'Inter',sans-serif; padding:8px; min-width:210px;">
+          <div style="font-size:12px; font-weight:800; text-transform:uppercase; color:#1D4ED8; margin-bottom:4px;">
             ${p.category === 'government' ? 'Cơ quan Hành chính' : p.category === 'police' ? 'Công an Phường' : p.category === 'health' ? 'Cơ sở Y tế' : p.category === 'school' ? 'Trường học' : 'Tổ dân phố'}
           </div>
-          <b style="color:#0F172A; font-size:13px; display:block; margin-bottom:4px;">${p.name}</b>
-          <span style="font-size:11px; color:#64748B; display:block; margin-bottom:8px;">${p.address || ''}</span>
-          <a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}" target="_blank" rel="noopener noreferrer" style="width:100%; background:#1D4ED8; color:white; border:none; padding:7px 10px; border-radius:8px; font-size:11px; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; text-decoration:none; box-sizing:border-box;">
-            <span class="material-symbols-outlined" style="font-size:14px;">near_me</span>
+          <b style="color:#0F172A; font-size:16px; display:block; margin-bottom:4px;">${p.name}</b>
+          <span style="font-size:14px; color:#64748B; display:block; margin-bottom:10px;">${p.address || ''}</span>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}" target="_blank" rel="noopener noreferrer" style="width:100%; background:#1D4ED8; color:white; border:none; padding:9px 12px; border-radius:8px; font-size:14px; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; text-decoration:none; box-sizing:border-box;">
+            <span class="material-symbols-outlined" style="font-size:18px;">near_me</span>
             <span>Chỉ đường</span>
           </a>
         </div>
@@ -2112,10 +2400,6 @@ class PortalApp {
   }
 
   private initEventListeners() {
-    const themeBtn = document.getElementById('theme-toggle-btn');
-    if (themeBtn) {
-      themeBtn.addEventListener('click', () => this.toggleTheme());
-    }
 
     const modal = document.getElementById('portal-detail-modal');
     if (modal) {
@@ -2141,6 +2425,8 @@ class PortalApp {
         this.renderMapPlacesCarousel(mapSearchInput.value);
       });
     }
+
+    setTimeout(() => this.map?.invalidateSize(), 250);
   }
 }
 
@@ -2261,6 +2547,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSharedHeader();
   initSharedFooter();
   initBackToTopButton();
+  initSubpageBanners();
   new PortalApp();
   triggerStatCardsCountUp();
 });

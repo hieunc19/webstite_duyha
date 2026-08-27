@@ -10,18 +10,14 @@
 
   <!-- Favicon -->
   <link rel="icon" type="image/jpeg" href="/logo.jpg" />
+  <!-- Preload banner image for faster LCP -->
+  <link rel="preload" as="image" href="/storage/banners/subpage_banner_officials_1787131079.jfif" fetchpriority="high" />
 
   <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="/vendor/tailwindcss.js"></script>
 
-  <!-- Google Fonts: Roboto -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap"
-    rel="stylesheet" />
-
-  <!-- Material Symbols Outlined -->
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-    rel="stylesheet" />
+  <!-- Local Self-Hosted Fonts (Inter & Material Symbols) -->
+  <link rel="stylesheet" href="/fonts/fonts.css" />
 
   <!-- Tailwind Custom Config -->
   <script id="tailwind-config">
@@ -38,11 +34,11 @@
             "surface": "#FFFFFF"
           },
           fontFamily: {
-            "sans": ["Roboto", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
-            "serif": ["Roboto", "serif"],
-            "headline": ["Roboto", "sans-serif"],
-            "body": ["Roboto", "sans-serif"],
-            "accent": ["Roboto", "sans-serif"]
+            "sans": ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+            "serif": ["Inter", "serif"],
+            "headline": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "accent": ["Inter", "sans-serif"]
           }
         }
       }
@@ -53,12 +49,15 @@
   <link rel="stylesheet" href="/src/style.css" />
   <style>
     body {
-      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
     }
 
     .material-symbols-outlined {
       font-family: 'Material Symbols Outlined' !important;
     }
+    /* FOUC Prevention */
+    main { opacity: 0; transition: opacity 0.15s ease-out; }
+    body.js-hydrated main { opacity: 1; }
   </style>
   <script>
     window.toggleMobileMenu = function () {
@@ -69,7 +68,7 @@
 </head>
 
 <body
-  class="portal-active bg-[#FFFDF5] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-['Roboto'] font-sans antialiased selection:bg-[#3399fe] selection:text-white transition-colors duration-300">
+  class="portal-active bg-[#FFFDF5] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-['Inter'] font-sans antialiased selection:bg-[#3399fe] selection:text-white transition-colors duration-300">
 
   <!-- Header Section (injected by sharedHeader.ts) -->
   <header id="app-header"
@@ -90,22 +89,22 @@
 
     <!-- PAGE HERO BANNER -->
     <div
-      class="text-white rounded-3xl p-8 sm:p-14 min-h-[250px] flex items-center shadow-2xl border border-blue-500/30 relative overflow-hidden bg-cover bg-center bg-no-repeat"
+      class="text-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-12 min-h-[180px] sm:min-h-[240px] md:min-h-[280px] flex items-center shadow-2xl border border-blue-500/30 relative overflow-hidden bg-cover bg-center bg-no-repeat"
       style="background-image: url('/images/tdp_merger_banner_bg.jpg');">
       <!-- Dark overlay for high text legibility -->
-      <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent z-0"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-black/40 via-black/15 to-transparent z-0"></div>
 
-      <div class="relative z-10 max-w-3xl space-y-3">
+      <div class="relative z-10 max-w-3xl space-y-2 sm:space-y-3">
         <div
-          class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-400/25 text-blue-300 border border-blue-400/40 text-xs font-black uppercase tracking-wider backdrop-blur-md shadow-sm">
+          class="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-blue-400/25 text-blue-300 border border-blue-400/40 text-[11px] sm:text-xs font-black uppercase tracking-wider backdrop-blur-md shadow-sm">
           <span class="material-symbols-outlined text-sm">contacts</span>
           <span>Hệ thống danh bạ liên lạc chính thức</span>
         </div>
-        <h2 class="text-2xl sm:text-4xl font-black tracking-tight text-white leading-tight"
+        <h2 class="text-xl sm:text-3xl md:text-4xl font-black tracking-tight text-white leading-tight"
           style="text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);">
-          Danh sách Cán bộ Phường & Tổ dân phố
+          Danh sách Cán bộ Phường &amp; Tổ dân phố
         </h2>
-        <p class="text-sm sm:text-base text-white leading-relaxed font-semibold"
+        <p class="text-xs sm:text-sm md:text-base text-white leading-relaxed font-semibold"
           style="text-shadow: 0 1.5px 6px rgba(0, 0, 0, 0.95);">
           Tra cứu nhanh số điện thoại Bí thư Đảng ủy, Chủ tịch UBND, Công an phụ trách địa bàn và các đồng chí Bí thư,
           Tổ trưởng tổ dân phố tại Phường Duy Hà.
@@ -115,7 +114,7 @@
 
     <!-- MAIN OFFICIALS SECTION (FULL WIDTH) -->
     <div
-      class="w-full bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
+      class="w-full bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-5 sm:space-y-6">
       <div
         class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
         <div>
@@ -157,8 +156,8 @@
         <div class="lg:col-span-7 flex items-start gap-4 sm:gap-5">
           <!-- Circular Emblem Icon -->
           <div
-            class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-white/80 p-0.5 flex items-center justify-center shrink-0 bg-[#3399fe] shadow-lg overflow-hidden">
-            <img src="/logo.jpg" alt="Logo Đoàn TNCS Phường Duy Hà" class="w-full h-full object-cover rounded-full" />
+            class="w-16 h-16 sm:w-20 sm:h-20 shrink-0 flex items-center justify-center">
+            <img src="/logo.jpg" alt="Logo Đoàn TNCS Phường Duy Hà" class="w-full h-full object-contain filter drop-shadow-md" />
           </div>
 
           <!-- Text Info -->
@@ -258,15 +257,15 @@
       class="bg-white dark:bg-slate-900 w-[98vw] max-w-[1650px] rounded-2xl shadow-2xl border-2 border-slate-300 dark:border-slate-700 overflow-hidden relative flex flex-col my-auto max-h-[94vh]">
       <!-- Modal Header -->
       <div
-        class="p-4 sm:p-5 bg-[#1a4a8c] dark:bg-slate-800 text-white flex items-center justify-between shrink-0 shadow-sm border-b-2 border-amber-500">
+        class="p-4 sm:p-5 bg-gradient-to-r from-[#3399fe] via-[#268df5] to-[#1d7fe0] text-white flex items-center justify-between shrink-0 shadow-sm border-b-2 border-amber-400">
         <div class="flex items-center gap-3">
           <div
-            class="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center text-amber-300 font-bold text-xl shrink-0">
+            class="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center text-amber-300 font-bold text-xl shrink-0">
             <span class="material-symbols-outlined text-2xl">badge</span>
           </div>
           <div>
             <h3 class="text-lg sm:text-xl font-extrabold tracking-tight">Thông tin cán bộ tổ dân phố</h3>
-            <p class="text-xs sm:text-sm text-amber-200 mt-0.5 font-semibold">(Áp dụng từ 1/7/2026 sau sáp nhập đơn vị
+            <p class="text-xs sm:text-sm text-sky-100 mt-0.5 font-semibold">(Áp dụng từ 1/7/2026 sau sáp nhập đơn vị
               hành chính)</p>
           </div>
         </div>
@@ -280,17 +279,17 @@
       <div class="p-3 sm:p-5 overflow-x-auto overflow-y-auto custom-scrollbar modal-table-scroll flex-1">
         <table class="w-full text-left border-collapse min-w-[1500px] border border-slate-300 dark:border-slate-700">
           <thead>
-            <tr class="bg-sky-900 text-white border-b-2 border-slate-400 text-xs sm:text-sm font-bold tracking-tight">
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[140px]">TÊN TỔ DÂN PHỐ</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[170px]">BÍ THƯ CHI BỘ</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[170px]">TỔ TRƯỞNG TỔ DÂN PHỐ</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[170px]">CẢNH SÁT KHU VỰC</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[170px]">TRƯỞNG BAN CTMT</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[150px]">CHI HỘI TRƯỞNG NCT</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[150px]">CHI HỘI TRƯỞNG PHỤ NỮ</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[150px]">CHI HỘI TRƯỞNG NÔNG DÂN</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[150px]">CHI HỘI TRƯỞNG CCB</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[150px]">BÍ THƯ CHI ĐOÀN TN</th>
+            <tr class="bg-gradient-to-r from-[#3399fe] via-[#268df5] to-[#1d7fe0] text-white border-b-2 border-sky-300/60 text-xs sm:text-sm font-bold tracking-tight shadow-xs">
+              <th class="py-3.5 px-3 border border-white/20 min-w-[140px]">TÊN TỔ DÂN PHỐ</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[170px]">BÍ THƯ CHI BỘ</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[170px]">TỔ TRƯỞNG TỔ DÂN PHỐ</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[170px]">CẢNH SÁT KHU VỰC</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[170px]">TRƯỞNG BAN CTMT</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[150px]">CHI HỘI TRƯỞNG NCT</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[150px]">CHI HỘI TRƯỞNG PHỤ NỮ</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[150px]">CHI HỘI TRƯỞNG NÔNG DÂN</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[150px]">CHI HỘI TRƯỞNG CCB</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[150px]">BÍ THƯ CHI ĐOÀN TN</th>
             </tr>
           </thead>
           <tbody id="all-officials-table-body"

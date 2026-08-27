@@ -1,0 +1,21 @@
+{
+    "title": "QUY TRÌNH 4 BƯỚC TIẾP NHẬN",
+    "steps": [
+        {
+            "title": "Bước 1: Tiếp nhận phản ánh",
+            "desc": "Người dân gửi thông tin phản ánh qua hệ thống."
+        },
+        {
+            "title": "Bước 2: Phân loại và chuyển xử lý",
+            "desc": "Phản ánh được phân loại và chuyển đến bộ phận phụ trách."
+        },
+        {
+            "title": "Bước 3: Kiểm tra, xác minh",
+            "desc": "Cán bộ phụ trách kiểm tra thực tế và xác minh nội dung phản ánh."
+        },
+        {
+            "title": "Bước 4: Phối hợp giải quyết",
+            "desc": "Các bộ phận liên quan thực hiện xử lý theo chức năng và thẩm quyền."
+        }
+    ]
+}

@@ -8,18 +8,14 @@
 
   <!-- Favicon -->
   <link rel="icon" type="image/jpeg" href="/logo.jpg" />
+  <!-- Preload banner image for faster LCP -->
+  <link rel="preload" as="image" href="/storage/banners/subpage_banner_feedback_1787131096.jfif" fetchpriority="high" />
 
   <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="/vendor/tailwindcss.js"></script>
 
-  <!-- Google Fonts: Roboto -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap"
-    rel="stylesheet" />
-
-  <!-- Material Symbols Outlined -->
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-    rel="stylesheet" />
+  <!-- Local Self-Hosted Fonts (Inter & Material Symbols) -->
+  <link rel="stylesheet" href="/fonts/fonts.css" />
 
   <!-- Tailwind Custom Config -->
   <script id="tailwind-config">
@@ -36,11 +32,11 @@
             "surface": "#FFFFFF"
           },
           fontFamily: {
-            "sans": ["Roboto", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
-            "serif": ["Roboto", "serif"],
-            "headline": ["Roboto", "sans-serif"],
-            "body": ["Roboto", "sans-serif"],
-            "accent": ["Roboto", "sans-serif"]
+            "sans": ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+            "serif": ["Inter", "serif"],
+            "headline": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "accent": ["Inter", "sans-serif"]
           }
         }
       }
@@ -50,12 +46,15 @@
   <link rel="stylesheet" href="/src/style.css" />
   <style>
     body {
-      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
     }
 
     .material-symbols-outlined {
       font-family: 'Material Symbols Outlined' !important;
     }
+    /* FOUC Prevention */
+    main { opacity: 0; transition: opacity 0.15s ease-out; }
+    body.js-hydrated main { opacity: 1; }
   </style>
 </head>
 
@@ -81,22 +80,22 @@
 
     <!-- PAGE HERO BANNER -->
     <div
-      class="relative rounded-3xl overflow-hidden shadow-2xl border border-sky-900/30 bg-cover bg-center min-h-[260px] sm:min-h-[300px] flex items-center"
+      class="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border border-sky-900/30 bg-cover bg-center min-h-[180px] sm:min-h-[240px] md:min-h-[280px] flex items-center"
       style="background-image: url('/images/tdp_merger_banner_bg.jpg');">
 
       <!-- Dark Gradient Overlay for Maximum Readability -->
-      <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/75 to-black/40"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-black/40 via-black/15 to-transparent z-0"></div>
 
       <!-- Banner Content -->
-      <div class="relative z-10 p-6 sm:p-10 text-white max-w-4xl space-y-4">
+      <div class="relative z-10 p-5 sm:p-8 md:p-12 text-white max-w-4xl space-y-2 sm:space-y-3">
         <div
-          class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/25 border border-sky-400/40 text-sky-300 text-xs font-bold backdrop-blur-md">
-          <span class="material-symbols-outlined text-base">verified</span>
+          class="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-sky-500/25 border border-sky-400/40 text-sky-300 text-[11px] sm:text-xs font-bold backdrop-blur-md">
+          <span class="material-symbols-outlined text-sm">verified</span>
           <span>UBND PHƯỜNG DUY HÀ — KÊNH TIẾP NHẬN Ý KIẾN CÔNG DÂN</span>
         </div>
 
         <h1
-          class="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-white uppercase leading-tight drop-shadow-md">
+          class="text-xl sm:text-3xl md:text-5xl font-black tracking-tight text-white uppercase leading-tight drop-shadow-md">
           GỬI PHẢN ÁNH &amp; KIẾN NGHỊ CỦA NHÂN DÂN
         </h1>
 
@@ -108,11 +107,11 @@
     </div>
 
     <!-- MAIN TWO-COLUMN FORM LAYOUT -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
 
       <!-- LEFT COLUMN: FEEDBACK FORM (8 COLS) -->
       <div
-        class="lg:col-span-8 bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
+        class="lg:col-span-8 bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-5 sm:space-y-6">
 
         <!-- Form Header -->
         <div class="border-b border-slate-100 dark:border-slate-800 pb-5 flex items-center justify-between">
@@ -194,10 +193,10 @@
           <h3
             class="text-base font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2 uppercase">
             <span class="material-symbols-outlined text-[#1d7fe0] text-xl">conversion_path</span>
-            <span>Quy trình 4 bước tiếp nhận</span>
+            <span id="feedback-process-title">Quy trình 4 bước tiếp nhận</span>
           </h3>
 
-          <div class="space-y-4 text-xs sm:text-sm">
+          <div id="feedback-process-steps" class="space-y-4 text-xs sm:text-sm">
             <div
               class="flex items-start gap-3.5 p-4 sm:p-4.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
               <span
@@ -251,30 +250,6 @@
 
   </main>
 
-  <!-- SUCCESS CONFIRMATION MODAL -->
-  <div id="feedback-success-modal"
-    class="fixed inset-0 z-[3500] hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
-    <div
-      class="bg-white dark:bg-slate-900 w-full max-w-md rounded-3xl p-6 sm:p-7 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-5 text-center my-auto">
-      <div
-        class="w-16 h-16 rounded-3xl bg-emerald-100 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400 flex items-center justify-center mx-auto shadow-md">
-        <span class="material-symbols-outlined text-4xl">check_circle</span>
-      </div>
-
-      <div class="space-y-2">
-        <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">Đã tiếp nhận phản ánh thành công!
-        </h3>
-        <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-semibold leading-relaxed">
-          Thông tin phản ánh kiến nghị đã được ghi nhận vào hệ thống tiếp nhận của UBND Phường Duy Hà.
-        </p>
-      </div>
-
-      <button onclick="closeSuccessModal()"
-        class="w-full py-3 bg-[#1d7fe0] hover:bg-[#1565c0] text-white font-extrabold text-sm rounded-2xl shadow-md transition-all active:scale-95 cursor-pointer">
-        Đã hiểu &amp; Đóng lại
-      </button>
-    </div>
-  </div>
 
   <!-- ==================== GOVERNMENT PORTAL FOOTER ==================== -->
   <footer
@@ -293,8 +268,8 @@
         <div class="lg:col-span-7 flex items-start gap-4 sm:gap-5">
           <!-- Circular Logo Image -->
           <div
-            class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-white/80 p-0.5 flex items-center justify-center shrink-0 bg-[#3399fe] shadow-lg overflow-hidden">
-            <img src="/logo.jpg" alt="Logo Đoàn TNCS Phường Duy Hà" class="w-full h-full object-cover rounded-full" />
+            class="w-16 h-16 sm:w-20 sm:h-20 shrink-0 flex items-center justify-center">
+            <img src="/logo.jpg" alt="Logo Đoàn TNCS Phường Duy Hà" class="w-full h-full object-contain filter drop-shadow-md" />
           </div>
 
           <!-- Text Info -->
@@ -350,24 +325,14 @@
           <div class="space-y-2">
             <select onchange="if(this.value) window.open(this.value, '_blank')"
               class="w-full bg-white/15 hover:bg-white/25 text-white border border-white/30 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold outline-none focus:border-amber-400 transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-[right_12px_center] bg-no-repeat pr-8">
-              <option value="" class="bg-slate-900 text-white">Các cơ quan, đơn vị</option>
-              <option value="https://ninhbinh.gov.vn" class="bg-slate-900 text-white">UBND Tỉnh Ninh Bình</option>
-              <option value="https://congan.ninhbinh.gov.vn" class="bg-slate-900 text-white">Công an Tỉnh Ninh Bình
-              </option>
-              <option value="https://stttt.ninhbinh.gov.vn" class="bg-slate-900 text-white">Sở Thông tin &amp; Truyền
-                thông
-              </option>
-            </select>
+                          </select>
 
             <select onchange="if(this.value) window.open(this.value, '_blank')"
               class="w-full bg-white/15 hover:bg-white/25 text-white border border-white/30 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold outline-none focus:border-amber-400 transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-[right_12px_center] bg-no-repeat pr-8">
               <option value="" class="bg-slate-900 text-white">Chọn đơn vị liên kết</option>
-              <option value="https://dichvucong.gov.vn" class="bg-slate-900 text-white">Cổng Dịch vụ công Quốc gia
-              </option>
-              <option value="https://chinhphu.vn" class="bg-slate-900 text-white">Cổng Thông tin Điện tử Chính phủ
-              </option>
-              <option value="https://bocongan.gov.vn" class="bg-slate-900 text-white">Cổng Thông tin Điện tử Bộ Công an
-              </option>
+              <option value="https://dichvucong.gov.vn" class="bg-slate-900 text-white">Cổng Dịch vụ công Quốc gia</option>
+              <option value="https://chinhphu.vn" class="bg-slate-900 text-white">Cổng Thông tin Điện tử Chính phủ</option>
+              <option value="https://bocongan.gov.vn" class="bg-slate-900 text-white">Cổng Thông tin Điện tử Bộ Công an</option>
             </select>
           </div>
         </div>
@@ -381,16 +346,22 @@
       <div
         class="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs sm:text-sm text-sky-100/90 text-center sm:text-left">
         <p class="font-medium">Copyright © Đoàn TNCS Hồ Chí Minh phường Duy Hà. All Rights Reserved</p>
-        <p class="text-xs text-sky-200/80">Ghi rõ nguồn "Đoàn TNCS Hồ Chí Minh phường Duy Hà" khi phát hành lại thông
-          tin từ Đoàn TNCS Hồ Chí Minh phường Duy Hà.</p>
+        <p class="text-xs text-sky-200/80">Ghi rõ nguồn "Đoàn TNCS Hồ Chí Minh phường Duy Hà" khi phát hành lại thông tin từ Đoàn TNCS Hồ Chí Minh phường Duy Hà.</p>
       </div>
 
     </div>
   </footer>
 
   <script>
+    const preventNavigationHandler = (e) => {
+      e.preventDefault();
+      e.returnValue = 'Hệ thống đang tiếp nhận gửi phản ánh, vui lòng không rời khỏi trang.';
+      return e.returnValue;
+    };
+
     async function handleFeedbackSubmit(e) {
       e.preventDefault();
+      const form = document.getElementById('citizen-feedback-form');
       const submitBtn = document.getElementById('submit-btn');
       const fullname = document.getElementById('fb-fullname')?.value?.trim();
       const phone = document.getElementById('fb-phone')?.value?.trim();
@@ -398,16 +369,59 @@
       const content = document.getElementById('fb-content')?.value?.trim();
 
       if (!fullname || !phone || !title || !content) {
-        alert('Vui lòng điền đầy đủ các thông tin bắt buộc (*)');
+        if (window.Swal) {
+          window.Swal.fire({
+            icon: 'warning',
+            title: 'Thông tin chưa đầy đủ',
+            text: 'Vui lòng điền đầy đủ các thông tin bắt buộc (*)',
+            confirmButtonColor: '#1d7fe0',
+            confirmButtonText: 'Đã hiểu',
+            customClass: {
+              popup: 'rounded-3xl shadow-2xl p-6 sm:p-8 border border-slate-200',
+              title: 'text-2xl sm:text-3xl font-black text-slate-900',
+              htmlContainer: 'text-base sm:text-lg font-medium text-slate-700 mt-2',
+              confirmButton: 'px-8 py-3.5 rounded-2xl font-bold text-base sm:text-lg shadow-lg'
+            }
+          });
+        } else {
+          alert('Vui lòng điền đầy đủ các thông tin bắt buộc (*)');
+        }
         return;
       }
 
+      // Lock navigation while submitting (cannot switch tabs / refresh / close page)
+      window.addEventListener('beforeunload', preventNavigationHandler);
+
+      // Disable inputs & submit button
+      if (form) {
+        const inputs = form.querySelectorAll('input, textarea, button');
+        inputs.forEach(el => el.disabled = true);
+      }
       if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.innerHTML = `
           <span class="material-symbols-outlined text-xl animate-spin">progress_activity</span>
-          <span>Đang gửi phản ánh...</span>
+          <span>Đang tiếp nhận phản ánh...</span>
         `;
+      }
+
+      // Show SweetAlert Loading Popup (blocking any interaction outside)
+      if (window.Swal) {
+        window.Swal.fire({
+          title: 'Đang gửi phản ánh...',
+          text: 'Hệ thống đang xử lý, vui lòng không rời khỏi trang.',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          showConfirmButton: false,
+          customClass: {
+            popup: 'rounded-3xl shadow-2xl p-6 sm:p-8 border border-slate-200',
+            title: 'text-2xl sm:text-3xl font-black text-slate-900',
+            htmlContainer: 'text-base sm:text-lg font-medium text-slate-700 mt-2'
+          },
+          didOpen: () => {
+            window.Swal.showLoading();
+          }
+        });
       }
 
       const payload = { fullname, phone, title, content };
@@ -435,23 +449,58 @@
           }).catch(() => null);
         }
 
-        // Show Success Modal
-        const modal = document.getElementById('feedback-success-modal');
-        if (modal) {
-          modal.classList.remove('hidden');
-          modal.classList.add('flex');
+        form?.reset();
+
+        // Unlock navigation
+        window.removeEventListener('beforeunload', preventNavigationHandler);
+
+        // Show SweetAlert Success Notification with exact user required text
+        if (window.Swal) {
+          await window.Swal.fire({
+            icon: 'success',
+            title: 'Đã tiếp nhận phản ánh.',
+            text: 'Thông tin phản ánh kiến nghị sẽ được gửi đến các ban ngành đoàn thể.',
+            confirmButtonText: 'Đã hiểu & Đóng',
+            confirmButtonColor: '#1d7fe0',
+            allowOutsideClick: false,
+            customClass: {
+              popup: 'rounded-3xl shadow-2xl p-6 sm:p-8 border border-slate-200',
+              title: 'text-2xl sm:text-3xl font-black text-slate-900',
+              htmlContainer: 'text-base sm:text-lg font-medium text-slate-700 mt-3',
+              confirmButton: 'px-8 py-3.5 font-bold text-base sm:text-lg rounded-2xl shadow-lg'
+            }
+          });
+        } else {
+          alert('Đã tiếp nhận phản ánh.\nThông tin phản ánh kiến nghị sẽ được gửi đến các ban ngành đoàn thể.');
         }
-        document.getElementById('citizen-feedback-form')?.reset();
 
       } catch (err) {
         console.warn('Feedback submit:', err);
-        const modal = document.getElementById('feedback-success-modal');
-        if (modal) {
-          modal.classList.remove('hidden');
-          modal.classList.add('flex');
+        form?.reset();
+        window.removeEventListener('beforeunload', preventNavigationHandler);
+
+        if (window.Swal) {
+          await window.Swal.fire({
+            icon: 'success',
+            title: 'Đã tiếp nhận phản ánh.',
+            text: 'Thông tin phản ánh kiến nghị sẽ được gửi đến các ban ngành đoàn thể.',
+            confirmButtonText: 'Đã hiểu & Đóng',
+            confirmButtonColor: '#1d7fe0',
+            allowOutsideClick: false,
+            customClass: {
+              popup: 'rounded-3xl shadow-2xl p-6 sm:p-8 border border-slate-200',
+              title: 'text-2xl sm:text-3xl font-black text-slate-900',
+              htmlContainer: 'text-base sm:text-lg font-medium text-slate-700 mt-3',
+              confirmButton: 'px-8 py-3.5 font-bold text-base sm:text-lg rounded-2xl shadow-lg'
+            }
+          });
         }
-        document.getElementById('citizen-feedback-form')?.reset();
       } finally {
+        window.removeEventListener('beforeunload', preventNavigationHandler);
+        if (form) {
+          const inputs = form.querySelectorAll('input, textarea, button');
+          inputs.forEach(el => el.disabled = false);
+        }
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.innerHTML = `
@@ -462,12 +511,41 @@
       }
     }
 
-    function closeSuccessModal() {
-      const modal = document.getElementById('feedback-success-modal');
-      if (modal) {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
+    // Dynamic loader for Feedback Process Guide
+    async function loadFeedbackProcessGuide() {
+      const titleEl = document.getElementById('feedback-process-title');
+      const stepsContainer = document.getElementById('feedback-process-steps');
+
+      let data = null;
+      try {
+        let res = await fetch('/src/data/feedback_process.json?v=' + Date.now()).catch(() => null);
+        if (!res || !res.ok) res = await fetch('/data/feedback_process.json?v=' + Date.now()).catch(() => null);
+        if (!res || !res.ok) res = await fetch('/api/feedback-process').catch(() => null);
+        if (res && res.ok) data = await res.json();
+      } catch (e) {}
+
+      if (data) {
+        if (data.title && titleEl) titleEl.textContent = data.title;
+        if (Array.isArray(data.steps) && data.steps.length > 0 && stepsContainer) {
+          stepsContainer.innerHTML = data.steps.map((step, idx) => `
+            <div class="flex items-start gap-3.5 p-4 sm:p-4.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+              <span class="w-7 h-7 rounded-full bg-[#1d7fe0] text-white text-xs font-black flex items-center justify-center shrink-0 shadow-sm mt-0.5">${idx + 1}</span>
+              <div>
+                <b class="text-sm font-extrabold text-slate-900 dark:text-white block">${step.title || `Bước ${idx + 1}`}</b>
+                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5 font-medium leading-relaxed">${step.desc || ''}</p>
+              </div>
+            </div>
+          `).join('');
+        }
       }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadFeedbackProcessGuide();
+    });
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      loadFeedbackProcessGuide();
     }
   </script>
   <script type="module" src="/src/main.ts"></script>

@@ -1,9 +1,41 @@
 [
     {
+        "id": 6,
+        "title": " Tra cứu thông tin nghĩa vụ Thuế trên ứng dụng eTax Mobile",
+        "category": "other",
+        "categoryText": "Lĩnh vực khác",
+        "videoUrl": "https:\/\/www.youtube.com\/embed\/KeAHdP20lPc?controls=1&rel=0&enablejsapi=1",
+        "sort_order": 0
+    },
+    {
+        "id": 5,
+        "title": "Hướng dẫn đăng ký thường trú trên Cổng Dịch vụ công năm 2026",
+        "category": "residence",
+        "categoryText": "Cư trú & Định danh điện tử",
+        "videoUrl": "https:\/\/www.youtube.com\/embed\/qpfTYcIFxXI?controls=1&rel=0&enablejsapi=1",
+        "sort_order": 0
+    },
+    {
+        "id": 4,
+        "title": "Hướng dẫn xác thực thông tin thuê bao di động trên ứng dụng VNeID",
+        "category": "other",
+        "categoryText": "Lĩnh vực khác",
+        "videoUrl": "https:\/\/www.youtube.com\/embed\/quqT1YvAwDw?controls=1&rel=0&enablejsapi=1",
+        "sort_order": 0
+    },
+    {
+        "id": 3,
+        "title": "Hướng dẫn thủ tục cấp hộ chiếu trên VNeID",
+        "category": "vneid",
+        "categoryText": "Định danh VNeID",
+        "videoUrl": "https:\/\/www.youtube.com\/embed\/U9T6ZCOixB8?controls=1&rel=0&enablejsapi=1",
+        "sort_order": 0
+    },
+    {
         "id": 1,
         "title": "Video hướng dẫn Nộp hồ sơ Đăng ký tạm trú trực tuyến trên Cổng DVC Bộ Công an",
         "category": "residence",
-        "categoryText": "Cư trú & Hộ khẩu",
+        "categoryText": "Cư trú & Định danh điện tử",
         "videoUrl": "https:\/\/www.youtube.com\/embed\/e1-HHDIVCp8?controls=1&rel=0&enablejsapi=1",
         "sort_order": 1
     },

@@ -8,14 +8,14 @@
   <meta name="description"
     content="Cổng tra cứu thông tin địa bàn, tổ dân phố, số hộ dân, nhà văn hóa, trụ sở UBND, công an và danh sách cán bộ - Phường Duy Hà, Tỉnh Ninh Bình." />
   <link rel="icon" type="image/jpeg" href="/logo.jpg" />
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap"
-    rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-    rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css" />
-  <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+  <!-- Preload critical above-the-fold images for faster LCP -->
+  <link rel="preload" as="image" href="/logo-doan.png" fetchpriority="high" />
+  <script src="/vendor/tailwindcss.js"></script>
+  <!-- Local Self-Hosted Fonts (Inter & Material Symbols) -->
+  <link rel="stylesheet" href="/fonts/fonts.css" />
+  <link rel="stylesheet" href="/src/style.css" />
+  <link rel="stylesheet" href="/vendor/driver.css" />
+  <script src="/vendor/driver.js.iife.js"></script>
   <script id="tailwind-config">
     tailwind.config = {
       darkMode: "class",
@@ -30,11 +30,11 @@
             "surface": "#FFFFFF"
           },
           fontFamily: {
-            "sans": ["Roboto", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
-            "serif": ["Roboto", "serif"],
-            "headline": ["Roboto", "sans-serif"],
-            "body": ["Roboto", "sans-serif"],
-            "accent": ["Roboto", "sans-serif"]
+            "sans": ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+            "serif": ["Inter", "serif"],
+            "headline": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "accent": ["Inter", "sans-serif"]
           }
         }
       }
@@ -42,11 +42,20 @@
   </script>
   <style>
     body {
-      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
     }
 
     .material-symbols-outlined {
       font-family: 'Material Symbols Outlined' !important;
+    }
+
+    /* FOUC Prevention: Hide dynamic content until JS hydration completes */
+    #portal-main-view {
+      opacity: 0;
+      transition: opacity 0.15s ease-out;
+    }
+    body.js-hydrated #portal-main-view {
+      opacity: 1;
     }
   </style>
   <script>
@@ -61,7 +70,7 @@
 </head>
 
 <body
-  class="portal-active bg-[#FFFDF5] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-full font-['Roboto'] font-sans antialiased">
+  class="portal-active bg-[#FFFDF5] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-full font-['Inter'] font-sans antialiased">
 
   <!-- Celebration Banner (If active) -->
   <div id="celebration-banner"
@@ -97,16 +106,15 @@
       <video id="hero-bg-video" class="absolute inset-0 w-full h-full object-cover pointer-events-none hidden z-0" autoplay muted loop playsinline></video>
       <div id="hero-video-overlay" class="absolute inset-0 bg-black/45 pointer-events-none hidden z-0"></div>
       <div class="hero-mesh z-[1]"></div>
-      <div class="max-w-4xl mx-auto relative z-10">
-        <div class="flex items-center justify-center mb-4">
-          <div
-            class="w-20 h-20 sm:w-24 sm:h-24 p-1 bg-white/25 backdrop-blur-md rounded-full shadow-2xl overflow-hidden flex items-center justify-center transition-transform duration-300 hover:scale-105">
+      <div class="max-w-5xl mx-auto relative z-10">
+        <div class="flex items-center justify-center mb-6 sm:mb-8">
+          <div class="w-28 sm:w-36 md:w-44 flex items-center justify-center transition-transform duration-300 hover:scale-105">
             <img src="/logo-doan.png" id="hero-logo-doan" alt="Logo Đoàn TNCS Hồ Chí Minh"
-              class="w-full h-full object-contain filter drop-shadow-md" />
+              class="w-full h-auto object-contain filter drop-shadow-[0_10px_25px_rgba(0,0,0,0.65)]" />
           </div>
         </div>
         <h1 id="hero-title-main"
-          class="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white uppercase leading-tight hero-text-shadow">
+          class="text-3xl sm:text-5xl md:text-6xl lg:text-6xl font-black tracking-tight text-white uppercase leading-tight hero-text-shadow">
           CỔNG TRA CỨU THÔNG TIN PHƯỜNG DUY HÀ
         </h1>
 
@@ -114,61 +122,57 @@
     </section>
 
     <!-- Stats Section -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 -mt-8 relative z-20" id="section-stats-cards">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="stats-cards-container">
+    <section class="max-w-7xl mx-auto px-3 sm:px-6 -mt-6 sm:-mt-8 relative z-20" id="section-stats-cards">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 lg:gap-4 items-stretch" id="stats-cards-container">
         <!-- Stat Card 1 -->
-        <div class="stat-card flex items-center gap-4">
+        <div class="stat-card">
           <div
-            class="w-14 h-14 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-3xl font-bold shrink-0">
-            <span class="material-symbols-outlined">holiday_village</span>
+            class="w-11 h-11 sm:w-13 sm:h-13 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-2xl sm:text-3xl lg:text-4xl font-bold shrink-0">
+            <span class="material-symbols-outlined text-2xl sm:text-3xl lg:text-4xl">holiday_village</span>
           </div>
-          <div>
-            <b class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white leading-none block"
+          <div class="min-w-0 flex-1">
+            <b class="text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[2.6rem] font-black text-slate-900 dark:text-white leading-none block truncate"
               id="stat-neighborhoods">10</b>
-            <span id="stat-label-1" class="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">Tổng số tổ
-              dân phố</span>
+            <span id="stat-label-1" class="text-[11px] sm:text-xs lg:text-sm xl:text-base font-semibold text-slate-500 dark:text-slate-400 stat-label mt-0.5 lg:mt-1">Tổng số tổ dân phố</span>
           </div>
         </div>
 
         <!-- Stat Card 2 -->
-        <div class="stat-card flex items-center gap-4">
+        <div class="stat-card">
           <div
-            class="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-3xl font-bold shrink-0">
-            <span class="material-symbols-outlined">group</span>
+            class="w-11 h-11 sm:w-13 sm:h-13 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-2xl sm:text-3xl lg:text-4xl font-bold shrink-0">
+            <span class="material-symbols-outlined text-2xl sm:text-3xl lg:text-4xl">group</span>
           </div>
-          <div>
-            <b class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white leading-none block"
+          <div class="min-w-0 flex-1">
+            <b class="text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[2.6rem] font-black text-slate-900 dark:text-white leading-none block truncate"
               id="stat-households">6.767</b>
-            <span id="stat-label-2" class="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">Tổng số hộ
-              gia đình</span>
+            <span id="stat-label-2" class="text-[11px] sm:text-xs lg:text-sm xl:text-base font-semibold text-slate-500 dark:text-slate-400 stat-label mt-0.5 lg:mt-1">Tổng số hộ gia đình</span>
           </div>
         </div>
 
         <!-- Stat Card 3 -->
-        <div class="stat-card flex items-center gap-4">
+        <div class="stat-card">
           <div
-            class="w-14 h-14 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-3xl font-bold shrink-0">
-            <span class="material-symbols-outlined">diversity_3</span>
+            class="w-11 h-11 sm:w-13 sm:h-13 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-2xl sm:text-3xl lg:text-4xl font-bold shrink-0">
+            <span class="material-symbols-outlined text-2xl sm:text-3xl lg:text-4xl">diversity_3</span>
           </div>
-          <div>
-            <b class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white leading-none block"
+          <div class="min-w-0 flex-1">
+            <b class="text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[2.6rem] font-black text-slate-900 dark:text-white leading-none block truncate"
               id="stat-population">23.615</b>
-            <span id="stat-label-3" class="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">Tổng số
-              nhân khẩu</span>
+            <span id="stat-label-3" class="text-[11px] sm:text-xs lg:text-sm xl:text-base font-semibold text-slate-500 dark:text-slate-400 stat-label mt-0.5 lg:mt-1">Tổng số nhân khẩu</span>
           </div>
         </div>
 
         <!-- Stat Card 4 -->
-        <div class="stat-card flex items-center gap-4">
+        <div class="stat-card">
           <div
-            class="w-14 h-14 rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center text-3xl font-bold shrink-0">
-            <span class="material-symbols-outlined">map</span>
+            class="w-11 h-11 sm:w-13 sm:h-13 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center text-2xl sm:text-3xl lg:text-4xl font-bold shrink-0">
+            <span class="material-symbols-outlined text-2xl sm:text-3xl lg:text-4xl">map</span>
           </div>
-          <div>
-            <b class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white leading-none block"
+          <div class="min-w-0 flex-1">
+            <b class="text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[2.6rem] font-black text-slate-900 dark:text-white leading-none block truncate"
               id="stat-area">15,46 km²</b>
-            <span id="stat-label-4" class="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">Diện tích
-              (1.546,30 ha)</span>
+            <span id="stat-label-4" class="text-[11px] sm:text-xs lg:text-sm xl:text-base font-semibold text-slate-500 dark:text-slate-400 stat-label mt-0.5 lg:mt-1">Diện tích (1.546,30 ha)</span>
           </div>
         </div>
       </div>
@@ -233,7 +237,7 @@
         </div>
 
         <!-- COLUMN 2: 6 TIỆN ÍCH TRỰC TUYẾN PHÓNG TO (4 COLS - KHÔNG KHUNG NỀN) -->
-        <div class="lg:col-span-4 flex flex-col gap-3.5">
+        <div class="lg:col-span-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3.5">
 
           <!-- Button 1: Tra cứu thủ tục hành chính -->
           <a href="/procedures.html"
@@ -305,28 +309,6 @@
             </div>
           </a>
 
-          <!-- Button 3: Tải biểu mẫu -->
-          <a href="/forms.html"
-            style="background-image: linear-gradient(110deg, rgba(255, 255, 255, 0.96) 0%, rgba(236, 253, 245, 0.92) 100%), url('/hero-bg.jpg'); background-size: cover; background-position: center;"
-            class="w-full p-4 sm:p-4.5 rounded-2xl border border-emerald-200 dark:border-slate-800 shadow-md hover:shadow-xl hover:border-emerald-400 transition-all duration-300 flex items-center justify-between gap-4 group active:scale-[0.98] relative overflow-hidden">
-            <div class="flex items-center gap-4 relative z-10">
-              <div
-                class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-2xl shrink-0 shadow-md group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-2xl">file_download</span>
-              </div>
-              <div class="text-left">
-                <span
-                  class="text-sm sm:text-base font-black text-slate-900 dark:text-slate-100 block tracking-tight">Tải
-                  biểu mẫu</span>
-
-              </div>
-            </div>
-            <div
-              class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-all relative z-10">
-              <span
-                class="material-symbols-outlined text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
-            </div>
-          </a>
 
           <!-- Button 4: Lịch thu gom rác -->
           <a href="/waste-schedule.html"
@@ -582,13 +564,13 @@
         <table class="w-full text-left border-collapse min-w-[1000px]">
           <thead>
             <tr
-              class="bg-gradient-to-r from-[#143e78] to-[#1a4a8c] text-white text-xs sm:text-sm font-extrabold uppercase tracking-wider">
-              <th class="py-4 px-4 border-r border-sky-800/60 w-16 text-center">STT</th>
-              <th class="py-4 px-4 border-r border-sky-800/60 w-32 text-center">MÃ MẪU</th>
-              <th class="py-4 px-5 border-r border-sky-800/60 min-w-[280px]">TÊN BIỂU MẪU THỦ TỤC</th>
-              <th class="py-4 px-4 border-r border-sky-800/60 w-52 text-center">LĨNH VỰC</th>
-              <th class="py-4 px-4 border-r border-sky-800/60 w-48 text-center">CƠ QUAN TIẾP NHẬN</th>
-              <th class="py-4 px-4 text-center w-56">THAO TÁC</th>
+              class="bg-gradient-to-r from-[#3399fe] via-[#268df5] to-[#1d7fe0] text-white text-xs sm:text-sm font-extrabold uppercase tracking-wider shadow-xs">
+              <th class="py-4 px-4 border-r border-white/20 w-16 text-center">STT</th>
+              <th class="py-4 px-4 border-r border-white/20 w-32 text-center">MÃ MẪU</th>
+              <th class="py-4 px-5 border-r border-white/20 min-w-[280px]">TÊN BIỂU MẪU THỦ TỤC</th>
+              <th class="py-4 px-4 border-r border-white/20 w-52 text-center">LĨNH VỰC</th>
+              <th class="py-4 px-4 border-r border-white/20 w-48 text-center">CƠ QUAN TIẾP NHẬN</th>
+              <th class="py-4 px-4 text-center w-56">XEM TẤT CẢ</th>
             </tr>
           </thead>
           <tbody id="forms-table-body"
@@ -644,8 +626,8 @@
         <div class="lg:col-span-7 flex items-start gap-4 sm:gap-5">
           <!-- Circular Logo Image -->
           <div
-            class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-white/80 p-0.5 flex items-center justify-center shrink-0 bg-[#3399fe] shadow-lg overflow-hidden">
-            <img src="/logo.jpg" alt="Logo Đoàn TNCS Phường Duy Hà" class="w-full h-full object-cover rounded-full" />
+            class="w-16 h-16 sm:w-20 sm:h-20 shrink-0 flex items-center justify-center">
+            <img src="/logo.jpg" alt="Logo Đoàn TNCS Phường Duy Hà" class="w-full h-full object-contain filter drop-shadow-md" />
           </div>
 
           <!-- Text Info -->
@@ -797,80 +779,18 @@
 
   <!-- LEAFLET MAP MODAL / FULLVIEW CONTAINER -->
   <div id="map-view-container"
-    class="fixed inset-0 z-[2500] hidden bg-white dark:bg-slate-950 flex-col overflow-hidden">
-    <!-- Shared Standard Header Bar inside Map View -->
-    <header
-      class="fixed top-0 left-0 right-0 z-50 bg-[#FFFDF8]/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-sky-900/15 dark:border-slate-800 transition-colors shadow-sm">
-      <div class="w-full px-4 sm:px-8 lg:px-12 py-3.5 flex items-center justify-between gap-3 sm:gap-4">
-        <!-- Brand Logo -->
-        <div id="app-logo-map" onclick="window.toggleMapView(); window.showPortalTab('home')"
-          class="flex items-center gap-3 cursor-pointer select-none shrink-0">
-          <div
-            class="w-11 h-11 rounded-full overflow-hidden shadow-md shadow-sky-500/30 border-2 border-sky-400/50 shrink-0 bg-[#3399fe] flex items-center justify-center">
-            <img src="/logo.jpg" alt="Logo Phường Duy Hà" class="w-full h-full object-cover" />
-          </div>
-          <div class="hidden sm:block">
-            <b
-              class="text-[#1d7fe0] dark:text-sky-400 text-base sm:text-[17px] font-bold tracking-tight leading-snug block whitespace-nowrap">Đoàn
-              TNCS Hồ Chí Minh phường Duy Hà</b>
-            <small
-              class="text-sky-700 dark:text-sky-400 text-[11px] sm:text-xs font-semibold uppercase tracking-wider block mt-0.5 whitespace-nowrap">CỔNG
-              THEO DÕI TIN TỨC &amp; TRA CỨU THÔNG TIN</small>
-          </div>
-        </div>
+    class="fixed inset-0 top-[65px] sm:top-[73px] z-[2500] hidden bg-white dark:bg-slate-950 flex-col overflow-hidden">
 
-        <!-- Search Bar (Map Search) -->
-        <div class="relative flex-1 max-w-[200px] sm:max-w-xs md:max-w-sm mx-1 sm:mx-2">
-          <div
-            class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-full px-3.5 py-2 w-full shadow-inner border border-slate-200 dark:border-slate-700">
-            <span class="material-symbols-outlined text-slate-400 mr-2 text-lg shrink-0">search</span>
-            <input id="map-search-input"
-              class="bg-transparent border-none focus:ring-0 text-xs sm:text-sm w-full placeholder:text-slate-400 font-medium outline-none"
-              placeholder="Tìm kiếm địa điểm trên bản đồ..." type="text" autocomplete="off" />
-          </div>
-        </div>
-
-        <!-- Primary Navigation Capsule (Same as Homepage, with Map Active) -->
-        <nav
-          class="hidden lg:flex items-center gap-2 sm:gap-3 bg-sky-50/90 dark:bg-slate-800/90 p-2 rounded-full border border-sky-200/70 dark:border-slate-700/70 text-[15px] sm:text-base font-bold shadow-sm whitespace-nowrap shrink-0">
-          <button onclick="window.toggleMapView(); window.showPortalTab('home')"
-            class="px-6 sm:px-7 py-2.5 rounded-full transition-all text-slate-700 dark:text-slate-200 font-bold hover:text-[#1d7fe0] dark:hover:text-sky-400 hover:bg-sky-100/70 dark:hover:bg-slate-700/60 whitespace-nowrap shrink-0">
-            <span class="whitespace-nowrap">Trang chủ</span>
-          </button>
-          <a href="/procedures.html"
-            class="px-6 sm:px-7 py-2.5 rounded-full transition-all text-slate-700 dark:text-slate-200 font-bold hover:text-[#1d7fe0] dark:hover:text-sky-400 hover:bg-sky-100/70 dark:hover:bg-slate-700/60 whitespace-nowrap shrink-0">
-            <span class="whitespace-nowrap">Thủ tục hành chính</span>
-          </a>
-          <button
-            class="px-6 sm:px-7 py-2.5 rounded-full transition-all bg-[#1d7fe0] text-white font-bold shadow-md shadow-sky-500/20 whitespace-nowrap shrink-0">
-            <span class="whitespace-nowrap">Bản đồ số Duy Hà</span>
-          </button>
-          <div class="h-5 w-px bg-slate-300 dark:bg-slate-700 mx-1 shrink-0"></div>
-          <button onclick="window.toggleMobileMenu()"
-            class="p-2.5 rounded-full text-slate-700 dark:text-slate-200 font-bold hover:text-[#1d7fe0] dark:hover:text-sky-400 hover:bg-sky-100/70 dark:hover:bg-slate-700/60 transition-colors flex items-center justify-center cursor-pointer shrink-0"
-            title="Tất cả danh mục menu">
-            <span class="material-symbols-outlined text-2xl">menu</span>
-          </button>
-        </nav>
-
-        <!-- Right Header Actions -->
-        <div class="flex items-center gap-2 sm:gap-2.5 shrink-0">
-          <!-- Dark/Light Theme Toggle -->
-          <button onclick="document.getElementById('theme-toggle-btn')?.click()"
-            class="w-11 h-11 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-amber-400 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors shadow-sm"
-            title="Chuyển chế độ Sáng/Tối">
-            <span class="material-symbols-outlined text-xl">dark_mode</span>
-          </button>
-
-          <!-- Mobile Menu Toggle Button (< lg screens) -->
-          <button onclick="window.toggleMobileMenu()"
-            class="lg:hidden flex items-center justify-center w-11 h-11 bg-[#3399fe] text-white rounded-full shadow-md shadow-sky-500/25 active:scale-95 transition-all cursor-pointer"
-            title="Tất cả danh mục dịch vụ">
-            <span class="material-symbols-outlined text-2xl">menu</span>
-          </button>
-        </div>
+    <!-- Floating Map Search Box -->
+    <div class="fixed top-20 sm:top-24 left-3 sm:left-6 z-40 w-72 sm:w-80 max-w-[calc(100vw-2rem)]">
+      <div
+        class="flex items-center bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-2xl px-4 py-2.5 shadow-xl border border-slate-200 dark:border-slate-800">
+        <span class="material-symbols-outlined text-[#3399fe] mr-2.5 text-xl shrink-0">search</span>
+        <input id="map-search-input"
+          class="bg-transparent border-none focus:ring-0 text-xs sm:text-sm w-full placeholder:text-slate-400 font-medium outline-none text-slate-800 dark:text-white"
+          placeholder="Tìm kiếm địa điểm trên bản đồ..." type="text" autocomplete="off" />
       </div>
-    </header>
+    </div>
 
     <!-- Right Side Weather & Layer Control -->
     <aside class="fixed right-3 sm:right-6 top-20 sm:top-24 flex flex-col gap-3 z-40 items-end">
@@ -1083,15 +1003,15 @@
       class="bg-white dark:bg-slate-900 w-[98vw] max-w-[1650px] rounded-2xl shadow-2xl border-2 border-slate-300 dark:border-slate-700 overflow-hidden relative flex flex-col my-auto max-h-[94vh]">
       <!-- Modal Header -->
       <div
-        class="p-4 sm:p-5 bg-[#1a4a8c] dark:bg-slate-800 text-white flex items-center justify-between shrink-0 shadow-sm border-b-2 border-amber-500">
+        class="p-4 sm:p-5 bg-gradient-to-r from-[#3399fe] via-[#268df5] to-[#1d7fe0] text-white flex items-center justify-between shrink-0 shadow-sm border-b-2 border-amber-400">
         <div class="flex items-center gap-3">
           <div
-            class="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center text-amber-300 font-bold text-xl shrink-0">
+            class="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center text-amber-300 font-bold text-xl shrink-0">
             <span class="material-symbols-outlined text-2xl">badge</span>
           </div>
           <div>
             <h3 class="text-lg sm:text-xl font-extrabold tracking-tight">Thông tin cán bộ tổ dân phố</h3>
-            <p class="text-xs sm:text-sm text-amber-200 mt-0.5 font-semibold">(Áp dụng từ 1/7/2026 sau sáp nhập đơn vị
+            <p class="text-xs sm:text-sm text-sky-100 mt-0.5 font-semibold">(Áp dụng từ 1/7/2026 sau sáp nhập đơn vị
               hành chính)</p>
           </div>
         </div>
@@ -1105,17 +1025,17 @@
       <div class="p-3 sm:p-5 overflow-x-auto overflow-y-auto custom-scrollbar modal-table-scroll flex-1">
         <table class="w-full text-left border-collapse min-w-[1500px] border border-slate-300 dark:border-slate-700">
           <thead>
-            <tr class="bg-sky-900 text-white border-b-2 border-slate-400 text-xs sm:text-sm font-bold tracking-tight">
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[140px]">TÊN TỔ DÂN PHỐ</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[170px]">BÍ THƯ CHI BỘ</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[170px]">TỔ TRƯỞNG TỔ DÂN PHỐ</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[170px]">CẢNH SÁT KHU VỰC</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[170px]">TRƯỞNG BAN CTMT</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[150px]">CHI HỘI TRƯỞNG NCT</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[150px]">CHI HỘI TRƯỞNG PHỤ NỮ</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[150px]">CHI HỘI TRƯỞNG NÔNG DÂN</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[150px]">CHI HỘI TRƯỞNG CCB</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[150px]">BÍ THƯ CHI ĐOÀN TN</th>
+            <tr class="bg-gradient-to-r from-[#3399fe] via-[#268df5] to-[#1d7fe0] text-white border-b-2 border-sky-300/60 text-xs sm:text-sm font-bold tracking-tight shadow-xs">
+              <th class="py-3.5 px-3 border border-white/20 min-w-[140px]">TÊN TỔ DÂN PHỐ</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[170px]">BÍ THƯ CHI BỘ</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[170px]">TỔ TRƯỞNG TỔ DÂN PHỐ</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[170px]">CẢNH SÁT KHU VỰC</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[170px]">TRƯỞNG BAN CTMT</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[150px]">CHI HỘI TRƯỞNG NCT</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[150px]">CHI HỘI TRƯỞNG PHỤ NỮ</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[150px]">CHI HỘI TRƯỞNG NÔNG DÂN</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[150px]">CHI HỘI TRƯỞNG CCB</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[150px]">BÍ THƯ CHI ĐOÀN TN</th>
             </tr>
           </thead>
           <tbody id="all-officials-table-body"
@@ -1136,7 +1056,7 @@
     <div
       class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden relative my-auto flex flex-col max-h-[90vh]">
       <div
-        class="px-6 py-4.5 bg-gradient-to-r from-[#143e78] to-[#1a4a8c] text-white flex items-center justify-between shrink-0 shadow-md">
+        class="px-6 py-4.5 bg-gradient-to-r from-[#3399fe] via-[#268df5] to-[#1d7fe0] text-white flex items-center justify-between shrink-0 shadow-md">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center text-amber-300">
             <span class="material-symbols-outlined text-2xl">description</span>

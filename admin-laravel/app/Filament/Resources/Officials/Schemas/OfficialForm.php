@@ -26,37 +26,13 @@ class OfficialForm
                     ->placeholder('Ví dụ: 0986.361.395')
                     ->required()
                     ->tel(),
-                Select::make('neighborhood_name')
-                    ->label('Đơn vị / Cơ quan trực thuộc')
-                    ->multiple()
-                    ->options(function ($record) {
-                        $options = [];
-
-                        // Lấy danh sách trực tiếp từ bảng Đơn vị & Khối công tác (Department)
-                        $departments = \App\Models\Department::where('status', 'active')
-                            ->orderBy('sort_order')
-                            ->get();
-
-                        foreach ($departments as $dep) {
-                            $options[$dep->name] = $dep->name;
-                        }
-
-                        // Giữ lại giá trị hiện tại của cán bộ nếu có
-                        if ($record && !empty($record->neighborhood_name)) {
-                            $currentValues = is_array($record->neighborhood_name) ? $record->neighborhood_name : [$record->neighborhood_name];
-                            foreach ($currentValues as $val) {
-                                if (!isset($options[$val])) {
-                                    $options[$val] = $val;
-                                }
-                            }
-                        }
-
-                        return $options;
-                    })
+                Select::make('department')
+                    ->label('Phòng ban / Ban ngành trực thuộc')
+                    ->options(fn () => \App\Models\Department::where('status', 'active')->orderBy('sort_order')->pluck('name', 'code')->toArray())
                     ->searchable()
                     ->preload()
-                    ->helperText('Danh sách lấy tự động từ mục "Đơn vị & Khối công tác".')
-                    ->nullable(),
+                    ->required()
+                    ->helperText('Chọn khối ban ngành / phòng ban công tác (Đảng ủy, UBND, Hành chính công, v.v.).'),
                 TextInput::make('avatar_color')
                     ->label('Màu nhãn đại diện')
                     ->default('#B91C1C')

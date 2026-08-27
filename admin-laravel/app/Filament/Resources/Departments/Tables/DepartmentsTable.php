@@ -24,7 +24,8 @@ class DepartmentsTable
                     ->label('Mã khối')
                     ->badge()
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('color')
                     ->label('Màu nhãn')
                     ->badge()

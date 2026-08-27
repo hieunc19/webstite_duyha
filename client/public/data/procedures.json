@@ -1,24 +1,108 @@
 [
     {
-        "id": 2,
-        "code": "Mẫu TK-CT05",
-        "title": "Tờ khai thông báo lưu trú qua đêm",
-        "name": "Tờ khai thông báo lưu trú qua đêm",
-        "category": "residence",
-        "categoryText": "Cư trú & Hộ khẩu",
-        "desc": "Tiếp nhận thông tin khách -> Ghi nhận Sổ tiếp nhận -> Nộp thông báo qua Cổng DVC \/ VNeID \/ Phần mềm ASM -> Hệ thống tự động chuyển Công an Phường.",
+        "id": 7,
+        "code": "TTHC-007",
+        "title": "TỜ KHAI ĐỀ NGHỊ HỖ TRỢ CHI PHÍ MAI TÁNG",
+        "name": "TỜ KHAI ĐỀ NGHỊ HỖ TRỢ CHI PHÍ MAI TÁNG",
+        "category": "social",
+        "categoryText": "An sinh xã hội & Người có công",
+        "desc": null,
         "fee": "Miễn phí",
-        "agency": "Công an Phường",
+        "agency": "Trung tâm phục vụ hành chính công",
         "docs": [
             {
-                "name": "1. Thông tin định danh\/CCCD của người lưu trú\n2. Địa chỉ cơ sở\/hộ gia đình tiếp nhận lưu trú",
+                "name": "Tờ khai",
                 "quantity": "01 bản chính",
-                "file": "procedure-documents\/logo-hoi-lien-hiep-thanh-nien-viet-nam-thumbnail.jpg",
-                "file_url": "\/storage\/procedure-documents\/logo-hoi-lien-hiep-thanh-nien-viet-nam-thumbnail.jpg"
+                "file": "procedure-documents\/TỜ KHAI ĐỀ NGHỊ HỖ TRỢ CHI PHÍ MAI TÁNG.doc",
+                "file_url": "\/storage\/procedure-documents\/TỜ KHAI ĐỀ NGHỊ HỖ TRỢ CHI PHÍ MAI TÁNG.doc"
             }
         ],
-        "attachment_url": "\/storage\/procedure-documents\/logo-hoi-lien-hiep-thanh-nien-viet-nam-thumbnail.jpg",
-        "created_at": "16\/08\/2026"
+        "attachment_url": "\/storage\/procedure-documents\/TỜ KHAI ĐỀ NGHỊ HỖ TRỢ CHI PHÍ MAI TÁNG.doc",
+        "created_at": "21\/08\/2026"
+    },
+    {
+        "id": 6,
+        "code": "TTHC-006",
+        "title": "MẪU TỜ KHAI THAY ĐỔI THỜ CÚNG",
+        "name": "MẪU TỜ KHAI THAY ĐỔI THỜ CÚNG",
+        "category": "social",
+        "categoryText": "An sinh xã hội & Người có công",
+        "desc": null,
+        "fee": "Miễn phí",
+        "agency": "Bộ phận Một cửa UBND Phường",
+        "docs": [
+            {
+                "name": "Tờ khai",
+                "quantity": "01 bản chính",
+                "file": "procedure-documents\/MẪU TỜ KHAI THAY ĐỔI THỜ CÚNG.docx",
+                "file_url": "\/storage\/procedure-documents\/MẪU TỜ KHAI THAY ĐỔI THỜ CÚNG.docx"
+            }
+        ],
+        "attachment_url": "\/storage\/procedure-documents\/MẪU TỜ KHAI THAY ĐỔI THỜ CÚNG.docx",
+        "created_at": "21\/08\/2026"
+    },
+    {
+        "id": 5,
+        "code": "TTHC-005",
+        "title": "MẪU TỜ KHAI MAI TÁNG PHÍ NGƯỜI CÓ CÔNG",
+        "name": "MẪU TỜ KHAI MAI TÁNG PHÍ NGƯỜI CÓ CÔNG",
+        "category": "social",
+        "categoryText": "An sinh xã hội & Người có công",
+        "desc": null,
+        "fee": "Miễn phí",
+        "agency": "Bộ phận Một cửa UBND Phường",
+        "docs": [
+            {
+                "name": "Tờ khai",
+                "quantity": "01 bản chính",
+                "file": "procedure-documents\/MẪU TỜ KHAI MAI TÁNG PHÍ NGƯỜI CÓ CÔNG.docx",
+                "file_url": "\/storage\/procedure-documents\/MẪU TỜ KHAI MAI TÁNG PHÍ NGƯỜI CÓ CÔNG.docx"
+            }
+        ],
+        "attachment_url": "\/storage\/procedure-documents\/MẪU TỜ KHAI MAI TÁNG PHÍ NGƯỜI CÓ CÔNG.docx",
+        "created_at": "21\/08\/2026"
+    },
+    {
+        "id": 4,
+        "code": "TTHC-004",
+        "title": "Mẫu số 01 TỜ KHAI KHUYẾT TẬT",
+        "name": "Mẫu số 01 TỜ KHAI KHUYẾT TẬT",
+        "category": "social",
+        "categoryText": "An sinh xã hội & Người có công",
+        "desc": null,
+        "fee": "Miễn phí",
+        "agency": "Bộ phận Một cửa UBND Phường",
+        "docs": [
+            {
+                "name": "Tờ khai",
+                "quantity": "01 bản",
+                "file": "procedure-documents\/Mẫu số 01 TỜ KHAI KHUYẾT TẬT.docx",
+                "file_url": "\/storage\/procedure-documents\/Mẫu số 01 TỜ KHAI KHUYẾT TẬT.docx"
+            }
+        ],
+        "attachment_url": "\/storage\/procedure-documents\/Mẫu số 01 TỜ KHAI KHUYẾT TẬT.docx",
+        "created_at": "21\/08\/2026"
+    },
+    {
+        "id": 3,
+        "code": "TTHC-003",
+        "title": "TK Đăng ký khai sinh",
+        "name": "TK Đăng ký khai sinh",
+        "category": "civil",
+        "categoryText": "Hộ tịch & Chứng thực",
+        "desc": null,
+        "fee": "Miễn phí",
+        "agency": "Bộ phận Một cửa UBND Phường",
+        "docs": [
+            {
+                "name": "Tờ khai",
+                "quantity": "01 bản chính",
+                "file": "procedure-documents\/1. TK đăng ký khai sinh.doc",
+                "file_url": "\/storage\/procedure-documents\/1. TK đăng ký khai sinh.doc"
+            }
+        ],
+        "attachment_url": "\/storage\/procedure-documents\/1. TK đăng ký khai sinh.doc",
+        "created_at": "21\/08\/2026"
     },
     {
         "id": 1,
@@ -26,7 +110,7 @@
         "title": "Tờ khai đăng ký tạm trú trực tuyến",
         "name": "Tờ khai đăng ký tạm trú trực tuyến",
         "category": "residence",
-        "categoryText": "Cư trú & Hộ khẩu",
+        "categoryText": "Cư trú & Định danh điện tử",
         "desc": "- Bước 1: Cá nhân, tổ chức chuẩn bị hồ sơ theo quy định của pháp luật.\n- Bước 2: Cá nhân, tổ chức nộp hồ sơ tại Công an cấp xã.\n- Bước 3: Khi tiếp nhận hồ sơ đăng ký tạm trú, cơ quan đăng ký cư trú kiểm tra tính pháp lý và nội dung hồ sơ:\n+ Trường hợp hồ sơ đã đầy đủ, hợp lệ thì tiếp nhận hồ sơ và cấp Phiếu tiếp nhận hồ sơ và hẹn trả kết quả (mẫu CT04 ban hành kèm theo Thông tư số 56\/2021\/TT-BCA) cho người đăng ký;\n+ Trường hợp hồ sơ đủ điều kiện nhưng chưa đủ hồ sơ thì hướng dẫn bổ sung, hoàn thiện và cấp Phiếu hướng dẫn bổ sung, hoàn thiện hồ sơ (mẫu CT05 ban hành kèm theo Thông tư số 56\/2021\/TT-BCA) cho người đăng ký;\n+ Trường hợp hồ sơ không đủ điều kiện thì từ chối và cấp Phiếu từ chối tiếp nhận, giải quyết hồ sơ (mẫu CT06 ban hành kèm theo Thông tư số 56\/2021\/TT-BCA) cho người đăng ký.\n- Bước 4: Cá nhân, tổ chức nộp lệ phí đăng ký cư trú theo quy định.\n- Bước 5: Căn cứ theo ngày hẹn trên Phiếu tiếp nhận hồ sơ và hẹn trả kết quả để nhận thông báo kết quả giải quyết thủ tục đăng ký cư trú (nếu có).",
         "fee": "Miễn phí",
         "agency": "Công an Phường",
@@ -39,6 +123,27 @@
             }
         ],
         "attachment_url": "\/storage\/procedure-documents\/vanhoc-17676197898811201182047.jpg",
+        "created_at": "16\/08\/2026"
+    },
+    {
+        "id": 2,
+        "code": "Mẫu TK-CT05",
+        "title": "Tờ khai thông tin cư trú",
+        "name": "Tờ khai thông tin cư trú",
+        "category": "residence",
+        "categoryText": "Cư trú & Định danh điện tử",
+        "desc": "Tiếp nhận thông tin khách -> Ghi nhận Sổ tiếp nhận -> Nộp thông báo qua Cổng DVC \/ VNeID \/ Phần mềm ASM -> Hệ thống tự động chuyển Công an Phường.",
+        "fee": "Miễn phí",
+        "agency": "Công an Phường",
+        "docs": [
+            {
+                "name": "1. Tờ khai",
+                "quantity": "01 bản chính",
+                "file": "procedure-documents\/Tờ khai CT01.doc",
+                "file_url": "\/storage\/procedure-documents\/Tờ khai CT01.doc"
+            }
+        ],
+        "attachment_url": "\/storage\/procedure-documents\/Tờ khai CT01.doc",
         "created_at": "16\/08\/2026"
     }
 ]

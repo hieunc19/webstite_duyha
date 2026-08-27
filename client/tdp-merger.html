@@ -10,18 +10,14 @@
 
   <!-- Favicon -->
   <link rel="icon" type="image/jpeg" href="/logo.jpg" />
+  <!-- Preload banner image for faster LCP -->
+  <link rel="preload" as="image" href="/storage/banners/subpage_banner_tdp_merger_1787131084.jfif" fetchpriority="high" />
 
   <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="/vendor/tailwindcss.js"></script>
 
-  <!-- Google Fonts: Roboto -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap"
-    rel="stylesheet" />
-
-  <!-- Material Symbols Outlined -->
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-    rel="stylesheet" />
+  <!-- Local Self-Hosted Fonts (Inter & Material Symbols) -->
+  <link rel="stylesheet" href="/fonts/fonts.css" />
 
   <!-- Tailwind Custom Config -->
   <script id="tailwind-config">
@@ -38,11 +34,11 @@
             "surface": "#FFFFFF"
           },
           fontFamily: {
-            "sans": ["Roboto", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
-            "serif": ["Roboto", "serif"],
-            "headline": ["Roboto", "sans-serif"],
-            "body": ["Roboto", "sans-serif"],
-            "accent": ["Roboto", "sans-serif"]
+            "sans": ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+            "serif": ["Inter", "serif"],
+            "headline": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "accent": ["Inter", "sans-serif"]
           }
         }
       }
@@ -53,11 +49,15 @@
   <link rel="stylesheet" href="/src/style.css" />
   <style>
     body {
-      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
     }
+
     .material-symbols-outlined {
       font-family: 'Material Symbols Outlined' !important;
     }
+    /* FOUC Prevention */
+    main { opacity: 0; transition: opacity 0.15s ease-out; }
+    body.js-hydrated main { opacity: 1; }
   </style>
   <script>
     window.toggleMobileMenu = function() {
@@ -68,7 +68,7 @@
 </head>
 
 <body
-  class="portal-active bg-[#FFFDF5] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-['Roboto'] font-sans antialiased selection:bg-[#3399fe] selection:text-white transition-colors duration-300">
+  class="portal-active bg-[#FFFDF5] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-['Inter'] font-sans antialiased selection:bg-[#3399fe] selection:text-white transition-colors duration-300">
 
   <!-- Header Section (injected by sharedHeader.ts) -->
   <header id="app-header"
@@ -89,21 +89,21 @@
 
     <!-- PAGE HERO BANNER -->
     <div
-      class="text-white rounded-3xl p-8 sm:p-16 min-h-[300px] flex items-center shadow-2xl border border-red-500/30 relative overflow-hidden bg-cover bg-center"
+      class="text-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-12 min-h-[180px] sm:min-h-[240px] md:min-h-[280px] flex items-center shadow-2xl border border-red-500/30 relative overflow-hidden bg-cover bg-center"
       style="background-image: url('/images/tdp_merger_banner_bg.jpg');">
       <!-- Dark overlay for high text legibility -->
-      <div class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-transparent z-0"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-black/40 via-black/15 to-transparent z-0"></div>
 
-      <div class="relative z-10 max-w-3xl space-y-3">
+      <div class="relative z-10 max-w-3xl space-y-2 sm:space-y-3">
         <div
-          class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-400/25 text-amber-300 border border-amber-400/40 text-xs font-black uppercase tracking-wider backdrop-blur-md shadow-sm">
+          class="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-amber-400/25 text-amber-300 border border-amber-400/40 text-[11px] sm:text-xs font-black uppercase tracking-wider backdrop-blur-md shadow-sm">
           <span class="material-symbols-outlined text-sm">call_merge</span>
           <span>Thông tin sáp nhập Đơn vị Hành chính 2026</span>
         </div>
-        <h2 class="text-2xl sm:text-4xl font-black tracking-tight text-white leading-tight" style="text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);">
+        <h2 class="text-xl sm:text-3xl md:text-4xl font-black tracking-tight text-white leading-tight" style="text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);">
           Phương án Sáp nhập & Tra cứu Tổ dân phố Phường Duy Hà
         </h2>
-        <p class="text-sm sm:text-base text-white leading-relaxed font-semibold" style="text-shadow: 0 1.5px 6px rgba(0, 0, 0, 0.95);">
+        <p class="text-xs sm:text-sm md:text-base text-white leading-relaxed font-semibold" style="text-shadow: 0 1.5px 6px rgba(0, 0, 0, 0.95);">
           Bảng số liệu chính thức so sánh hiện trạng 16 Tổ dân phố cũ và 10 Tổ dân phố mới dự kiến sau sáp nhập. Tra cứu
           thông tin hộ dân, nhân khẩu, diện tích và danh sách cán bộ phụ trách.
         </p>
@@ -112,7 +112,7 @@
 
     <!-- MAIN TABLES SECTION CONTAINER -->
     <section
-      class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
+      class="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-5 sm:space-y-6">
 
       <!-- Section Header -->
       <div
@@ -146,12 +146,12 @@
 
       <!-- Tables Side-by-Side Grid (Desktop) / Horizontal Swipe (Mobile) -->
       <div id="page-tdp-tables-container"
-        class="flex lg:grid lg:grid-cols-2 gap-6 items-start overflow-x-auto snap-x snap-mandatory pb-4 lg:pb-0 no-scrollbar transition-all">
+        class="flex lg:grid lg:grid-cols-2 gap-4 lg:gap-5 items-start overflow-x-auto snap-x snap-mandatory pb-4 lg:pb-0 no-scrollbar transition-all">
 
         <!-- TABLE 1: OLD NEIGHBORHOODS -->
         <div id="page-tdp-slide-old"
-          class="w-full min-w-full lg:min-w-0 snap-start shrink-0 bg-slate-50/60 dark:bg-slate-800/40 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
+          class="w-full min-w-full lg:min-w-0 snap-start shrink-0 bg-slate-50/60 dark:bg-slate-800/40 p-3.5 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2.5">
             <h4
               class="text-xs sm:text-sm font-black uppercase text-red-700 dark:text-red-400 tracking-wider flex items-center gap-2"
               id="page-old-neighborhoods-count-title">
@@ -165,11 +165,11 @@
               <thead>
                 <tr
                   class="border-b border-slate-200 dark:border-slate-700 text-[10px] font-extrabold uppercase text-slate-500 dark:text-slate-400">
-                  <th class="py-2.5 px-2 text-center w-10">STT</th>
-                  <th class="py-2.5 px-2">Tên Tổ dân phố</th>
-                  <th class="py-2.5 px-2 text-right">Số hộ GD</th>
-                  <th class="py-2.5 px-2 text-right">Nhân khẩu</th>
-                  <th class="py-2.5 px-2 text-right">Diện tích (ha)</th>
+                  <th class="py-2 px-1.5 text-center w-7">STT</th>
+                  <th class="py-2 px-1.5">Tên Tổ dân phố</th>
+                  <th class="py-2 px-1.5 text-right whitespace-nowrap">Số hộ GD</th>
+                  <th class="py-2 px-1.5 text-right whitespace-nowrap">Nhân khẩu</th>
+                  <th class="py-2 px-1.5 text-right whitespace-nowrap">Diện tích (ha)</th>
                 </tr>
               </thead>
               <tbody id="page-old-neighborhoods-list"
@@ -178,13 +178,13 @@
               <tfoot>
                 <tr
                   class="border-t-2 border-slate-300 dark:border-slate-700 font-extrabold text-slate-900 dark:text-white bg-slate-200/60 dark:bg-slate-800">
-                  <td class="py-3 px-2 text-center"></td>
-                  <td class="py-3 px-2 uppercase">Tổng cộng</td>
+                  <td class="py-2.5 px-1.5 text-center"></td>
+                  <td class="py-2.5 px-1.5 uppercase font-black">Tổng cộng</td>
                   <td id="page-old-total-households"
-                    class="py-3 px-2 text-right text-red-700 dark:text-red-400 font-black">0</td>
-                  <td id="page-old-total-people" class="py-3 px-2 text-right text-red-700 dark:text-red-400 font-black">
+                    class="py-2.5 px-1.5 text-right text-red-700 dark:text-red-400 font-black">0</td>
+                  <td id="page-old-total-people" class="py-2.5 px-1.5 text-right text-red-700 dark:text-red-400 font-black">
                     0</td>
-                  <td id="page-old-total-area" class="py-3 px-2 text-right text-red-700 dark:text-red-400 font-black">0
+                  <td id="page-old-total-area" class="py-2.5 px-1.5 text-right text-red-700 dark:text-red-400 font-black">0
                   </td>
                 </tr>
               </tfoot>
@@ -194,8 +194,8 @@
 
         <!-- TABLE 2: NEW NEIGHBORHOODS -->
         <div id="page-tdp-slide-new"
-          class="w-full min-w-full lg:min-w-0 snap-start shrink-0 bg-slate-50/60 dark:bg-slate-800/40 p-4 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-3">
+          class="w-full min-w-full lg:min-w-0 snap-start shrink-0 bg-slate-50/60 dark:bg-slate-800/40 p-3.5 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-2.5">
             <h4
               class="text-xs sm:text-sm font-black uppercase text-emerald-700 dark:text-emerald-400 tracking-wider flex items-center gap-2"
               id="page-new-neighborhoods-count-title">
@@ -209,12 +209,12 @@
               <thead>
                 <tr
                   class="border-b border-slate-200 dark:border-slate-700 text-[10px] font-extrabold uppercase text-slate-500 dark:text-slate-400">
-                  <th class="py-2.5 px-2 text-center w-10">STT</th>
-                  <th class="py-2.5 px-2">Tên gọi dự kiến</th>
-                  <th class="py-2.5 px-2 text-right">Số hộ GD</th>
-                  <th class="py-2.5 px-2 text-right">Nhân khẩu</th>
-                  <th class="py-2.5 px-2 text-right">Diện tích (ha)</th>
-                  <th class="py-2.5 px-2 text-center">Danh sách cán bộ</th>
+                  <th class="py-2 px-1.5 text-center w-7">STT</th>
+                  <th class="py-2 px-1.5">Tên gọi dự kiến</th>
+                  <th class="py-2 px-1.5 text-right whitespace-nowrap">Số hộ GD</th>
+                  <th class="py-2 px-1.5 text-right whitespace-nowrap">Nhân khẩu</th>
+                  <th class="py-2 px-1.5 text-right whitespace-nowrap">Diện tích (ha)</th>
+                  <th class="py-2 px-1.5 text-center whitespace-nowrap">Cán bộ</th>
                 </tr>
               </thead>
               <tbody id="page-new-neighborhoods-list"
@@ -223,15 +223,15 @@
               <tfoot>
                 <tr
                   class="border-t-2 border-slate-300 dark:border-slate-700 font-extrabold text-slate-900 dark:text-white bg-slate-200/60 dark:bg-slate-800">
-                  <td class="py-3 px-2 text-center"></td>
-                  <td class="py-3 px-2 uppercase">Tổng cộng</td>
+                  <td class="py-2.5 px-1.5 text-center"></td>
+                  <td class="py-2.5 px-1.5 uppercase font-black">Tổng cộng</td>
                   <td id="page-new-total-households"
-                    class="py-3 px-2 text-right text-emerald-700 dark:text-emerald-400 font-black">0</td>
+                    class="py-2.5 px-1.5 text-right text-emerald-700 dark:text-emerald-400 font-black">0</td>
                   <td id="page-new-total-people"
-                    class="py-3 px-2 text-right text-emerald-700 dark:text-emerald-400 font-black">0</td>
+                    class="py-2.5 px-1.5 text-right text-emerald-700 dark:text-emerald-400 font-black">0</td>
                   <td id="page-new-total-area"
-                    class="py-3 px-2 text-right text-emerald-700 dark:text-emerald-400 font-black">0</td>
-                  <td class="py-3 px-2"></td>
+                    class="py-2.5 px-1.5 text-right text-emerald-700 dark:text-emerald-400 font-black">0</td>
+                  <td class="py-2.5 px-1.5"></td>
                 </tr>
               </tfoot>
             </table>
@@ -256,8 +256,8 @@
         <!-- Left 7 Cols: Emblem & Main Contact Info -->
         <div class="lg:col-span-7 flex items-start gap-4 sm:gap-5">
           <!-- Circular Emblem Icon -->
-          <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-white/80 p-0.5 flex items-center justify-center shrink-0 bg-[#3399fe] shadow-lg overflow-hidden">
-            <img src="/logo.jpg" alt="Logo Đoàn TNCS Phường Duy Hà" class="w-full h-full object-cover rounded-full" />
+          <div class="w-16 h-16 sm:w-20 sm:h-20 shrink-0 flex items-center justify-center">
+            <img src="/logo.jpg" alt="Logo Đoàn TNCS Phường Duy Hà" class="w-full h-full object-contain filter drop-shadow-md" />
           </div>
           
           <!-- Text Info -->
@@ -346,15 +346,15 @@
       class="bg-white dark:bg-slate-900 w-[98vw] max-w-[1650px] rounded-2xl shadow-2xl border-2 border-slate-300 dark:border-slate-700 overflow-hidden relative flex flex-col my-auto max-h-[94vh]">
       <!-- Modal Header -->
       <div
-        class="p-4 sm:p-5 bg-[#1a4a8c] dark:bg-slate-800 text-white flex items-center justify-between shrink-0 shadow-sm border-b-2 border-amber-500">
+        class="p-4 sm:p-5 bg-gradient-to-r from-[#3399fe] via-[#268df5] to-[#1d7fe0] text-white flex items-center justify-between shrink-0 shadow-sm border-b-2 border-amber-400">
         <div class="flex items-center gap-3">
           <div
-            class="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center text-amber-300 font-bold text-xl shrink-0">
+            class="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center text-amber-300 font-bold text-xl shrink-0">
             <span class="material-symbols-outlined text-2xl">badge</span>
           </div>
           <div>
             <h3 class="text-lg sm:text-xl font-extrabold tracking-tight">Thông tin cán bộ tổ dân phố</h3>
-            <p class="text-xs sm:text-sm text-amber-200 mt-0.5 font-semibold">(Áp dụng từ 1/7/2026 sau sáp nhập đơn vị
+            <p class="text-xs sm:text-sm text-sky-100 mt-0.5 font-semibold">(Áp dụng từ 1/7/2026 sau sáp nhập đơn vị
               hành chính)</p>
           </div>
         </div>
@@ -368,17 +368,17 @@
       <div class="p-3 sm:p-5 overflow-x-auto overflow-y-auto custom-scrollbar modal-table-scroll flex-1">
         <table class="w-full text-left border-collapse min-w-[1500px] border border-slate-300 dark:border-slate-700">
           <thead>
-            <tr class="bg-sky-900 text-white border-b-2 border-slate-400 text-xs sm:text-sm font-bold tracking-tight">
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[140px]">TÊN TỔ DÂN PHỐ</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[170px]">BÍ THƯ CHI BỘ</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[170px]">TỔ TRƯỞNG TỔ DÂN PHỐ</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[170px]">CẢNH SÁT KHU VỰC</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[170px]">TRƯỞNG BAN CTMT</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[150px]">CHI HỘI TRƯỞNG NCT</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[150px]">CHI HỘI TRƯỞNG PHỤ NỮ</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[150px]">CHI HỘI TRƯỞNG NÔNG DÂN</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[150px]">CHI HỘI TRƯỞNG CCB</th>
-              <th class="py-3.5 px-3 border border-sky-800 min-w-[150px]">BÍ THƯ CHI ĐOÀN TN</th>
+            <tr class="bg-gradient-to-r from-[#3399fe] via-[#268df5] to-[#1d7fe0] text-white border-b-2 border-sky-300/60 text-xs sm:text-sm font-bold tracking-tight shadow-xs">
+              <th class="py-3.5 px-3 border border-white/20 min-w-[140px]">TÊN TỔ DÂN PHỐ</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[170px]">BÍ THƯ CHI BỘ</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[170px]">TỔ TRƯỞNG TỔ DÂN PHỐ</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[170px]">CẢNH SÁT KHU VỰC</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[170px]">TRƯỞNG BAN CTMT</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[150px]">CHI HỘI TRƯỞNG NCT</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[150px]">CHI HỘI TRƯỞNG PHỤ NỮ</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[150px]">CHI HỘI TRƯỞNG NÔNG DÂN</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[150px]">CHI HỘI TRƯỞNG CCB</th>
+              <th class="py-3.5 px-3 border border-white/20 min-w-[150px]">BÍ THƯ CHI ĐOÀN TN</th>
             </tr>
           </thead>
           <tbody id="all-officials-table-body"

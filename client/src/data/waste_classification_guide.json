@@ -1,0 +1,26 @@
+{
+    "title": "Hướng dẫn phân loại rác tại nguồn",
+    "subtitle": "Thực hiện Luật Bảo vệ môi trường — Chung tay xây dựng Phường Duy Hà Xanh - Sạch - Văn minh",
+    "categories": [
+        {
+            "title": "1. RÁC HỮU CƠ (DỄ PHÂN HỦY)",
+            "desc": "Thức ăn thừa, rau củ quả thải loại, vỏ trái cây, bã chè, lá cây nhỏ...",
+            "icon": "compost",
+            "theme": "emerald",
+            "image": ""
+        },
+        {
+            "title": "2. RÁC TÁI CHẾ (PHẾ LIỆU)",
+            "desc": "Bìa carton, giấy báo cũ, chai lọ nhựa, vỏ lon kim loại, đồ nhựa gia dụng...",
+            "icon": "inventory_2",
+            "theme": "amber"
+        },
+        {
+            "title": "3. RÁC THẢI CÒN LẠI (VÔ CƠ)",
+            "desc": "Túi nilon bẩn, hộp xốp, tã bỉm, gốm sứ vỡ, rác quét nhà, cành cây tỉa...",
+            "icon": "delete_sweep",
+            "theme": "slate"
+        }
+    ],
+    "regulation": "Bỏ rác đúng giờ trước khi xe đến 15-30 phút. Hành vi vứt rác bừa bãi ra vỉa hè, lòng đường bị phạt tiền từ 500.000đ — 2.000.000đ theo Nghị định 45\/2022\/NĐ-CP."
+}

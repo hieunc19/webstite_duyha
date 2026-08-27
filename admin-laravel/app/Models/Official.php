@@ -53,7 +53,12 @@ class Official extends Model
     protected static function booted(): void
     {
         static::saving(function (Official $official) {
-            if (!empty($official->neighborhood_name)) {
+            if (!empty($official->department)) {
+                $dep = \App\Models\Department::where('code', $official->department)->first();
+                if ($dep && empty($official->neighborhood_name)) {
+                    $official->neighborhood_name = [$dep->name];
+                }
+            } elseif (!empty($official->neighborhood_name)) {
                 $rawNames = $official->neighborhood_name;
                 $deptNames = is_array($rawNames) ? $rawNames : array_map('trim', explode(',', (string) $rawNames));
                 foreach ($deptNames as $name) {

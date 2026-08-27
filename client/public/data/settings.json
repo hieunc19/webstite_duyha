@@ -13,7 +13,7 @@
         {
             "key": "stat_2",
             "name": "Thẻ 2: Tổng số Hộ gia đình",
-            "value": "6.767",
+            "value": "6.000",
             "label": "Tổng số hộ gia đình",
             "sort_order": 2,
             "icon": "group",
@@ -43,7 +43,7 @@
     ],
     "stat_1_val": "10",
     "stat_1_lbl": "Tổng số tổ dân phố",
-    "stat_2_val": "6.767",
+    "stat_2_val": "6.000",
     "stat_2_lbl": "Tổng số hộ gia đình",
     "stat_3_val": "23.615",
     "stat_3_lbl": "Tổng số nhân khẩu",

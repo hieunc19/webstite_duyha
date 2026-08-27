@@ -10,18 +10,15 @@
 
   <!-- Favicon -->
   <link rel="icon" type="image/jpeg" href="/logo.jpg" />
+  <!-- Preload banner image for faster LCP -->
+  <link rel="preload" as="image" href="/storage/banners/subpage_banner_waste_schedule_1787131068.jfif"
+    fetchpriority="high" />
 
   <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="/vendor/tailwindcss.js"></script>
 
-  <!-- Google Fonts: Roboto -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,500;1,700;1,900&display=swap"
-    rel="stylesheet" />
-
-  <!-- Material Symbols Outlined -->
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-    rel="stylesheet" />
+  <!-- Local Self-Hosted Fonts (Inter & Material Symbols) -->
+  <link rel="stylesheet" href="/fonts/fonts.css" />
 
   <!-- Tailwind Custom Config -->
   <script id="tailwind-config">
@@ -38,11 +35,11 @@
             "surface": "#FFFFFF"
           },
           fontFamily: {
-            "sans": ["Roboto", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
-            "serif": ["Roboto", "serif"],
-            "headline": ["Roboto", "sans-serif"],
-            "body": ["Roboto", "sans-serif"],
-            "accent": ["Roboto", "sans-serif"]
+            "sans": ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
+            "serif": ["Inter", "serif"],
+            "headline": ["Inter", "sans-serif"],
+            "body": ["Inter", "sans-serif"],
+            "accent": ["Inter", "sans-serif"]
           }
         }
       }
@@ -53,14 +50,25 @@
   <link rel="stylesheet" href="/src/style.css" />
   <style>
     body {
-      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
     }
+
     .material-symbols-outlined {
       font-family: 'Material Symbols Outlined' !important;
     }
+
+    /* FOUC Prevention */
+    main {
+      opacity: 0;
+      transition: opacity 0.15s ease-out;
+    }
+
+    body.js-hydrated main {
+      opacity: 1;
+    }
   </style>
   <script>
-    window.toggleMobileMenu = function() {
+    window.toggleMobileMenu = function () {
       var m = document.getElementById('mobile-nav-menu');
       if (m) m.classList.toggle('hidden');
     };
@@ -68,7 +76,7 @@
 </head>
 
 <body
-  class="portal-active bg-[#FFFDF5] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-['Roboto'] font-sans antialiased selection:bg-[#3399fe] selection:text-white transition-colors duration-300">
+  class="portal-active bg-[#FFFDF5] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-['Inter'] font-sans antialiased selection:bg-[#3399fe] selection:text-white transition-colors duration-300">
 
   <!-- ==================== HEADER ==================== -->
 
@@ -76,7 +84,7 @@
   <header id="app-header"
     class="sticky top-0 z-50 bg-[#FFFDF8]/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-sky-900/15 dark:border-slate-800 transition-colors shadow-sm">
   </header>
-<!-- ==================== MAIN CONTENT ==================== -->
+  <!-- ==================== MAIN CONTENT ==================== -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-8">
 
     <!-- BREADCRUMB -->
@@ -91,29 +99,32 @@
 
     <!-- PAGE HERO BANNER -->
     <div
-      class="text-white rounded-3xl p-8 sm:p-16 min-h-[300px] flex items-center shadow-2xl border border-red-500/30 relative overflow-hidden bg-cover bg-center"
+      class="text-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-12 min-h-[180px] sm:min-h-[240px] md:min-h-[280px] flex items-center shadow-2xl border border-red-500/30 relative overflow-hidden bg-cover bg-center"
       style="background-image: url('/images/tdp_merger_banner_bg.jpg');">
       <!-- Dark overlay for high text legibility -->
-      <div class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-transparent z-0"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-black/40 via-black/15 to-transparent z-0"></div>
 
-      <div class="relative z-10 max-w-3xl space-y-3">
+      <div class="relative z-10 max-w-3xl space-y-2 sm:space-y-3">
         <div
-          class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-400/25 text-amber-300 border border-amber-400/40 text-xs font-black uppercase tracking-wider backdrop-blur-md shadow-sm">
+          class="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-amber-400/25 text-amber-300 border border-amber-400/40 text-[11px] sm:text-xs font-black uppercase tracking-wider backdrop-blur-md shadow-sm">
           <span class="material-symbols-outlined text-sm">delete</span>
           <span>VỆ SINH MÔI TRƯỜNG ĐÔ THỊ</span>
         </div>
-        <h2 class="text-2xl sm:text-4xl font-black tracking-tight text-white leading-tight" style="text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);">
+        <h2 class="text-xl sm:text-3xl md:text-4xl font-black tracking-tight text-white leading-tight"
+          style="text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);">
           Lịch thu gom rác sinh hoạt &amp; Vệ sinh môi trường
         </h2>
-        <p class="text-sm sm:text-base text-white leading-relaxed font-semibold" style="text-shadow: 0 1.5px 6px rgba(0, 0, 0, 0.95);">
-          Bảng thời khóa biểu chi tiết khung thời gian xe gom rác, điểm tập kết và phân loại rác tại 10 Tổ dân phố Phường Duy Hà, tỉnh Ninh Bình.
+        <p class="text-xs sm:text-sm md:text-base text-white leading-relaxed font-semibold"
+          style="text-shadow: 0 1.5px 6px rgba(0, 0, 0, 0.95);">
+          Bảng thời khóa biểu chi tiết khung thời gian xe gom rác, điểm tập kết và phân loại rác tại 10 Tổ dân phố
+          Phường Duy Hà, tỉnh Ninh Bình.
         </p>
       </div>
     </div>
 
     <!-- MAIN TABLES SECTION CONTAINER -->
     <section
-      class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
+      class="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-5 sm:space-y-6">
 
       <!-- Section Header -->
       <div
@@ -130,14 +141,13 @@
         </div>
 
         <div class="hidden sm:flex items-center gap-3 text-xs font-bold">
-          <span class="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 dark:bg-emerald-950/60 dark:text-emerald-300 px-2.5 py-1 rounded-md border border-emerald-200 dark:border-emerald-800">
-            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Ca sáng
+          <span
+            class="inline-flex items-center gap-1.5 text-emerald-700 bg-emerald-50 dark:bg-emerald-950/60 dark:text-emerald-300 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-800 shadow-xs">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Khung giờ thu gom rác
           </span>
-          <span class="inline-flex items-center gap-1 text-sky-700 bg-sky-50 dark:bg-sky-950/60 dark:text-sky-300 px-2.5 py-1 rounded-md border border-sky-200 dark:border-sky-800">
-            <span class="w-2 h-2 rounded-full bg-sky-500"></span> Ca chiều tối
-          </span>
-          <span class="inline-flex items-center gap-1 text-slate-500 bg-slate-100 dark:bg-slate-800 dark:text-slate-400 px-2.5 py-1 rounded-md border border-slate-200 dark:border-slate-700">
-            <span class="w-2 h-2 rounded-full bg-slate-400"></span> — : Không thu gom
+          <span
+            class="inline-flex items-center gap-1.5 text-slate-500 bg-slate-100 dark:bg-slate-800 dark:text-slate-400 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-xs">
+            <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span> — : Không thu gom
           </span>
         </div>
       </div>
@@ -146,18 +156,20 @@
       <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
         <table class="w-full text-left border-collapse min-w-[1100px]">
           <thead>
-            <tr class="bg-gradient-to-r from-[#143e78] to-[#1a4a8c] text-white text-xs sm:text-sm font-extrabold uppercase tracking-wider">
-              <th class="py-4 px-4 border-r border-sky-800/60 w-56">TỔ DÂN PHỐ (TDP)</th>
-              <th class="py-4 px-3 border-r border-sky-800/60 text-center">THỨ 2</th>
-              <th class="py-4 px-3 border-r border-sky-800/60 text-center">THỨ 3</th>
-              <th class="py-4 px-3 border-r border-sky-800/60 text-center">THỨ 4</th>
-              <th class="py-4 px-3 border-r border-sky-800/60 text-center">THỨ 5</th>
-              <th class="py-4 px-3 border-r border-sky-800/60 text-center">THỨ 6</th>
-              <th class="py-4 px-3 border-r border-sky-800/60 text-center">THỨ 7</th>
+            <tr
+              class="bg-gradient-to-r from-[#3399fe] via-[#268df5] to-[#1d7fe0] text-white text-xs sm:text-sm font-extrabold uppercase tracking-wider shadow-xs">
+              <th class="py-4 px-4 border-r border-white/20 w-56">TỔ DÂN PHỐ (TDP)</th>
+              <th class="py-4 px-3 border-r border-white/20 text-center">THỨ 2</th>
+              <th class="py-4 px-3 border-r border-white/20 text-center">THỨ 3</th>
+              <th class="py-4 px-3 border-r border-white/20 text-center">THỨ 4</th>
+              <th class="py-4 px-3 border-r border-white/20 text-center">THỨ 5</th>
+              <th class="py-4 px-3 border-r border-white/20 text-center">THỨ 6</th>
+              <th class="py-4 px-3 border-r border-white/20 text-center">THỨ 7</th>
               <th class="py-4 px-3 text-center">CHỦ NHẬT</th>
             </tr>
           </thead>
-          <tbody id="timetable-matrix-body" class="divide-y divide-slate-200 dark:divide-slate-800 text-xs sm:text-sm font-medium">
+          <tbody id="timetable-matrix-body"
+            class="divide-y divide-slate-200 dark:divide-slate-800 text-xs sm:text-sm font-medium">
             <!-- Dynamic Timetable Rows Injected by JS -->
           </tbody>
         </table>
@@ -165,74 +177,97 @@
     </section>
 
     <!-- ==================== WASTE SORTING GUIDELINES BANNER ==================== -->
-    <section class="bg-white dark:bg-slate-900 rounded-3xl p-7 sm:p-10 border border-slate-200 dark:border-slate-800 shadow-xl space-y-8">
-      
+    <section
+      class="bg-white dark:bg-slate-900 rounded-3xl p-7 sm:p-10 border border-slate-200 dark:border-slate-800 shadow-xl space-y-8">
+
       <!-- Section Title Header -->
       <div class="flex items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
-        <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/20 shadow-sm">
+        <div
+          class="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/20 shadow-sm">
           <span class="material-symbols-outlined text-3xl sm:text-4xl">recycling</span>
         </div>
         <div>
-          <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
-            <span>Hướng dẫn phân loại rác tại nguồn</span>
+          <h3
+            class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+            <span id="waste-guide-title">Hướng dẫn phân loại rác tại nguồn</span>
           </h3>
-          <p class="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">
+          <p id="waste-guide-subtitle" class="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">
             Thực hiện Luật Bảo vệ môi trường — Chung tay xây dựng Phường Duy Hà Xanh - Sạch - Văn minh
           </p>
         </div>
       </div>
 
-      <!-- 3 Types of Waste Category Cards -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
+      <!-- Types of Waste Category Cards Container -->
+      <div id="waste-guide-categories" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
         <!-- Category 1: Rác hữu cơ -->
-        <div class="bg-emerald-50/70 dark:bg-emerald-950/30 p-6 sm:p-7 rounded-3xl border border-emerald-200 dark:border-emerald-900/50 space-y-3 shadow-sm hover:shadow-md transition-shadow">
-          <div class="flex items-center gap-3 text-emerald-800 dark:text-emerald-300">
-            <div class="w-11 h-11 rounded-2xl bg-emerald-100 dark:bg-emerald-900/60 flex items-center justify-center shrink-0 text-emerald-600 dark:text-emerald-400 shadow-sm">
-              <span class="material-symbols-outlined text-2xl">compost</span>
+        <div
+          class="bg-emerald-50/70 dark:bg-emerald-950/30 p-5 sm:p-6 rounded-3xl border border-emerald-200 dark:border-emerald-900/50 space-y-3 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+          <div class="space-y-2.5">
+            <div class="flex items-center gap-3 text-emerald-800 dark:text-emerald-300">
+              <div
+                class="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-900/60 flex items-center justify-center shrink-0 text-emerald-600 dark:text-emerald-400 shadow-sm">
+                <span class="material-symbols-outlined text-xl">compost</span>
+              </div>
+              <h4 class="text-sm sm:text-base font-black uppercase tracking-tight">1. Rác hữu cơ (Dễ phân hủy)</h4>
             </div>
-            <h4 class="text-base font-black uppercase tracking-tight">1. Rác hữu cơ (Dễ phân hủy)</h4>
+            <div class="w-full h-44 sm:h-48 rounded-2xl overflow-hidden bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/60 shadow-xs mt-1">
+              <img src="/storage/waste/waste_cat_0_1787671590.png" alt="1. Rác hữu cơ" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" />
+            </div>
+            <p class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed">
+              Thức ăn thừa, rau củ quả thải loại, vỏ trái cây, bã chè, lá cây nhỏ...
+            </p>
           </div>
-          <p class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed">
-            Thức ăn thừa, rau củ quả thải loại, vỏ trái cây, bã chè, lá cây nhỏ...
-          </p>
         </div>
 
         <!-- Category 2: Rác tái chế -->
-        <div class="bg-amber-50/70 dark:bg-amber-950/30 p-6 sm:p-7 rounded-3xl border border-amber-200 dark:border-amber-900/50 space-y-3 shadow-sm hover:shadow-md transition-shadow">
-          <div class="flex items-center gap-3 text-amber-800 dark:text-amber-300">
-            <div class="w-11 h-11 rounded-2xl bg-amber-100 dark:bg-amber-900/60 flex items-center justify-center shrink-0 text-amber-600 dark:text-amber-400 shadow-sm">
-              <span class="material-symbols-outlined text-2xl">inventory_2</span>
+        <div
+          class="bg-amber-50/70 dark:bg-amber-950/30 p-5 sm:p-6 rounded-3xl border border-amber-200 dark:border-amber-900/50 space-y-3 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+          <div class="space-y-2.5">
+            <div class="flex items-center gap-3 text-amber-800 dark:text-amber-300">
+              <div
+                class="w-10 h-10 rounded-2xl bg-amber-100 dark:bg-amber-900/60 flex items-center justify-center shrink-0 text-amber-600 dark:text-amber-400 shadow-sm">
+                <span class="material-symbols-outlined text-xl">inventory_2</span>
+              </div>
+              <h4 class="text-sm sm:text-base font-black uppercase tracking-tight">2. Rác tái chế (Phế liệu)</h4>
             </div>
-            <h4 class="text-base font-black uppercase tracking-tight">2. Rác tái chế (Phế liệu)</h4>
+            <p class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed">
+              Bìa carton, giấy báo cũ, chai lọ nhựa, vỏ lon kim loại, đồ nhựa gia dụng...
+            </p>
           </div>
-          <p class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed">
-            Bìa carton, giấy báo cũ, chai lọ nhựa, vỏ lon kim loại, đồ nhựa gia dụng...
-          </p>
         </div>
 
         <!-- Category 3: Rác vô cơ khác -->
-        <div class="bg-slate-50 dark:bg-slate-800/60 p-6 sm:p-7 rounded-3xl border border-slate-200 dark:border-slate-700 space-y-3 shadow-sm hover:shadow-md transition-shadow">
-          <div class="flex items-center gap-3 text-slate-800 dark:text-slate-200">
-            <div class="w-11 h-11 rounded-2xl bg-slate-200/80 dark:bg-slate-700 flex items-center justify-center shrink-0 text-slate-600 dark:text-slate-300 shadow-sm">
-              <span class="material-symbols-outlined text-2xl">delete_sweep</span>
+        <div
+          class="bg-slate-50 dark:bg-slate-800/60 p-5 sm:p-6 rounded-3xl border border-slate-200 dark:border-slate-700 space-y-3 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+          <div class="space-y-2.5">
+            <div class="flex items-center gap-3 text-slate-800 dark:text-slate-200">
+              <div
+                class="w-10 h-10 rounded-2xl bg-slate-200/80 dark:bg-slate-700 flex items-center justify-center shrink-0 text-slate-600 dark:text-slate-300 shadow-sm">
+                <span class="material-symbols-outlined text-xl">delete_sweep</span>
+              </div>
+              <h4 class="text-sm sm:text-base font-black uppercase tracking-tight">3. Rác thải còn lại (Vô cơ)</h4>
             </div>
-            <h4 class="text-base font-black uppercase tracking-tight">3. Rác thải còn lại (Vô cơ)</h4>
+            <p class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed">
+              Túi nilon bẩn, hộp xốp, tã bỉm, gốm sứ vỡ, rác quét nhà, cành cây tỉa...
+            </p>
           </div>
-          <p class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed">
-            Túi nilon bẩn, hộp xốp, tã bỉm, gốm sứ vỡ, rác quét nhà, cành cây tỉa...
-          </p>
         </div>
 
       </div>
 
       <!-- Rules & Regulations Bar -->
-      <div class="bg-gradient-to-r from-amber-50 via-orange-50/60 to-amber-50/40 dark:from-slate-800 dark:to-slate-850 p-5 sm:p-6 rounded-3xl border-2 border-amber-200/80 dark:border-amber-900/40 flex items-center gap-4 shadow-sm mt-4">
-        <div class="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-700 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-400/30 shadow-sm">
+      <div
+        class="bg-gradient-to-r from-amber-50 via-orange-50/60 to-amber-50/40 dark:from-slate-800 dark:to-slate-850 p-5 sm:p-6 rounded-3xl border-2 border-amber-200/80 dark:border-amber-900/40 flex items-center gap-4 shadow-sm mt-4">
+        <div
+          class="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-700 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-400/30 shadow-sm">
           <span class="material-symbols-outlined text-2xl">gavel</span>
         </div>
-        <p class="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 leading-relaxed">
-          <strong class="font-extrabold text-amber-900 dark:text-amber-300 uppercase">Quy định:</strong> Bỏ rác đúng giờ trước khi xe đến 15-30 phút. Hành vi vứt rác bừa bãi ra vỉa hè, lòng đường bị phạt tiền từ <strong class="text-red-600 dark:text-red-400 font-extrabold">500.000đ — 2.000.000đ</strong> theo Nghị định 45/2022/NĐ-CP.
+        <p id="waste-guide-regulation-text" class="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 leading-relaxed">
+          <strong class="font-extrabold text-amber-900 dark:text-amber-300 uppercase">Quy định:</strong> Bỏ rác đúng giờ
+          trước khi xe đến 15-30 phút. Hành vi vứt rác bừa bãi ra vỉa hè, lòng đường bị phạt tiền từ <strong
+            class="text-red-600 dark:text-red-400 font-extrabold">500.000đ — 2.000.000đ</strong> theo Nghị định
+          45/2022/NĐ-CP.
         </p>
       </div>
     </section>
@@ -253,9 +288,9 @@
 
         <!-- Left 7 Cols: Emblem & Main Contact Info -->
         <div class="lg:col-span-7 flex items-start gap-4 sm:gap-5">
-          <div
-            class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-white/80 p-0.5 flex items-center justify-center shrink-0 bg-[#3399fe] shadow-lg overflow-hidden">
-            <img src="/logo.jpg" alt="Logo Đoàn TNCS Phường Duy Hà" class="w-full h-full object-cover rounded-full" />
+          <div class="w-16 h-16 sm:w-20 sm:h-20 shrink-0 flex items-center justify-center">
+            <img src="/logo.jpg" alt="Logo Đoàn TNCS Phường Duy Hà"
+              class="w-full h-full object-contain filter drop-shadow-md" />
           </div>
 
           <div class="space-y-1.5">
@@ -266,7 +301,8 @@
               Địa chỉ: Số 01 đường Lê Lợi, Phường Duy Hà, thành phố Ninh Bình, tỉnh Ninh Bình
             </p>
             <p class="text-xs sm:text-sm text-sky-100 font-medium">
-              <strong>Giờ làm việc:</strong> Sáng: 7h30 - 11h30 | Chiều: 13h30 - 17h00 (Từ Thứ 2 đến Thứ 6, nghỉ T7 &amp; CN)
+              <strong>Giờ làm việc:</strong> Sáng: 7h30 - 11h30 | Chiều: 13h30 - 17h00 (Từ Thứ 2 đến Thứ 6, nghỉ T7
+              &amp; CN)
             </p>
             <p class="text-xs sm:text-sm text-sky-100 font-medium">
               Email: thongtin@duyha.ninhbinh.gov.vn &nbsp;|&nbsp; Điện thoại: (0229) 38253536
@@ -275,13 +311,14 @@
             <!-- Social & Web Link Icons (Small Circular Badges) -->
             <div class="flex items-center gap-2 pt-1.5">
               <span class="text-xs font-semibold text-sky-200/90 mr-1">Kênh liên kết:</span>
-              
+
               <!-- Facebook Icon (Small Circle) -->
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
                 class="w-7 h-7 rounded-full bg-white/15 hover:bg-[#1877F2] text-white flex items-center justify-center transition-all duration-300 shadow-sm border border-white/30 hover:scale-110 hover:border-transparent"
                 title="Trang Facebook Phường Duy Hà">
                 <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  <path
+                    d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                 </svg>
               </a>
 
@@ -306,18 +343,25 @@
         <div class="lg:col-span-5 space-y-2">
           <h4 class="text-sm font-extrabold text-white tracking-wide">Liên kết website</h4>
           <div class="space-y-2">
-            <select onchange="if(this.value) window.open(this.value, '_blank')" class="w-full bg-white/15 hover:bg-white/25 text-white border border-white/30 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold outline-none focus:border-amber-400 transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-[right_12px_center] bg-no-repeat pr-8">
+            <select onchange="if(this.value) window.open(this.value, '_blank')"
+              class="w-full bg-white/15 hover:bg-white/25 text-white border border-white/30 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold outline-none focus:border-amber-400 transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-[right_12px_center] bg-no-repeat pr-8">
               <option value="" class="bg-slate-900 text-white">Các cơ quan, đơn vị</option>
               <option value="https://ninhbinh.gov.vn" class="bg-slate-900 text-white">UBND Tỉnh Ninh Bình</option>
-              <option value="https://congan.ninhbinh.gov.vn" class="bg-slate-900 text-white">Công an Tỉnh Ninh Bình</option>
-              <option value="https://stttt.ninhbinh.gov.vn" class="bg-slate-900 text-white">Sở Thông tin & Truyền thông</option>
+              <option value="https://congan.ninhbinh.gov.vn" class="bg-slate-900 text-white">Công an Tỉnh Ninh Bình
+              </option>
+              <option value="https://stttt.ninhbinh.gov.vn" class="bg-slate-900 text-white">Sở Thông tin & Truyền thông
+              </option>
             </select>
 
-            <select onchange="if(this.value) window.open(this.value, '_blank')" class="w-full bg-white/15 hover:bg-white/25 text-white border border-white/30 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold outline-none focus:border-amber-400 transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-[right_12px_center] bg-no-repeat pr-8">
+            <select onchange="if(this.value) window.open(this.value, '_blank')"
+              class="w-full bg-white/15 hover:bg-white/25 text-white border border-white/30 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold outline-none focus:border-amber-400 transition-colors cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-[right_12px_center] bg-no-repeat pr-8">
               <option value="" class="bg-slate-900 text-white">Chọn đơn vị liên kết</option>
-              <option value="https://dichvucong.gov.vn" class="bg-slate-900 text-white">Cổng Dịch vụ công Quốc gia</option>
-              <option value="https://chinhphu.vn" class="bg-slate-900 text-white">Cổng Thông tin Điện tử Chính phủ</option>
-              <option value="https://bocongan.gov.vn" class="bg-slate-900 text-white">Cổng Thông tin Điện tử Bộ Công an</option>
+              <option value="https://dichvucong.gov.vn" class="bg-slate-900 text-white">Cổng Dịch vụ công Quốc gia
+              </option>
+              <option value="https://chinhphu.vn" class="bg-slate-900 text-white">Cổng Thông tin Điện tử Chính phủ
+              </option>
+              <option value="https://bocongan.gov.vn" class="bg-slate-900 text-white">Cổng Thông tin Điện tử Bộ Công an
+              </option>
             </select>
           </div>
         </div>
@@ -328,25 +372,30 @@
       <div class="border-t border-white/15"></div>
 
       <!-- Bottom Bar: Copyright Only -->
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs sm:text-sm text-sky-100/90 text-center sm:text-left">
+      <div
+        class="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs sm:text-sm text-sky-100/90 text-center sm:text-left">
         <p class="font-medium">Copyright © Đoàn TNCS Hồ Chí Minh phường Duy Hà. All Rights Reserved</p>
-        <p class="text-xs text-sky-200/80">Ghi rõ nguồn "Đoàn TNCS Hồ Chí Minh phường Duy Hà" khi phát hành lại thông tin từ Đoàn TNCS Hồ Chí Minh phường Duy Hà.</p>
+        <p class="text-xs text-sky-200/80">Ghi rõ nguồn "Đoàn TNCS Hồ Chí Minh phường Duy Hà" khi phát hành lại thông
+          tin từ Đoàn TNCS Hồ Chí Minh phường Duy Hà.</p>
       </div>
 
     </div>
   </footer>
 
   <!-- ==================== WASTE REPORT MODAL (BÁO RÁC TỒN ĐỌNG) ==================== -->
-  <div id="waste-report-modal" class="fixed inset-0 z-[3200] hidden items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md overflow-y-auto">
-    <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden relative my-auto">
-      
+  <div id="waste-report-modal"
+    class="fixed inset-0 z-[3200] hidden items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md overflow-y-auto">
+    <div
+      class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden relative my-auto">
+
       <!-- Header -->
       <div class="px-6 py-4 bg-red-600 text-white flex items-center justify-between">
         <div class="flex items-center gap-2.5">
           <span class="material-symbols-outlined text-2xl">report</span>
           <h3 class="text-base font-black tracking-tight uppercase">PHẢN ÁNH RÁC THẢI TỒN ĐỌNG</h3>
         </div>
-        <button onclick="window.closeWasteReportModal()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors">
+        <button onclick="window.closeWasteReportModal()"
+          class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors">
           <span class="material-symbols-outlined text-lg">close</span>
         </button>
       </div>
@@ -354,8 +403,10 @@
       <!-- Form -->
       <form id="waste-report-form" onsubmit="window.submitWasteReport(event)" class="p-6 space-y-4 text-xs sm:text-sm">
         <div>
-          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Tổ dân phố xảy ra tình trạng rác tồn đọng *</label>
-          <select id="report-tdp" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 font-semibold outline-none focus:border-red-600">
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Tổ dân phố xảy ra tình trạng rác tồn
+            đọng *</label>
+          <select id="report-tdp" required
+            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 font-semibold outline-none focus:border-red-600">
             <option value="">-- Chọn Tổ dân phố --</option>
             <option value="TDP Hoàng Đồng">TDP Hoàng Đồng</option>
             <option value="TDP Ngọc Tú">TDP Ngọc Tú</option>
@@ -371,25 +422,32 @@
         </div>
 
         <div>
-          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Vị trí cụ thể (Tên ngõ, số nhà, điểm mốc) *</label>
-          <input id="report-location" type="text" required placeholder="Ví dụ: Ngõ 3 An Nhân, cạnh nhà văn hóa..." class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 font-semibold outline-none focus:border-red-600" />
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Vị trí cụ thể (Tên ngõ, số nhà, điểm
+            mốc) *</label>
+          <input id="report-location" type="text" required placeholder="Ví dụ: Ngõ 3 An Nhân, cạnh nhà văn hóa..."
+            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 font-semibold outline-none focus:border-red-600" />
         </div>
 
         <div>
           <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Mô tả tình trạng rác *</label>
-          <textarea id="report-desc" rows="3" required placeholder="Ví dụ: Rác thải sinh hoạt tồn đọng 2 ngày chưa gom, bốc mùi hôi..." class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 font-semibold outline-none focus:border-red-600"></textarea>
+          <textarea id="report-desc" rows="3" required
+            placeholder="Ví dụ: Rác thải sinh hoạt tồn đọng 2 ngày chưa gom, bốc mùi hôi..."
+            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 font-semibold outline-none focus:border-red-600"></textarea>
         </div>
 
         <div>
           <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Số điện thoại người phản ánh *</label>
-          <input id="report-phone" type="tel" required placeholder="Nhập SĐT để đội vệ sinh liên hệ xác nhận" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 font-semibold outline-none focus:border-red-600" />
+          <input id="report-phone" type="tel" required placeholder="Nhập SĐT để đội vệ sinh liên hệ xác nhận"
+            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl px-3.5 py-2.5 font-semibold outline-none focus:border-red-600" />
         </div>
 
         <div class="pt-2 flex items-center justify-end gap-3">
-          <button type="button" onclick="window.closeWasteReportModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs">
+          <button type="button" onclick="window.closeWasteReportModal()"
+            class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs">
             Hủy bỏ
           </button>
-          <button type="submit" class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-extrabold rounded-xl text-xs shadow-md active:scale-95 flex items-center gap-1">
+          <button type="submit"
+            class="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white font-extrabold rounded-xl text-xs shadow-md active:scale-95 flex items-center gap-1">
             <span class="material-symbols-outlined text-base">send</span>
             <span>Gửi phản ánh</span>
           </button>
@@ -415,33 +473,47 @@
       { id: 10, tdp_name: "TDP Đông Hải", morning_shift: "05h00 - 06h30", evening_shift: "16h30 - 18h00", saturday_recycle: "07h30 - 10h30" }
     ];
 
-    let WASTE_SCHEDULE_DATA = [];
-    let filteredData = [];
-    let isWasteLoaded = false;
+    let WASTE_SCHEDULE_DATA = [...DB_NEW_TDPS];
+    let filteredData = [...DB_NEW_TDPS];
+    let isWasteLoaded = true;
 
     async function loadWasteSchedules() {
       try {
-        let res = await fetch('/api/waste-schedules');
-        if (!res.ok) {
-          res = await fetch('/src/data/waste_schedules.json');
-        }
-        if (res.ok) {
+        let res = await fetch('/src/data/waste_schedules.json').catch(() => null);
+        if (!res || !res.ok) res = await fetch('/data/waste_schedules.json').catch(() => null);
+        if (!res || !res.ok) res = await fetch('/api/waste-schedules').catch(() => null);
+
+        if (res && res.ok) {
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
             WASTE_SCHEDULE_DATA = data;
             filteredData = [...WASTE_SCHEDULE_DATA];
+            renderTimetableMatrix();
+            renderCardsView();
           }
         }
+
+        // Silent API update in background
+        fetch('/api/waste-schedules').then(r => r.ok ? r.json() : null).then(data => {
+          if (Array.isArray(data) && data.length > 0) {
+            WASTE_SCHEDULE_DATA = data;
+            filteredData = [...WASTE_SCHEDULE_DATA];
+            renderTimetableMatrix();
+            renderCardsView();
+          }
+        }).catch(() => { });
       } catch (e) {
         console.warn('Could not load waste schedules from API/JSON.', e);
       } finally {
         isWasteLoaded = true;
-        renderTimetableMatrix();
-        renderCardsView();
+        document.body.classList.add('js-hydrated');
       }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      renderTimetableMatrix();
+      renderCardsView();
+      document.body.classList.add('js-hydrated');
       loadWasteSchedules();
     });
 
@@ -480,11 +552,15 @@
         const borderClass = isLast ? '' : 'border-r border-slate-200 dark:border-slate-800';
 
         if (isCollected) {
+          const shiftTime = item.morning_shift || item.evening_shift || '';
+          const content = shiftTime
+            ? `<span class="inline-block px-2.5 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 rounded-lg text-xs font-extrabold shadow-xs whitespace-nowrap">${shiftTime}</span>`
+            : `<span class="inline-block px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 rounded text-[11px] font-bold">Có thu gom</span>`;
+
           return `
-            <td class="p-2 ${borderClass} text-center align-top bg-emerald-50/40 dark:bg-emerald-950/20">
-              <div class="space-y-1 py-1">
-                <span class="inline-block px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 rounded text-[11px] font-bold">Sáng: ${item.morning_shift}</span>
-                <span class="inline-block px-2 py-0.5 bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300 rounded text-[11px] font-bold">Chiều: ${item.evening_shift}</span>
+            <td class="p-2.5 ${borderClass} text-center align-middle bg-emerald-50/40 dark:bg-emerald-950/20">
+              <div class="py-1 flex items-center justify-center">
+                ${content}
               </div>
             </td>
           `;
@@ -539,7 +615,7 @@
               </div>
               <div>
                 <h3 class="text-base font-black text-slate-900 dark:text-white leading-snug">${item.tdp_name}</h3>
-                <span class="text-xs font-medium text-slate-500 dark:text-slate-400 block">${item.former_names}</span>
+                <span class="text-xs font-medium text-slate-500 dark:text-slate-400 block">${item.former_names || ''}</span>
               </div>
             </div>
             <span class="px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-[10px] font-black uppercase shrink-0">
@@ -548,29 +624,23 @@
           </div>
 
           <div class="space-y-2.5 text-xs">
+            ${(item.morning_shift || item.evening_shift) ? `
             <div class="flex items-start gap-2">
-              <span class="material-symbols-outlined text-emerald-600 text-base shrink-0 mt-0.5">wb_twilight</span>
+              <span class="material-symbols-outlined text-emerald-600 text-base shrink-0 mt-0.5">schedule</span>
               <div>
-                <strong class="text-slate-800 dark:text-slate-200 font-extrabold">Ca Sáng hàng ngày:</strong>
-                <span class="text-emerald-700 dark:text-emerald-400 font-bold ml-1">${item.morning_shift}</span>
+                <strong class="text-slate-800 dark:text-slate-200 font-extrabold">Khung giờ thu gom:</strong>
+                <span class="text-emerald-700 dark:text-emerald-400 font-bold ml-1">${item.morning_shift || item.evening_shift}</span>
               </div>
-            </div>
+            </div>` : ''}
 
-            <div class="flex items-start gap-2">
-              <span class="material-symbols-outlined text-sky-600 text-base shrink-0 mt-0.5">dark_mode</span>
-              <div>
-                <strong class="text-slate-800 dark:text-slate-200 font-extrabold">Ca Chiều tối:</strong>
-                <span class="text-sky-700 dark:text-sky-400 font-bold ml-1">${item.evening_shift}</span>
-              </div>
-            </div>
-
+            ${item.saturday_recycle ? `
             <div class="flex items-start gap-2">
               <span class="material-symbols-outlined text-purple-600 text-base shrink-0 mt-0.5">recycling</span>
               <div>
                 <strong class="text-slate-800 dark:text-slate-200 font-extrabold">Thứ 7 (Rác tái chế):</strong>
                 <span class="text-purple-700 dark:text-purple-400 font-black ml-1">${item.saturday_recycle}</span>
               </div>
-            </div>
+            </div>` : ''}
 
             <div class="flex items-start gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
               <span class="material-symbols-outlined text-amber-600 text-base shrink-0 mt-0.5">alt_route</span>
@@ -632,7 +702,7 @@
       const shiftVal = shiftSelect ? shiftSelect.value : 'all';
 
       filteredData = WASTE_SCHEDULE_DATA.filter(item => {
-        const matchQuery = !query || 
+        const matchQuery = !query ||
           item.tdp_name.toLowerCase().includes(query) ||
           item.former_names.toLowerCase().includes(query) ||
           item.main_routes.toLowerCase().includes(query) ||
@@ -690,7 +760,7 @@
     }
 
     // Theme Toggle Functionality
-        async function initWeather() {
+    async function initWeather() {
       const tempEl = document.getElementById('weather-temp-portal');
       if (!tempEl) return;
       try {
@@ -701,35 +771,13 @@
             tempEl.textContent = Math.round(data.current.temperature_2m) + '°C';
           }
         }
-      } catch (e) {}
+      } catch (e) { }
     }
 
-        function toggleMobileMenu() {
+    function toggleMobileMenu() {
       const menu = document.getElementById('mobile-nav-menu');
       if (menu) {
         menu.classList.toggle('hidden');
-      }
-    }
-
-    function initTheme() {
-      const themeBtn = document.getElementById('theme-toggle-btn');
-      const themeIcon = document.getElementById('theme-icon');
-      const savedTheme = localStorage.getItem('portal_theme') || 'light';
-
-      if (savedTheme === 'dark') {
-        document.documentElement.classList.add('dark');
-        if (themeIcon) themeIcon.textContent = 'light_mode';
-      } else {
-        document.documentElement.classList.remove('dark');
-        if (themeIcon) themeIcon.textContent = 'dark_mode';
-      }
-
-      if (themeBtn) {
-        themeBtn.addEventListener('click', () => {
-          const isDark = document.documentElement.classList.toggle('dark');
-          localStorage.setItem('portal_theme', isDark ? 'dark' : 'light');
-          if (themeIcon) themeIcon.textContent = isDark ? 'light_mode' : 'dark_mode';
-        });
       }
     }
 
@@ -738,7 +786,8 @@
       try {
         const res = await fetch('/src/data/neighborhoods.json');
         if (res.ok) {
-          const newTdps = data.filter(d => d.type === 'new').sort((a, b) => (a.name || '').replace(/^(TDP|Tổ dân phố)\s+/gi, '').localeCompare((b.name || '').replace(/^(TDP|Tổ dân phố)\s+/gi, ''), 'vi', { numeric: true, sensitivity: 'base' }));
+          const rawData = await res.json();
+          const newTdps = (Array.isArray(rawData) ? rawData : []).filter(d => d.type === 'new').sort((a, b) => (a.name || '').replace(/^(TDP|Tổ dân phố)\s+/gi, '').localeCompare((b.name || '').replace(/^(TDP|Tổ dân phố)\s+/gi, ''), 'vi', { numeric: true, sensitivity: 'base' }));
           if (newTdps && newTdps.length > 0) {
             WASTE_SCHEDULE_DATA = newTdps.map((n, idx) => {
               const defaultShift = DB_NEW_TDPS[idx] || {
@@ -764,29 +813,95 @@
       }
     }
 
+    // Dynamic loader for Waste Classification Guide
+    async function loadWasteClassificationGuide() {
+      const titleEl = document.getElementById('waste-guide-title');
+      const subtitleEl = document.getElementById('waste-guide-subtitle');
+      const containerEl = document.getElementById('waste-guide-categories');
+      const regulationEl = document.getElementById('waste-guide-regulation-text');
+
+      let data = null;
+      try {
+        let res = await fetch('/src/data/waste_classification_guide.json?v=' + Date.now()).catch(() => null);
+        if (!res || !res.ok) res = await fetch('/data/waste_classification_guide.json?v=' + Date.now()).catch(() => null);
+        if (!res || !res.ok) res = await fetch('/api/waste-classification-guide').catch(() => null);
+        if (res && res.ok) data = await res.json();
+      } catch (e) {}
+
+      if (data) {
+        if (data.title && titleEl) titleEl.textContent = data.title;
+        if (data.subtitle && subtitleEl) subtitleEl.textContent = data.subtitle;
+        if (data.regulation && regulationEl) {
+          regulationEl.innerHTML = `<strong class="font-extrabold text-amber-900 dark:text-amber-300 uppercase">Quy định:</strong> ${data.regulation}`;
+        }
+
+        if (data.categories && Array.isArray(data.categories) && data.categories.length > 0 && containerEl) {
+          const themeConfigs = [
+            { bg: 'bg-emerald-50/70 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-900/50', iconBg: 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-600 dark:text-emerald-400', titleColor: 'text-emerald-800 dark:text-emerald-300', defaultIcon: 'compost' },
+            { bg: 'bg-amber-50/70 dark:bg-amber-950/30 border-amber-200 dark:border-amber-900/50', iconBg: 'bg-amber-100 dark:bg-amber-900/60 text-amber-600 dark:text-amber-400', titleColor: 'text-amber-800 dark:text-amber-300', defaultIcon: 'inventory_2' },
+            { bg: 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700', iconBg: 'bg-slate-200/80 dark:bg-slate-700 text-slate-600 dark:text-slate-300', titleColor: 'text-slate-800 dark:text-slate-200', defaultIcon: 'delete_sweep' },
+            { bg: 'bg-sky-50/70 dark:bg-sky-950/30 border-sky-200 dark:border-sky-900/50', iconBg: 'bg-sky-100 dark:bg-sky-900/60 text-sky-600 dark:text-sky-400', titleColor: 'text-sky-800 dark:text-sky-300', defaultIcon: 'recycling' }
+          ];
+
+          containerEl.innerHTML = data.categories.map((cat, idx) => {
+            const theme = themeConfigs[idx % themeConfigs.length];
+            const icon = cat.icon || theme.defaultIcon;
+            let imgHtml = '';
+            if (cat.image) {
+              let imgUrl = cat.image;
+              if (!imgUrl.startsWith('http') && !imgUrl.startsWith('/storage/') && !imgUrl.startsWith('/')) {
+                imgUrl = '/storage/' + imgUrl.replace(/^\/+/, '');
+              }
+              imgHtml = `
+                <div class="w-full h-44 sm:h-48 rounded-2xl overflow-hidden bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/60 shadow-xs mt-1">
+                  <img src="${imgUrl}" alt="${cat.title || 'Phân loại rác'}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" />
+                </div>
+              `;
+            }
+
+            return `
+              <div class="${theme.bg} p-5 sm:p-6 rounded-3xl border space-y-3 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                <div class="space-y-2.5">
+                  <div class="flex items-center gap-3 ${theme.titleColor}">
+                    <div class="w-10 h-10 rounded-2xl ${theme.iconBg} flex items-center justify-center shrink-0 shadow-sm">
+                      <span class="material-symbols-outlined text-xl">${icon}</span>
+                    </div>
+                    <h4 class="text-sm sm:text-base font-black uppercase tracking-tight">${cat.title || `Nhóm rác ${idx + 1}`}</h4>
+                  </div>
+
+                  ${imgHtml}
+
+                  <p class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed">
+                    ${cat.desc || ''}
+                  </p>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+    }
+
     // Initialize Event Listeners
     document.addEventListener('DOMContentLoaded', () => {
-      initTheme();
       initWeather();
       window.toggleMobileMenu = toggleMobileMenu;
       renderTimetableMatrix();
       loadDynamicNeighborhoods();
+      loadWasteClassificationGuide();
 
       window.switchScheduleView = switchScheduleView;
       window.openWasteReportModal = openWasteReportModal;
       window.closeWasteReportModal = closeWasteReportModal;
       window.submitWasteReport = submitWasteReport;
     });
+
+    // Immediate invoke in case DOM is already ready
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      loadWasteClassificationGuide();
+    }
   </script>
   <script type="module" src="/src/main.ts"></script>
 </body>
 
 </html>
-
-
-
-
-
-
-
-

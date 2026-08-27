@@ -27,10 +27,10 @@ class DepartmentResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return 'Quản lý Địa bàn & Dân cư';
+        return 'Tổ chức & Cán bộ';
     }
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'name';
 

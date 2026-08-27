@@ -61,6 +61,25 @@ class Procedure extends Model
             }
         });
 
+        static::saving(function ($model) {
+            if ($model->category) {
+                $catName = \App\Models\ProcedureCategory::where('slug', $model->category)->value('name');
+                if ($catName) {
+                    $model->category_text = $catName;
+                } else {
+                    $categoryMap = [
+                        'residence' => 'Cư trú & Định danh điện tử',
+                        'vneid'     => 'Định danh VNeID',
+                        'civil'     => 'Hộ tịch & Chứng thực',
+                        'land'      => 'Đất đai & Xây dựng',
+                        'social'    => 'An sinh xã hội & Người có công',
+                        'other'     => 'Lĩnh vực khác',
+                    ];
+                    $model->category_text = $categoryMap[$model->category] ?? 'Thủ tục hành chính';
+                }
+            }
+        });
+
         static::saved(function ($model) {
             static::dumpToJson();
         });

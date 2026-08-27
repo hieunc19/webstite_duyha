@@ -19,17 +19,17 @@ class OfficialResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $navigationLabel = 'Danh sách Cán bộ Phường';
+    protected static ?string $navigationLabel = 'Cán bộ Phòng ban & Ban ngành';
 
-    protected static ?string $pluralLabel = 'Danh sách Cán bộ Phường';
+    protected static ?string $pluralLabel = 'Cán bộ Phòng ban & Ban ngành';
 
     protected static ?string $modelLabel = 'Cán bộ';
 
-    protected static bool $shouldRegisterNavigation = false;
+    protected static bool $shouldRegisterNavigation = true;
 
     public static function shouldRegisterNavigation(): bool
     {
-        return false;
+        return true;
     }
 
     public static function getNavigationGroup(): ?string
@@ -37,7 +37,7 @@ class OfficialResource extends Resource
         return 'Tổ chức & Cán bộ';
     }
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'name';
 

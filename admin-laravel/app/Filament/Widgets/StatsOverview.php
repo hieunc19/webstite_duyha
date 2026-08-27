@@ -2,7 +2,6 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\MeritoriousFamily;
 use App\Models\Neighborhood;
 use App\Models\Official;
 use App\Models\Place;
@@ -21,7 +20,6 @@ class StatsOverview extends BaseWidget
         $totalArea = Neighborhood::where('type', 'new')->sum('area_ha') ?: 1546.30;
         $placeCount = Place::count() ?: 12;
         $officialCount = Official::count() ?: 18;
-        $meritoriousCount = MeritoriousFamily::count() ?: 15;
 
         return [
             Stat::make('Tổ dân phố mới', $newTdpCount . ' TDP')
@@ -52,11 +50,6 @@ class StatsOverview extends BaseWidget
             Stat::make('Cán bộ & CSKV phụ trách', $officialCount . ' đồng chí')
                 ->description('Phụ trách 10 tổ dân phố')
                 ->descriptionIcon('heroicon-m-identification')
-                ->color('danger'),
-
-            Stat::make('Gia đình chính sách, có công', $meritoriousCount . ' hộ')
-                ->description('Bà mẹ VNAH, Liệt sĩ, Thương binh')
-                ->descriptionIcon('heroicon-m-heart')
                 ->color('danger'),
         ];
     }

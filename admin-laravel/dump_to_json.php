@@ -55,9 +55,17 @@ $wards = \App\Models\AdministrativeUnit::all()->map(function($u) {
 });
 saveJsonBoth('wards.json', $wards, $mainTargetDir);
 
+$formatStorage = function($img) {
+    if (!$img) return '/hero-bg.jpg';
+    if (str_starts_with($img, 'http://') || str_starts_with($img, 'https://') || str_starts_with($img, '/storage/') || str_starts_with($img, '/')) {
+        return $img;
+    }
+    return '/storage/' . ltrim($img, '/');
+};
+
 // 3. Places
 echo "Dumping places...\n";
-$places = \App\Models\Place::all()->map(function($place) {
+$places = \App\Models\Place::all()->map(function($place) use ($formatStorage) {
     return [
         'id' => $place->id,
         'name' => $place->name,
@@ -67,7 +75,7 @@ $places = \App\Models\Place::all()->map(function($place) {
         'phone' => $place->phone,
         'lat' => (float)$place->lat,
         'lng' => (float)$place->lng,
-        'image' => $place->image,
+        'image' => $formatStorage($place->image),
         'administrative_unit_id' => $place->administrative_unit_id,
         'description' => $place->description
     ];
@@ -151,7 +159,7 @@ saveJsonBoth('meritorious_families.json', $families, $mainTargetDir);
 
 // 7. Officials
 echo "Dumping officials...\n";
-$officials = \App\Models\Official::all()->map(function($o) {
+$officials = \App\Models\Official::all()->map(function($o) use ($formatStorage) {
     return [
         'id' => $o->id,
         'name' => $o->name,
@@ -159,7 +167,7 @@ $officials = \App\Models\Official::all()->map(function($o) {
         'phone' => $o->phone,
         'neighborhood_name' => $o->neighborhood_name,
         'avatar_color' => $o->avatar_color,
-        'avatar' => $o->avatar,
+        'avatar' => $formatStorage($o->avatar),
         'department' => $o->department,
         'status' => $o->status
     ];
@@ -286,6 +294,22 @@ $homepageSections = \App\Models\HomepageSection::where(function ($query) use ($m
 });
 saveJsonBoth('homepage_sections.json', $homepageSections, $mainTargetDir);
 
+// 10.1 Subpage Banners Config
+echo "Dumping subpage banners config...\n";
+$bannersSetting = \App\Models\Setting::where('key', 'subpage_banners')->first();
+$subpageBanners = [];
+if ($bannersSetting && !empty($bannersSetting->value)) {
+    $decodedBanners = json_decode($bannersSetting->value, true);
+    if (is_array($decodedBanners)) {
+        $subpageBanners = $decodedBanners;
+    }
+}
+if (empty($subpageBanners)) {
+    $subpageMgr = new \App\Filament\Pages\ManageSubpageBanners();
+    $subpageBanners = $subpageMgr->defaultBanners();
+}
+saveJsonBoth('subpage_banners.json', $subpageBanners, $mainTargetDir);
+
 // 11. Feedback & Petitions Config (Google Form & Sheets URL)
 echo "Dumping feedback config...\n";
 $fbFormUrl = \App\Models\Setting::where('key', 'feedback_google_form_url')->value('value') ?? '';
@@ -304,6 +328,30 @@ $feedbackConfig = [
 ];
 saveJsonBoth('feedback_config.json', $feedbackConfig, $mainTargetDir);
 
+$fbProcessRaw = \App\Models\Setting::where('key', 'feedback_process_guide')->value('value');
+$fbProcessData = $fbProcessRaw ? json_decode($fbProcessRaw, true) : [
+    'title' => 'QUY TRÌNH 4 BƯỚC TIẾP NHẬN',
+    'steps' => [
+        [
+            'title' => 'Bước 1: Tiếp nhận phản ánh',
+            'desc' => 'Người dân gửi thông tin phản ánh qua hệ thống.',
+        ],
+        [
+            'title' => 'Bước 2: Phân loại và chuyển xử lý',
+            'desc' => 'Phản ánh được phân loại và chuyển đến bộ phận phụ trách.',
+        ],
+        [
+            'title' => 'Bước 3: Kiểm tra, xác minh',
+            'desc' => 'Cán bộ phụ trách kiểm tra thực tế và xác minh nội dung phản ánh.',
+        ],
+        [
+            'title' => 'Bước 4: Phối hợp giải quyết',
+            'desc' => 'Các bộ phận liên quan thực hiện xử lý theo chức năng và thẩm quyền.',
+        ],
+    ],
+];
+saveJsonBoth('feedback_process.json', $fbProcessData, $mainTargetDir);
+
 // 12. Citizen Reception Schedule (Lịch tiếp công dân)
 echo "Dumping citizen reception schedule...\n";
 $crTitle = \App\Models\Setting::where('key', 'citizen_reception_title')->value('value') ?? 'LỊCH TIẾP CÔNG DÂN ĐỊNH KỲ NĂM 2026';
@@ -312,34 +360,34 @@ $crTime = \App\Models\Setting::where('key', 'citizen_reception_schedule_time')->
 $crLocation = \App\Models\Setting::where('key', 'citizen_reception_location')->value('value') ?? 'Phòng Tiếp công dân — Trụ sở UBND Phường Duy Hà (Số 01 đường Lê Lợi, TP. Ninh Bình)';
 $crOfficer = \App\Models\Setting::where('key', 'citizen_reception_officer')->value('value') ?? 'Đồng chí Chủ tịch UBND Phường và các Phó Chủ tịch UBND Phường';
 $crNotes = \App\Models\Setting::where('key', 'citizen_reception_notes')->value('value') ?? 'Công dân khi đến khiếu nại, tố cáo, kiến nghị, phản ánh cần xuất trình Căn cước công dân và các giấy tờ, tài liệu liên quan đến nội dung phản ánh.';
+$crRulesRaw = \App\Models\Setting::where('key', 'citizen_reception_rules')->value('value');
+$crRules = $crRulesRaw ? json_decode($crRulesRaw, true) : [
+    'Xuất trình giấy tờ tùy thân (Căn cước công dân hoặc VNeID Mức 2) khi vào phòng tiếp dân.',
+    'Trình bày nội dung rõ ràng, trung thực và cung cấp chứng cứ, tài liệu liên quan đến vụ việc.',
+    'Giữ gìn trật tự, trang phục lịch sự, chấp hành hướng dẫn của cán bộ tiếp dân.',
+    'Nghiêm cấm mang theo vũ khí, chất cháy nổ hoặc các vật dụng gây nguy hiểm vào trụ sở.',
+];
 
 $citizenReceptionData = [
     'title' => $crTitle,
-    'image' => $crImage,
+    'image' => $formatStorage($crImage),
     'schedule_time' => $crTime,
     'location' => $crLocation,
     'officer' => $crOfficer,
     'notes' => $crNotes,
+    'rules' => $crRules,
     'updated_at' => date('Y-m-d H:i:s'),
 ];
 saveJsonBoth('citizen_reception.json', $citizenReceptionData, $mainTargetDir);
 
 // 13. Administrative Procedures (Thủ tục hành chính)
 echo "Dumping administrative procedures...\n";
+$procCategoriesMap = \App\Models\ProcedureCategory::pluck('name', 'slug')->toArray();
 $procedures = \App\Models\Procedure::where('is_active', true)
+    ->orderBy('sort_order', 'asc')
     ->orderBy('id', 'desc')
     ->get()
-    ->map(function($p) {
-        $categoryMap = [
-            'residence' => 'Cư trú & Hộ khẩu',
-            'civil' => 'Hộ tịch & Tư pháp',
-            'land' => 'Địa chính & Đất đai',
-            'vneid' => 'Định danh VNeID',
-            'social' => 'An sinh xã hội & Trợ cấp',
-            'tax' => 'Thuế & Tài chính',
-            'other' => 'Thủ tục khác',
-        ];
-
+    ->map(function($p) use ($procCategoriesMap) {
         $docsList = collect($p->docs ?? [])->map(function($doc) {
             if (is_array($doc)) {
                 $file = $doc['file'] ?? null;
@@ -381,7 +429,7 @@ $procedures = \App\Models\Procedure::where('is_active', true)
             'title' => $p->title,
             'name' => $p->title,
             'category' => $p->category,
-            'categoryText' => $categoryMap[$p->category] ?? 'Thủ tục khác',
+            'categoryText' => $p->category_text ?? ($procCategoriesMap[$p->category] ?? 'Thủ tục hành chính'),
             'desc' => $p->desc,
             'fee' => $p->fee ?? 'Miễn phí',
             'agency' => $p->agency ?? 'UBND Phường',
@@ -398,16 +446,7 @@ $procedureVideos = \App\Models\ProcedureVideo::where('is_active', true)
     ->orderBy('sort_order', 'asc')
     ->orderBy('id', 'desc')
     ->get()
-    ->map(function($v) {
-        $categoryMap = [
-            'residence' => 'Cư trú & Hộ khẩu',
-            'vneid' => 'Định danh VNeID',
-            'civil' => 'Hộ tịch & Chứng thực',
-            'land' => 'Đất đai & Xây dựng',
-            'social' => 'An sinh xã hội',
-            'other' => 'Lĩnh vực khác',
-        ];
-
+    ->map(function($v) use ($procCategoriesMap) {
         $url = trim($v->video_url ?? '');
         if (!empty($url)) {
             // Google Drive auto-convert
@@ -430,7 +469,7 @@ $procedureVideos = \App\Models\ProcedureVideo::where('is_active', true)
             'id' => $v->id,
             'title' => $v->title,
             'category' => $v->category,
-            'categoryText' => $categoryMap[$v->category] ?? 'Lĩnh vực khác',
+            'categoryText' => $procCategoriesMap[$v->category] ?? 'Lĩnh vực khác',
             'videoUrl' => $url,
             'sort_order' => $v->sort_order,
         ];
@@ -473,8 +512,8 @@ $policies = \App\Models\Policy::where('is_active', true)
     });
 saveJsonBoth('policies.json', $policies, $mainTargetDir);
 
-// 16. Waste Schedules
-echo "Dumping waste schedules...\n";
+// 16. Waste Schedules & Classification Guide
+echo "Dumping waste schedules & classification guide...\n";
 if (\Illuminate\Support\Facades\Schema::hasTable('waste_schedules')) {
     $wasteSchedules = \App\Models\WasteSchedule::where('is_active', true)
         ->orderBy('sort_order', 'asc')
@@ -482,6 +521,34 @@ if (\Illuminate\Support\Facades\Schema::hasTable('waste_schedules')) {
         ->get();
     saveJsonBoth('waste_schedules.json', $wasteSchedules, $mainTargetDir);
 }
+
+$wasteGuideRaw = \App\Models\Setting::where('key', 'waste_classification_guide')->value('value');
+$wasteGuideData = $wasteGuideRaw ? json_decode($wasteGuideRaw, true) : [
+    'title' => 'Hướng dẫn phân loại rác tại nguồn',
+    'subtitle' => 'Thực hiện Luật Bảo vệ môi trường — Chung tay xây dựng Phường Duy Hà Xanh - Sạch - Văn minh',
+    'categories' => [
+        [
+            'title' => '1. RÁC HỮU CƠ (DỄ PHÂN HỦY)',
+            'desc' => 'Thức ăn thừa, rau củ quả thải loại, vỏ trái cây, bã chè, lá cây nhỏ...',
+            'icon' => 'compost',
+            'theme' => 'emerald',
+        ],
+        [
+            'title' => '2. RÁC TÁI CHẾ (PHẾ LIỆU)',
+            'desc' => 'Bìa carton, giấy báo cũ, chai lọ nhựa, vỏ lon kim loại, đồ nhựa gia dụng...',
+            'icon' => 'inventory_2',
+            'theme' => 'amber',
+        ],
+        [
+            'title' => '3. RÁC THẢI CÒN LẠI (VÔ CƠ)',
+            'desc' => 'Túi nilon bẩn, hộp xốp, tã bỉm, gốm sứ vỡ, rác quét nhà, cành cây tỉa...',
+            'icon' => 'delete_sweep',
+            'theme' => 'slate',
+        ],
+    ],
+    'regulation' => 'Bỏ rác đúng giờ trước khi xe đến 15-30 phút. Hành vi vứt rác bừa bãi ra vỉa hè, lòng đường bị phạt tiền từ 500.000đ — 2.000.000đ theo Nghị định 45/2022/NĐ-CP.',
+];
+saveJsonBoth('waste_classification_guide.json', $wasteGuideData, $mainTargetDir);
 
 // 17. Form Documents
 echo "Dumping form documents...\n";

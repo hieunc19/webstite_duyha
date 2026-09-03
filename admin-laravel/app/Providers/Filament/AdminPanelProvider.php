@@ -28,6 +28,13 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->profile(\App\Filament\Pages\Auth\EditProfile::class, isSimple: false)
+            ->userMenuItems([
+                'profile' => \Filament\Navigation\MenuItem::make()
+                    ->label('Đổi mật khẩu')
+                    ->icon('heroicon-o-key')
+                    ->url(fn (): string => \App\Filament\Pages\Auth\EditProfile::getUrl()),
+            ])
             ->spa()
             ->brandName('Bản đồ Địa bàn Phường Duy Hà')
             ->font('Inter')

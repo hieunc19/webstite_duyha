@@ -4,6 +4,7 @@
 node_modules/
 client/node_modules/
 client/dist/
+client/public/storage/
 dist/
 dist-ssr/
 *.local
@@ -63,3 +64,5 @@ DEPLOYMENT_GUIDE_VPS.md
 *MASTER_GUIDE*.md
 *SYSTEM_GUIDE*.md
 *DEPLOYMENT_GUIDE*.md
+*.sql
+*.zip

@@ -22,6 +22,16 @@ function saveJsonBoth($filename, $data, $mainTargetDir) {
         mkdir($publicTargetDir, 0755, true);
     }
     file_put_contents($publicTargetDir . '/' . $filename, $json);
+
+    // Đồng bộ trực tiếp vào client/dist/data (nơi Nginx serve frontend trên VPS)
+    $distDir = __DIR__ . '/../client/dist';
+    if (is_dir($distDir)) {
+        $distTargetDir = $distDir . '/data';
+        if (!is_dir($distTargetDir)) {
+            mkdir($distTargetDir, 0755, true);
+        }
+        file_put_contents($distTargetDir . '/' . $filename, $json);
+    }
 }
 
 // 1. Provinces
@@ -484,8 +494,6 @@ $policies = \App\Models\Policy::where('is_active', true)
     ->orderBy('id', 'desc')
     ->get()
     ->map(function($p) use ($sharedCategoryMap) {
-        $downloadUrl = '#';
-
         $downloadUrl = '#';
         if (!empty($p->download_url)) {
             if (str_starts_with($p->download_url, 'http://') || str_starts_with($p->download_url, 'https://') || $p->download_url === '#') {

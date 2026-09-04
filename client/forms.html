@@ -436,27 +436,48 @@
     let MASTER_FORMS_DATA = [];
     let isFormsLoaded = false;
 
+    async function safeFetchJson(urls) {
+      for (const url of urls) {
+        try {
+          const res = await fetch(url);
+          if (res.ok && (res.headers.get('content-type') || '').includes('application/json')) {
+            const json = await res.json();
+            if (Array.isArray(json)) {
+              if (json.length > 0) return json;
+            } else if (json && typeof json === 'object') {
+              return json;
+            }
+          }
+        } catch (_) {}
+      }
+      return null;
+    }
+
     async function loadFormDocuments() {
       try {
-        let res = await fetch('/src/data/form_documents.json').catch(() => null);
-        if (!res || !res.ok) res = await fetch('/data/form_documents.json').catch(() => null);
-        if (!res || !res.ok) res = await fetch('/api/form-documents').catch(() => null);
+        const data = await safeFetchJson([
+          '/api/form-documents',
+          '/data/form_documents.json',
+          '/src/data/form_documents.json'
+        ]);
 
-        if (res && res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
-            MASTER_FORMS_DATA = data.map(item => ({
-              ...item,
-              name: item.title || item.name,
-              category_name: item.category_name || item.category_text || 'Thủ tục hành chính',
-              category_badge: item.category_badge || 'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300',
-            }));
-            renderFormsTable();
-          }
+        if (Array.isArray(data) && data.length > 0) {
+          MASTER_FORMS_DATA = data.map(item => ({
+            ...item,
+            name: item.title || item.name,
+            category_name: item.category_name || item.category_text || 'Thủ tục hành chính',
+            category_badge: item.category_badge || 'bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300',
+          }));
+          renderFormsTable();
         }
 
         // Background API sync
-        fetch('/api/form-documents').then(r => r.ok ? r.json() : null).then(data => {
+        fetch('/api/form-documents').then(r => {
+          if (r.ok && (r.headers.get('content-type') || '').includes('application/json')) {
+            return r.json();
+          }
+          return null;
+        }).then(data => {
           if (Array.isArray(data) && data.length > 0) {
             MASTER_FORMS_DATA = data.map(item => ({
               ...item,
@@ -498,26 +519,17 @@
 
     async function loadFormCategories() {
       try {
-        const res = await fetch('/api/procedure-categories');
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
-            MASTER_CATEGORIES_DATA = [
-              { slug: 'all', name: 'Tất cả biểu mẫu' },
-              ...data.map(c => ({ slug: c.slug, name: c.name }))
-            ];
-          }
-        } else {
-          const jsonRes = await fetch('/data/procedure_categories.json');
-          if (jsonRes.ok) {
-            const data = await jsonRes.json();
-            if (Array.isArray(data) && data.length > 0) {
-              MASTER_CATEGORIES_DATA = [
-                { slug: 'all', name: 'Tất cả biểu mẫu' },
-                ...data.map(c => ({ slug: c.slug, name: c.name }))
-              ];
-            }
-          }
+        const data = await safeFetchJson([
+          '/api/procedure-categories',
+          '/data/procedure_categories.json',
+          '/src/data/procedure_categories.json'
+        ]);
+
+        if (Array.isArray(data) && data.length > 0) {
+          MASTER_CATEGORIES_DATA = [
+            { slug: 'all', name: 'Tất cả biểu mẫu' },
+            ...data.map(c => ({ slug: c.slug, name: c.name }))
+          ];
         }
       } catch (e) {
         console.warn('Could not load procedure categories, using defaults.', e);

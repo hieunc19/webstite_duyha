@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Auth;
 
 use Filament\Auth\Pages\EditProfile as BaseEditProfile;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
@@ -36,9 +37,10 @@ class EditProfile extends BaseEditProfile
         return TextInput::make('currentPassword')
             ->label('Mật khẩu hiện tại')
             ->password()
-            ->revealable()
+            ->revealable(filament()->arePasswordsRevealable())
+            ->autocomplete('current-password')
             ->required()
-            ->currentPassword()
+            ->currentPassword(guard: Filament::getAuthGuard())
             ->dehydrated(false);
     }
 
@@ -47,10 +49,13 @@ class EditProfile extends BaseEditProfile
         return TextInput::make('password')
             ->label('Mật khẩu mới')
             ->password()
-            ->revealable()
+            ->revealable(filament()->arePasswordsRevealable())
             ->required()
             ->rule(Password::default())
+            ->autocomplete('new-password')
+            ->dehydrated(fn ($state): bool => filled($state))
             ->dehydrateStateUsing(fn ($state): string => Hash::make($state))
+            ->live(debounce: 500)
             ->same('passwordConfirmation');
     }
 
@@ -59,7 +64,8 @@ class EditProfile extends BaseEditProfile
         return TextInput::make('passwordConfirmation')
             ->label('Xác nhận mật khẩu mới')
             ->password()
-            ->revealable()
+            ->revealable(filament()->arePasswordsRevealable())
+            ->autocomplete('new-password')
             ->required()
             ->dehydrated(false);
     }

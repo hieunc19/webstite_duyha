@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --port 5174",
     "dev:all": "concurrently -k \"npm run dev\" \"cd ../admin-laravel && php artisan serve --port=8005 --no-reload\"",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build --emptyOutDir false",
     "preview": "vite preview --port 5174"
   },
   "devDependencies": {

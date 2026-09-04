@@ -355,26 +355,46 @@
       modal.classList.remove('flex');
     };
 
+    async function safeFetchJson(urls) {
+      for (const url of urls) {
+        try {
+          const res = await fetch(url);
+          if (res.ok && (res.headers.get('content-type') || '').includes('application/json')) {
+            const json = await res.json();
+            if (Array.isArray(json)) {
+              if (json.length > 0) return json;
+            } else if (json && typeof json === 'object') {
+              return json;
+            }
+          }
+        } catch (_) {}
+      }
+      return null;
+    }
+
     async function loadAgencies() {
       try {
-        // Fast local fallback first
-        let res = await fetch('/src/data/places.json').catch(() => null);
-        if (!res || !res.ok) {
-          res = await fetch('/api/places').catch(() => null);
-        }
-        if (res && res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data)) {
-            allAgencies = data.filter(p => p.category !== 'neighborhood').map(p => ({
-              ...p,
-              image: formatStorageUrl(p.image)
-            }));
-            renderAgenciesTable();
-          }
+        const data = await safeFetchJson([
+          '/api/places',
+          '/data/places.json',
+          '/src/data/places.json'
+        ]);
+
+        if (Array.isArray(data) && data.length > 0) {
+          allAgencies = data.filter(p => p.category !== 'neighborhood').map(p => ({
+            ...p,
+            image: formatStorageUrl(p.image)
+          }));
+          renderAgenciesTable();
         }
 
-        // Silent API update in background
-        fetch('/api/places').then(r => r.ok ? r.json() : null).then(data => {
+        // Silent API update in background if loaded from static file
+        fetch('/api/places').then(r => {
+          if (r.ok && (r.headers.get('content-type') || '').includes('application/json')) {
+            return r.json();
+          }
+          return null;
+        }).then(data => {
           if (Array.isArray(data) && data.length > 0) {
             allAgencies = data.filter(p => p.category !== 'neighborhood').map(p => ({
               ...p,
@@ -508,7 +528,7 @@
       }).join('');
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    function initAgenciesPage() {
       loadAgencies();
 
       document.addEventListener('keydown', (e) => {
@@ -569,7 +589,13 @@
           });
         });
       }
-    });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAgenciesPage);
+    } else {
+      initAgenciesPage();
+    }
   </script>
   <script type="module" src="/src/main.ts"></script>
 </body>

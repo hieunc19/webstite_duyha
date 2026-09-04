@@ -511,18 +511,29 @@
       }
     }
 
+    async function safeFetchJson(urls) {
+      for (const url of urls) {
+        try {
+          const res = await fetch(url);
+          if (res.ok && (res.headers.get('content-type') || '').includes('application/json')) {
+            const json = await res.json();
+            if (json && typeof json === 'object') return json;
+          }
+        } catch (_) {}
+      }
+      return null;
+    }
+
     // Dynamic loader for Feedback Process Guide
     async function loadFeedbackProcessGuide() {
       const titleEl = document.getElementById('feedback-process-title');
       const stepsContainer = document.getElementById('feedback-process-steps');
 
-      let data = null;
-      try {
-        let res = await fetch('/src/data/feedback_process.json?v=' + Date.now()).catch(() => null);
-        if (!res || !res.ok) res = await fetch('/data/feedback_process.json?v=' + Date.now()).catch(() => null);
-        if (!res || !res.ok) res = await fetch('/api/feedback-process').catch(() => null);
-        if (res && res.ok) data = await res.json();
-      } catch (e) {}
+      const data = await safeFetchJson([
+        '/api/feedback-process',
+        '/data/feedback_process.json?v=' + Date.now(),
+        '/src/data/feedback_process.json?v=' + Date.now()
+      ]);
 
       if (data) {
         if (data.title && titleEl) titleEl.textContent = data.title;

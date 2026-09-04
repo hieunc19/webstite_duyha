@@ -340,6 +340,19 @@
   <script>
     let currentImageSrc = '';
 
+    async function safeFetchJson(urls) {
+      for (const url of urls) {
+        try {
+          const res = await fetch(url);
+          if (res.ok && (res.headers.get('content-type') || '').includes('application/json')) {
+            const json = await res.json();
+            if (json && typeof json === 'object') return json;
+          }
+        } catch (_) {}
+      }
+      return null;
+    }
+
     async function loadCitizenReceptionData() {
       const container = document.getElementById('reception-image-container');
       const heroTitle = document.getElementById('reception-hero-title');
@@ -348,21 +361,11 @@
       const btnDownload = document.getElementById('btn-download-image');
       const modalImg = document.getElementById('modal-fullscreen-img');
 
-      // 1. Fast local JSON first
-      try {
-        const res = await fetch('/src/data/citizen_reception.json').catch(() => null);
-        if (res && res.ok) {
-          data = await res.json();
-        }
-      } catch (e) { }
-
-      // 2. Fallback to API / public JSON
-      if (!data) {
-        try {
-          const res = await fetch('/api/citizen-reception').catch(() => null);
-          if (res && res.ok) data = await res.json();
-        } catch (e) { }
-      }
+      let data = await safeFetchJson([
+        '/api/citizen-reception',
+        '/data/citizen_reception.json',
+        '/src/data/citizen_reception.json'
+      ]);
 
       if (data) {
         if (data.title) {

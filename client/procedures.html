@@ -1442,19 +1442,35 @@
     }
     window.closePolicyModal = closePolicyModal;
 
+    async function safeFetchJson(urls) {
+      for (const url of urls) {
+        try {
+          const res = await fetch(url);
+          if (res.ok && (res.headers.get('content-type') || '').includes('application/json')) {
+            const json = await res.json();
+            if (Array.isArray(json)) {
+              if (json.length > 0) return json;
+            } else if (json && typeof json === 'object') {
+              return json;
+            }
+          }
+        } catch (_) {}
+      }
+      return null;
+    }
+
     // Dynamic load procedures from API
     async function loadProceduresData() {
       try {
-        let res = await fetch('/api/procedures').catch(() => null);
-        if (!res || !res.ok) res = await fetch('/src/data/procedures.json').catch(() => null);
-        if (!res || !res.ok) res = await fetch('/data/procedures.json').catch(() => null);
+        const data = await safeFetchJson([
+          '/api/procedures',
+          '/data/procedures.json',
+          '/src/data/procedures.json'
+        ]);
 
-        if (res && res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
-            PROCEDURES_DATA = data;
-            renderProcedures();
-          }
+        if (Array.isArray(data) && data.length > 0) {
+          PROCEDURES_DATA = data;
+          renderProcedures();
         }
       } catch (e) {
         console.warn('Could not fetch procedures data:', e);
@@ -1464,17 +1480,16 @@
     // Dynamic load procedure videos from API
     async function loadVideosData() {
       try {
-        let res = await fetch('/api/procedure-videos').catch(() => null);
-        if (!res || !res.ok) res = await fetch('/src/data/procedure_videos.json').catch(() => null);
-        if (!res || !res.ok) res = await fetch('/data/procedure_videos.json').catch(() => null);
+        const data = await safeFetchJson([
+          '/api/procedure-videos',
+          '/data/procedure_videos.json',
+          '/src/data/procedure_videos.json'
+        ]);
 
-        if (res && res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
-            VIDEOS_DATA = data;
-            isVideosLoaded = true;
-            renderVideos();
-          }
+        if (Array.isArray(data) && data.length > 0) {
+          VIDEOS_DATA = data;
+          isVideosLoaded = true;
+          renderVideos();
         }
       } catch (e) {
         console.warn('Could not fetch procedure videos data:', e);
@@ -1486,17 +1501,16 @@
     // Dynamic load policies from API
     async function loadPoliciesData() {
       try {
-        let res = await fetch('/api/policies').catch(() => null);
-        if (!res || !res.ok) res = await fetch('/src/data/policies.json').catch(() => null);
-        if (!res || !res.ok) res = await fetch('/data/policies.json').catch(() => null);
+        const data = await safeFetchJson([
+          '/api/policies',
+          '/data/policies.json',
+          '/src/data/policies.json'
+        ]);
 
-        if (res && res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
-            POLICIES_DATA = data;
-            isPoliciesLoaded = true;
-            renderPolicies();
-          }
+        if (Array.isArray(data) && data.length > 0) {
+          POLICIES_DATA = data;
+          isPoliciesLoaded = true;
+          renderPolicies();
         }
       } catch (e) {
         console.warn('Could not fetch policies data:', e);
@@ -1516,7 +1530,7 @@
       }
 
       loadProcedureCategories();
-      loadProceduresData().then(() => document.body.classList.add('js-hydrated'));
+      loadProceduresData();
       loadVideosData();
       loadPoliciesData();
     });
@@ -1533,26 +1547,17 @@
 
     async function loadProcedureCategories() {
       try {
-        const res = await fetch('/api/procedure-categories');
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
-            MASTER_PROC_CATEGORIES = [
-              { slug: 'all', name: 'Tất cả lĩnh vực' },
-              ...data.map(c => ({ slug: c.slug, name: c.name }))
-            ];
-          }
-        } else {
-          const jsonRes = await fetch('/data/procedure_categories.json');
-          if (jsonRes.ok) {
-            const data = await jsonRes.json();
-            if (Array.isArray(data) && data.length > 0) {
-              MASTER_PROC_CATEGORIES = [
-                { slug: 'all', name: 'Tất cả lĩnh vực' },
-                ...data.map(c => ({ slug: c.slug, name: c.name }))
-              ];
-            }
-          }
+        const data = await safeFetchJson([
+          '/api/procedure-categories',
+          '/data/procedure_categories.json',
+          '/src/data/procedure_categories.json'
+        ]);
+
+        if (Array.isArray(data) && data.length > 0) {
+          MASTER_PROC_CATEGORIES = [
+            { slug: 'all', name: 'Tất cả lĩnh vực' },
+            ...data.map(c => ({ slug: c.slug, name: c.name }))
+          ];
         }
       } catch (e) {
         console.warn('Could not load procedure categories, using defaults.', e);

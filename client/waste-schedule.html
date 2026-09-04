@@ -461,62 +461,56 @@
   <script>
     // 10 Tổ dân phố chuẩn xác theo Cơ sở dữ liệu Phường Duy Hà
     const DB_NEW_TDPS = [
-      { id: 1, tdp_name: "TDP Duy Minh", morning_shift: "05h30 - 07h00", evening_shift: "17h00 - 18h30", saturday_recycle: "08h00 - 11h00" },
-      { id: 2, tdp_name: "TDP Ngọc Tú", morning_shift: "06h00 - 07h30", evening_shift: "17h30 - 19h00", saturday_recycle: "08h30 - 11h30" },
-      { id: 3, tdp_name: "TDP Động Linh Trang", morning_shift: "05h30 - 07h00", evening_shift: "16h30 - 18h00", saturday_recycle: "07h30 - 10h30" },
-      { id: 4, tdp_name: "TDP Chuông", morning_shift: "06h00 - 07h30", evening_shift: "17h00 - 18h30", saturday_recycle: "08h00 - 11h00" },
-      { id: 5, tdp_name: "TDP Bạch Xá", morning_shift: "05h30 - 07h00", evening_shift: "17h30 - 19h00", saturday_recycle: "08h00 - 11h00" },
-      { id: 6, tdp_name: "TDP Hoàng Đông", morning_shift: "06h00 - 07h30", evening_shift: "18h00 - 19h30", saturday_recycle: "09h00 - 12h00" },
-      { id: 7, tdp_name: "TDP Hương Cát", morning_shift: "05h00 - 06h30", evening_shift: "16h30 - 18h00", saturday_recycle: "07h00 - 10h00" },
-      { id: 8, tdp_name: "TDP Duy Hải", morning_shift: "06h00 - 07h30", evening_shift: "17h30 - 19h00", saturday_recycle: "08h00 - 11h00" },
-      { id: 9, tdp_name: "TDP Ngọc Động", morning_shift: "05h30 - 07h00", evening_shift: "17h00 - 18h30", saturday_recycle: "08h30 - 11h30" },
-      { id: 10, tdp_name: "TDP Đông Hải", morning_shift: "05h00 - 06h30", evening_shift: "16h30 - 18h00", saturday_recycle: "07h30 - 10h30" }
+      { id: 1, tdp_name: "TDP Duy Minh", morning_shift: "05h30 - 07h00", collection_days: ["thu_2", "thu_5"] },
+      { id: 2, tdp_name: "TDP Ngọc Tú", morning_shift: "06h00 - 07h30", collection_days: ["thu_3", "thu_6"] },
+      { id: 3, tdp_name: "TDP Động Linh Trang", morning_shift: "05h30 - 07h00", collection_days: ["thu_2", "thu_5"] },
+      { id: 4, tdp_name: "TDP Chuông", morning_shift: "06h00 - 07h30", collection_days: ["thu_3", "thu_6"] },
+      { id: 5, tdp_name: "TDP Bạch Xá", morning_shift: "05h30 - 07h00", collection_days: ["thu_2", "thu_5"] },
+      { id: 6, tdp_name: "TDP Hoàng Đông", morning_shift: "17h00 - 18h30", collection_days: ["thu_3", "thu_6"] },
+      { id: 7, tdp_name: "TDP Hương Cát", morning_shift: "05h00 - 06h30", collection_days: ["thu_2", "thu_5"] },
+      { id: 8, tdp_name: "TDP Duy Hải", morning_shift: "06h00 - 07h30", collection_days: ["thu_3", "thu_6"] },
+      { id: 9, tdp_name: "TDP Ngọc Động", morning_shift: "17h00 - 18h30", collection_days: ["thu_2", "thu_5"] },
+      { id: 10, tdp_name: "TDP Đông Hải", morning_shift: "05h00 - 06h30", collection_days: ["thu_3", "thu_6"] }
     ];
 
     let WASTE_SCHEDULE_DATA = [...DB_NEW_TDPS];
     let filteredData = [...DB_NEW_TDPS];
-    let isWasteLoaded = true;
+    let isWasteLoaded = false;
+
+    async function safeFetchJson(urls) {
+      for (const url of urls) {
+        try {
+          const res = await fetch(url);
+          if (res.ok && (res.headers.get('content-type') || '').includes('application/json')) {
+            const json = await res.json();
+            if (Array.isArray(json) && json.length > 0) return json;
+            if (json && typeof json === 'object') return json;
+          }
+        } catch (_) {}
+      }
+      return null;
+    }
 
     async function loadWasteSchedules() {
       try {
-        let data = null;
+        const data = await safeFetchJson([
+          '/api/waste-schedules?v=' + Date.now(),
+          '/data/waste_schedules.json?v=' + Date.now(),
+          '/src/data/waste_schedules.json?v=' + Date.now()
+        ]);
 
-        // 1. Uu tien API realtime tu MySQL
-        try {
-          const apiRes = await fetch('/api/waste-schedules');
-          if (apiRes.ok && (apiRes.headers.get('content-type') || '').includes('application/json')) {
-            const json = await apiRes.json();
-            if (Array.isArray(json) && json.length > 0) data = json;
-          }
-        } catch (_) {}
-
-        // 2. Fallback sang file tinh /data/waste_schedules.json
-        if (!data) {
-          try {
-            const staticRes = await fetch('/data/waste_schedules.json');
-            if (staticRes.ok && (staticRes.headers.get('content-type') || '').includes('application/json')) {
-              const json = await staticRes.json();
-              if (Array.isArray(json) && json.length > 0) data = json;
-            }
-          } catch (_) {}
-        }
-
-        // 3. Fallback sang /src/data/waste_schedules.json
-        if (!data) {
-          try {
-            const devRes = await fetch('/src/data/waste_schedules.json');
-            if (devRes.ok && (devRes.headers.get('content-type') || '').includes('application/json')) {
-              const json = await devRes.json();
-              if (Array.isArray(json) && json.length > 0) data = json;
-            }
-          } catch (_) {}
-        }
-
-        if (data && Array.isArray(data) && data.length > 0) {
-          WASTE_SCHEDULE_DATA = data;
+        if (Array.isArray(data) && data.length > 0) {
+          WASTE_SCHEDULE_DATA = data.map(item => ({
+            ...item,
+            id: item.id,
+            tdp_name: item.tdp_name,
+            morning_shift: (item.morning_shift || '').trim(),
+            collection_days: Array.isArray(item.collection_days) ? item.collection_days : [],
+            is_active: item.is_active !== false,
+            sort_order: item.sort_order || 0
+          }));
           filteredData = [...WASTE_SCHEDULE_DATA];
           renderTimetableMatrix();
-          renderCardsView();
         }
       } catch (e) {
         console.warn('Could not load waste schedules from API/JSON.', e);
@@ -525,13 +519,6 @@
         document.body.classList.add('js-hydrated');
       }
     }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      renderTimetableMatrix();
-      renderCardsView();
-      document.body.classList.add('js-hydrated');
-      loadWasteSchedules();
-    });
 
     function renderTimetableMatrix() {
       const tbody = document.getElementById('timetable-matrix-body');
@@ -568,15 +555,11 @@
         const borderClass = isLast ? '' : 'border-r border-slate-200 dark:border-slate-800';
 
         if (isCollected) {
-          const shiftTime = item.morning_shift || item.evening_shift || '';
-          const content = shiftTime
-            ? `<span class="inline-block px-2.5 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 rounded-lg text-xs font-extrabold shadow-xs whitespace-nowrap">${shiftTime}</span>`
-            : `<span class="inline-block px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 rounded text-[11px] font-bold">Có thu gom</span>`;
-
+          const shiftTime = item.morning_shift || 'Có thu gom';
           return `
             <td class="p-2.5 ${borderClass} text-center align-middle bg-emerald-50/40 dark:bg-emerald-950/20">
               <div class="py-1 flex items-center justify-center">
-                ${content}
+                <span class="inline-block px-2.5 py-1 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 rounded-lg text-xs font-extrabold shadow-xs whitespace-nowrap">${shiftTime}</span>
               </div>
             </td>
           `;
@@ -607,145 +590,6 @@
           </tr>
         `;
       }).join('');
-    }
-
-    function renderCardsView() {
-      const container = document.getElementById('schedule-cards-container');
-      if (!container) return;
-
-      if (filteredData.length === 0) {
-        container.innerHTML = `
-          <div class="col-span-full p-8 text-center bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 text-slate-500 font-bold">
-            Không tìm thấy Tổ dân phố nào phù hợp.
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = filteredData.map(item => `
-        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4 hover:shadow-2xl transition-all">
-          <div class="flex items-start justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3.5">
-            <div class="flex items-center gap-3">
-              <div class="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-600 flex items-center justify-center text-2xl font-bold shrink-0">
-                <span class="material-symbols-outlined">delete</span>
-              </div>
-              <div>
-                <h3 class="text-base font-black text-slate-900 dark:text-white leading-snug">${item.tdp_name}</h3>
-                <span class="text-xs font-medium text-slate-500 dark:text-slate-400 block">${item.former_names || ''}</span>
-              </div>
-            </div>
-            <span class="px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-[10px] font-black uppercase shrink-0">
-              Đang vận hành
-            </span>
-          </div>
-
-          <div class="space-y-2.5 text-xs">
-            ${(item.morning_shift || item.evening_shift) ? `
-            <div class="flex items-start gap-2">
-              <span class="material-symbols-outlined text-emerald-600 text-base shrink-0 mt-0.5">schedule</span>
-              <div>
-                <strong class="text-slate-800 dark:text-slate-200 font-extrabold">Khung giờ thu gom:</strong>
-                <span class="text-emerald-700 dark:text-emerald-400 font-bold ml-1">${item.morning_shift || item.evening_shift}</span>
-              </div>
-            </div>` : ''}
-
-            ${item.saturday_recycle ? `
-            <div class="flex items-start gap-2">
-              <span class="material-symbols-outlined text-purple-600 text-base shrink-0 mt-0.5">recycling</span>
-              <div>
-                <strong class="text-slate-800 dark:text-slate-200 font-extrabold">Thứ 7 (Rác tái chế):</strong>
-                <span class="text-purple-700 dark:text-purple-400 font-black ml-1">${item.saturday_recycle}</span>
-              </div>
-            </div>` : ''}
-
-            <div class="flex items-start gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
-              <span class="material-symbols-outlined text-amber-600 text-base shrink-0 mt-0.5">alt_route</span>
-              <div class="text-slate-600 dark:text-slate-400">
-                <strong class="text-slate-800 dark:text-slate-200 font-bold">Tuyến đường gom:</strong> ${item.main_routes}
-              </div>
-            </div>
-
-            <div class="flex items-start gap-2">
-              <span class="material-symbols-outlined text-red-600 text-base shrink-0 mt-0.5">location_on</span>
-              <div class="text-slate-600 dark:text-slate-400">
-                <strong class="text-slate-800 dark:text-slate-200 font-bold">Điểm tập kết:</strong> ${item.collection_point}
-              </div>
-            </div>
-          </div>
-
-          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-            <div>
-              <span class="text-[11px] font-bold text-slate-500 block">${item.team} (${item.manager})</span>
-            </div>
-            <a href="tel:${item.phone.replace(/\./g, '')}" class="px-3.5 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-black flex items-center gap-1 shadow-sm active:scale-95">
-              <span class="material-symbols-outlined text-sm">call</span>
-              <span>${item.phone}</span>
-            </a>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function switchScheduleView(view) {
-      currentView = view;
-      const timetableSection = document.getElementById('view-timetable-section');
-      const cardsSection = document.getElementById('view-cards-section');
-      const btnTimetable = document.getElementById('tab-btn-timetable');
-      const btnCards = document.getElementById('tab-btn-cards');
-
-      if (view === 'timetable') {
-        timetableSection.classList.remove('hidden');
-        cardsSection.classList.add('hidden');
-        btnTimetable.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all bg-[#3399fe] text-white shadow-md flex items-center gap-2";
-        btnCards.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2";
-        renderTimetableMatrix();
-      } else {
-        timetableSection.classList.add('hidden');
-        cardsSection.classList.remove('hidden');
-        btnCards.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all bg-[#3399fe] text-white shadow-md flex items-center gap-2";
-        btnTimetable.className = "px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2";
-        renderCardsView();
-      }
-    }
-
-    function applyScheduleFilter() {
-      const searchInput = document.getElementById('schedule-search-input');
-      const tdpSelect = document.getElementById('filter-tdp-select');
-      const shiftSelect = document.getElementById('filter-shift-select');
-
-      const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
-      const tdpVal = tdpSelect ? tdpSelect.value : 'all';
-      const shiftVal = shiftSelect ? shiftSelect.value : 'all';
-
-      filteredData = WASTE_SCHEDULE_DATA.filter(item => {
-        const matchQuery = !query ||
-          item.tdp_name.toLowerCase().includes(query) ||
-          item.former_names.toLowerCase().includes(query) ||
-          item.main_routes.toLowerCase().includes(query) ||
-          item.collection_point.toLowerCase().includes(query) ||
-          item.manager.toLowerCase().includes(query) ||
-          item.phone.includes(query);
-
-        const matchTdp = tdpVal === 'all' || item.tdp_name.includes(tdpVal);
-
-        let matchShift = true;
-        if (shiftVal === 'morning') matchShift = !!item.morning_shift;
-        else if (shiftVal === 'evening') matchShift = !!item.evening_shift;
-        else if (shiftVal === 'saturday') matchShift = !!item.saturday_recycle;
-
-        return matchQuery && matchTdp && matchShift;
-      });
-
-      const label = document.getElementById('schedule-counter-label');
-      if (label) {
-        label.textContent = `Đang hiển thị ${filteredData.length}/${WASTE_SCHEDULE_DATA.length} Tổ dân phố`;
-      }
-
-      if (currentView === 'timetable') {
-        renderTimetableMatrix();
-      } else {
-        renderCardsView();
-      }
     }
 
     function openWasteReportModal() {
@@ -797,46 +641,6 @@
       }
     }
 
-    // Dynamic loader from DB
-    async function loadDynamicNeighborhoods() {
-      // Neu da co du lieu lich thu gom thuc te tu MySQL / API thi khong ghi de
-      if (Array.isArray(WASTE_SCHEDULE_DATA) && WASTE_SCHEDULE_DATA.length > 0 && WASTE_SCHEDULE_DATA.some(item => item.collection_days && item.collection_days.length > 0)) {
-        return;
-      }
-      try {
-        let res = await fetch('/api/neighborhoods').catch(() => null);
-        if (!res || !res.ok) res = await fetch('/data/neighborhoods.json').catch(() => null);
-        if (!res || !res.ok) res = await fetch('/src/data/neighborhoods.json').catch(() => null);
-        if (res && res.ok && (res.headers.get('content-type') || '').includes('application/json')) {
-          const rawData = await res.json();
-          const newTdps = (Array.isArray(rawData) ? rawData : []).filter(d => d.type === 'new').sort((a, b) => (a.name || '').replace(/^(TDP|Tổ dân phố)\s+/gi, '').localeCompare((b.name || '').replace(/^(TDP|Tổ dân phố)\s+/gi, ''), 'vi', { numeric: true, sensitivity: 'base' }));
-          if (newTdps && newTdps.length > 0) {
-            WASTE_SCHEDULE_DATA = newTdps.map((n, idx) => {
-              const defaultShift = DB_NEW_TDPS[idx] || {
-                morning_shift: "05h30 - 07h00",
-                evening_shift: "17h00 - 18h30",
-                saturday_recycle: "08h00 - 11h00"
-              };
-              return {
-                id: n.id,
-                tdp_name: n.name,
-                morning_shift: defaultShift.morning_shift,
-                evening_shift: defaultShift.evening_shift,
-                saturday_recycle: defaultShift.saturday_recycle,
-                collection_days: ["thu_2", "thu_5"],
-                status: n.status || 'active'
-              };
-            });
-            filteredData = [...WASTE_SCHEDULE_DATA];
-            renderTimetableMatrix();
-            renderCardsView();
-          }
-        }
-      } catch (err) {
-        console.warn('Using embedded DB_NEW_TDPS data:', err);
-      }
-    }
-
     // Dynamic loader for Waste Classification Guide
     async function loadWasteClassificationGuide() {
       const titleEl = document.getElementById('waste-guide-title');
@@ -844,13 +648,11 @@
       const containerEl = document.getElementById('waste-guide-categories');
       const regulationEl = document.getElementById('waste-guide-regulation-text');
 
-      let data = null;
-      try {
-        let res = await fetch('/api/waste-classification-guide').catch(() => null);
-        if (!res || !res.ok) res = await fetch('/data/waste_classification_guide.json?v=' + Date.now()).catch(() => null);
-        if (!res || !res.ok) res = await fetch('/src/data/waste_classification_guide.json?v=' + Date.now()).catch(() => null);
-        if (res && res.ok && (res.headers.get('content-type') || '').includes('application/json')) data = await res.json();
-      } catch (e) {}
+      const data = await safeFetchJson([
+        '/api/waste-classification-guide?v=' + Date.now(),
+        '/data/waste_classification_guide.json?v=' + Date.now(),
+        '/src/data/waste_classification_guide.json?v=' + Date.now()
+      ]);
 
       if (data) {
         if (data.title && titleEl) titleEl.textContent = data.title;
@@ -893,22 +695,22 @@
     }
 
     // Initialize Event Listeners
-    document.addEventListener('DOMContentLoaded', () => {
+    function initWasteSchedulePage() {
       initWeather();
       window.toggleMobileMenu = toggleMobileMenu;
       renderTimetableMatrix();
-      loadDynamicNeighborhoods();
+      loadWasteSchedules();
       loadWasteClassificationGuide();
 
-      window.switchScheduleView = switchScheduleView;
       window.openWasteReportModal = openWasteReportModal;
       window.closeWasteReportModal = closeWasteReportModal;
       window.submitWasteReport = submitWasteReport;
-    });
+    }
 
-    // Immediate invoke in case DOM is already ready
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-      loadWasteClassificationGuide();
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initWasteSchedulePage);
+    } else {
+      initWasteSchedulePage();
     }
   </script>
   <script type="module" src="/src/main.ts"></script>

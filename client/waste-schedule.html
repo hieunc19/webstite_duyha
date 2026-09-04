@@ -475,7 +475,6 @@
 
     let WASTE_SCHEDULE_DATA = [...DB_NEW_TDPS];
     let filteredData = [...DB_NEW_TDPS];
-    let isWasteLoaded = false;
 
     async function safeFetchJson(urls) {
       for (const url of urls) {
@@ -515,7 +514,6 @@
       } catch (e) {
         console.warn('Could not load waste schedules from API/JSON.', e);
       } finally {
-        isWasteLoaded = true;
         document.body.classList.add('js-hydrated');
       }
     }
@@ -523,20 +521,6 @@
     function renderTimetableMatrix() {
       const tbody = document.getElementById('timetable-matrix-body');
       if (!tbody) return;
-
-      if (!isWasteLoaded) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="8" class="p-8 text-center text-slate-500 font-bold">
-              <div class="flex items-center justify-center gap-2">
-                <span class="animate-spin rounded-full h-5 w-5 border-b-2 border-[#1d7fe0]"></span>
-                <span>Đang tải lịch thu gom rác...</span>
-              </div>
-            </td>
-          </tr>
-        `;
-        return;
-      }
 
       if (filteredData.length === 0) {
         tbody.innerHTML = `

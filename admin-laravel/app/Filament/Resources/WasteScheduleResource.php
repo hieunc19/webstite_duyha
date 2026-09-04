@@ -106,48 +106,10 @@ class WasteScheduleResource extends Resource
                             ->default(['thu_2', 'thu_5'])
                             ->required()
                             ->columnSpanFull(),
-                    ]),
-
-                Section::make('Thông tin tuyến đường & Đơn vị phụ trách')
-                    ->description('Cung cấp thông tin lộ trình và đầu mối liên hệ cho nhân dân')
-                    ->columnSpanFull()
-                    ->columns(2)
-                    ->components([
-                        TextInput::make('main_routes')
-                            ->label('Tuyến đường gom chính')
-                            ->placeholder('Ví dụ: Trục đường chính Lê Thái Tổ, ngõ xóm...')
-                            ->columnSpan(1)
-                            ->nullable(),
-
-                        TextInput::make('collection_point')
-                            ->label('Điểm tập kết rác')
-                            ->placeholder('Ví dụ: Điểm tập kết rác quy định của TDP')
-                            ->columnSpan(1)
-                            ->nullable(),
-
-                        TextInput::make('responsible_unit')
-                            ->label('Đơn vị phụ trách')
-                            ->default('Đội vệ sinh môi trường Phường Duy Hà')
-                            ->columnSpan(1)
-                            ->nullable(),
-
-                        TextInput::make('contact_phone')
-                            ->label('Số điện thoại / Hotline')
-                            ->tel()
-                            ->placeholder('Ví dụ: 0226.3835.112 hoặc 0988.xxx.xxx')
-                            ->columnSpan(1)
-                            ->nullable(),
-
-                        TextInput::make('sort_order')
-                            ->label('Thứ tự sắp xếp')
-                            ->numeric()
-                            ->default(0)
-                            ->columnSpan(1),
 
                         Toggle::make('is_active')
                             ->label('Hiển thị trên website')
-                            ->default(true)
-                            ->columnSpan(1),
+                            ->default(true),
                     ]),
             ]);
     }

@@ -16,4 +16,12 @@ class EditWasteSchedule extends EditRecord
             DeleteAction::make(),
         ];
     }
+
+    protected function afterSave(): void
+    {
+        $scriptPath = base_path('dump_to_json.php');
+        if (file_exists($scriptPath)) {
+            @exec("php {$scriptPath}");
+        }
+    }
 }

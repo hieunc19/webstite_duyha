@@ -21,6 +21,20 @@ const ALL_TDP_OFFICIALS = tdpOfficialsData as any[];
 import proceduresData from './data/procedures.json';
 import procedureVideosData from './data/procedure_videos.json';
 import policiesData from './data/policies.json';
+import wasteSchedulesData from './data/waste_schedules.json';
+
+const HOMEPAGE_FALLBACK_TDPS = [
+  { id: 1, tdp_name: "TDP Duy Minh", morning_shift: "05h30 - 07h00", collection_days: ["thu_2", "thu_5"] },
+  { id: 2, tdp_name: "TDP Ngọc Tú", morning_shift: "06h00 - 07h30", collection_days: ["thu_3", "thu_6"] },
+  { id: 3, tdp_name: "TDP Động Linh Trang", morning_shift: "05h30 - 07h00", collection_days: ["thu_2", "thu_5"] },
+  { id: 4, tdp_name: "TDP Chuông", morning_shift: "06h00 - 07h30", collection_days: ["thu_3", "thu_6"] },
+  { id: 5, tdp_name: "TDP Bạch Xá", morning_shift: "05h30 - 07h00", collection_days: ["thu_2", "thu_5"] },
+  { id: 6, tdp_name: "TDP Hoàng Đông", morning_shift: "17h00 - 18h30", collection_days: ["thu_3", "thu_6"] },
+  { id: 7, tdp_name: "TDP Hương Cát", morning_shift: "05h00 - 06h30", collection_days: ["thu_2", "thu_5"] },
+  { id: 8, tdp_name: "TDP Duy Hải", morning_shift: "06h00 - 07h30", collection_days: ["thu_3", "thu_6"] },
+  { id: 9, tdp_name: "TDP Ngọc Động", morning_shift: "17h00 - 18h30", collection_days: ["thu_2", "thu_5"] },
+  { id: 10, tdp_name: "TDP Đông Hải", morning_shift: "05h00 - 06h30", collection_days: ["thu_3", "thu_6"] }
+];
 import { CSKV_MAP } from './data/tdpOfficials';
 import { applySharedHeaderConfig, initSharedHeader, applyThemeState } from './components/sharedHeader';
 import { applySharedFooterConfig, initSharedFooter } from './components/sharedFooter';
@@ -103,6 +117,7 @@ class PortalApp {
   private proceduresList: any[] = proceduresData as any[];
   private procedureVideos: any[] = procedureVideosData as any[];
   private policiesList: any[] = policiesData as any[];
+  private wasteSchedulesList: any[] = (wasteSchedulesData as any[]) || [];
   private activeCategory: string = 'all';
   private currentPlace: Place | null = null;
   private procedureActiveTab = 'popular';
@@ -136,6 +151,7 @@ class PortalApp {
     this.renderTdpModalTables();
     this.renderMeritoriousSection();
     this.renderProceduresSection();
+    this.renderHomepageWasteSchedule();
 
     this.initSearch();
     this.initEventListeners();
@@ -176,6 +192,7 @@ class PortalApp {
       this.renderTdpModalTables();
       this.renderMeritoriousSection();
       this.renderProceduresSection();
+      this.renderHomepageWasteSchedule();
       this.initSearch();
       this.initEventListeners();
       triggerStatCardsCountUp();
@@ -419,6 +436,18 @@ class PortalApp {
           this.applyHomepageLayout(sectionsData);
         }
       }
+
+      // Sync Waste Schedules from API or JSON
+      try {
+        const wasteRes = await fetch('/api/waste-schedules?v=' + Date.now()).catch(() => null);
+        if (wasteRes && wasteRes.ok) {
+          const wData = await wasteRes.json();
+          if (Array.isArray(wData) && wData.length > 0) {
+            this.wasteSchedulesList = wData;
+            this.renderHomepageWasteSchedule();
+          }
+        }
+      } catch (_) {}
     } catch (e) {
       console.log('API call fallback to seed data');
     }
@@ -1737,6 +1766,85 @@ class PortalApp {
     `;
 
     container.innerHTML = html;
+  }
+
+  private renderHomepageWasteSchedule() {
+    const container = document.getElementById('homepage-waste-schedule-container');
+    if (!container) return;
+
+    const rawList = (this.wasteSchedulesList && this.wasteSchedulesList.length > 0)
+      ? this.wasteSchedulesList
+      : HOMEPAGE_FALLBACK_TDPS;
+
+    // Filter active items and normalize
+    const data = rawList
+      .filter((item: any) => item.is_active !== false)
+      .map((item: any) => ({
+        ...item,
+        tdp_name: item.tdp_name || '',
+        morning_shift: (item.morning_shift || item.shift || 'Có gom').trim(),
+        collection_days: Array.isArray(item.collection_days)
+          ? item.collection_days
+          : (typeof item.collection_days === 'string' ? (() => { try { return JSON.parse(item.collection_days); } catch (_) { return []; } })() : [])
+      }))
+      .slice(0, 10);
+
+    const days = [
+      { key: 'thu_2', label: 'THỨ 2' },
+      { key: 'thu_3', label: 'THỨ 3' },
+      { key: 'thu_4', label: 'THỨ 4' },
+      { key: 'thu_5', label: 'THỨ 5' },
+      { key: 'thu_6', label: 'THỨ 6' },
+      { key: 'thu_7', label: 'THỨ 7' },
+      { key: 'chu_nhat', label: 'CHỦ NHẬT' }
+    ];
+
+    container.innerHTML = `
+      <div class="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs bg-white dark:bg-slate-900">
+        <table class="w-full text-left border-collapse min-w-[620px]">
+          <thead>
+            <tr class="bg-gradient-to-r from-[#1d7fe0] via-[#268df5] to-[#1464b8] text-white text-[11px] font-black uppercase tracking-wider">
+              <th class="py-2.5 px-3.5 border-r border-white/20 w-44">TỔ DÂN PHỐ (TDP)</th>
+              ${days.map((d, i) => `
+                <th class="py-2.5 px-2 ${i === days.length - 1 ? '' : 'border-r border-white/20'} text-center">${d.label}</th>
+              `).join('')}
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 dark:divide-slate-800 text-xs font-medium">
+            ${data.map((item: any, index: number) => {
+              const bgClass = index % 2 === 0 ? 'bg-white dark:bg-slate-900' : 'bg-slate-50/70 dark:bg-slate-850/60';
+              const shift = item.morning_shift || 'Có gom';
+
+              return `
+                <tr class="${bgClass} hover:bg-sky-50/80 dark:hover:bg-slate-800/80 transition-colors">
+                  <td class="py-2.5 px-3.5 border-r border-slate-200 dark:border-slate-800 align-middle">
+                    <b class="text-slate-900 dark:text-white font-extrabold text-xs block whitespace-nowrap">${item.tdp_name}</b>
+                  </td>
+                  ${days.map((d, i) => {
+                    const isCollected = item.collection_days.includes(d.key);
+                    const borderClass = i === days.length - 1 ? '' : 'border-r border-slate-200 dark:border-slate-800';
+                    if (isCollected) {
+                      return `
+                        <td class="p-1.5 ${borderClass} text-center align-middle bg-emerald-50/40 dark:bg-emerald-950/20">
+                          <span class="inline-block px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 rounded text-[11px] font-black whitespace-nowrap shadow-2xs" title="Khung giờ xe thu gom: ${shift}">
+                            ${shift}
+                          </span>
+                        </td>
+                      `;
+                    }
+                    return `
+                      <td class="p-1.5 ${borderClass} text-center align-middle text-slate-300 dark:text-slate-700 text-xs font-bold">
+                        —
+                      </td>
+                    `;
+                  }).join('')}
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
   }
 
   private renderMeritoriousSection() {

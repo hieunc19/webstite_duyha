@@ -106,9 +106,9 @@
     {
         "id": 5,
         "section_code": "procedures_utilities",
-        "name": "Hướng dẫn Thủ tục & Tiện ích trực tuyến",
-        "custom_title": "Hướng dẫn thủ tục hành chính & Tiện ích trực tuyến",
-        "custom_subtitle": "Quy trình thực hiện TTHC trực tuyến ",
+        "name": "Lịch thu gom rác & Tiện ích trực tuyến",
+        "custom_title": "Lịch thu gom rác sinh hoạt",
+        "custom_subtitle": "Thời khóa biểu xe thu gom rác theo tuần tại 10 Tổ dân phố Phường Duy Hà",
         "is_visible": true,
         "sort_order": 4,
         "settings": null

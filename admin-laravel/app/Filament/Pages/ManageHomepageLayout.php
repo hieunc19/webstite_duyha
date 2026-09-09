@@ -17,6 +17,7 @@ class ManageHomepageLayout extends Page
         'hero_banner',
         'stats_cards',
         'agencies_grid',
+        'quick_utilities',
         'procedures_utilities',
         'hdsd_procedure',
         'footer_section',
@@ -86,6 +87,15 @@ class ManageHomepageLayout extends Page
     public $stat4Val = '15,46 km²';
     public $stat4Lbl = 'Diện tích địa bàn';
 
+    // Waste schedule & utilities modal properties
+    public $isWasteScheduleModal = false;
+    public $scheduleBtnText = 'Xem chi tiết lịch';
+    public $scheduleBtnUrl = '/waste-schedule.html';
+
+    // Quick Utilities modal properties (7 danh mục tiện ích nhanh)
+    public $isQuickUtilitiesModal = false;
+    public $quickUtilityItems = [];
+
     // Custom Section properties
     public $isCustomSectionModal = false;
     public $customSectionContent = '';
@@ -115,6 +125,45 @@ class ManageHomepageLayout extends Page
 
     public function loadSections()
     {
+        if (HomepageSection::where('section_code', 'quick_utilities')->doesntExist()) {
+            HomepageSection::create([
+                'section_code' => 'quick_utilities',
+                'name' => 'Danh mục Tiện ích trực tuyến (7 tiện ích nhanh)',
+                'custom_title' => 'Danh mục Tiện ích trực tuyến',
+                'custom_subtitle' => '7 tiện ích tra cứu nhanh, thủ tục, sáp nhập TDP, cán bộ và phản ánh',
+                'is_visible' => true,
+                'sort_order' => 4,
+                'settings' => [
+                    'items' => $this->defaultQuickUtilityItems(),
+                ],
+            ]);
+            $this->dumpData();
+        }
+
+        if (HomepageSection::where('section_code', 'footer_section')->doesntExist()) {
+            HomepageSection::create([
+                'section_code' => 'footer_section',
+                'name' => 'Thông tin Chân trang (Footer)',
+                'custom_title' => 'ĐOÀN TNCS HỒ CHÍ MINH PHƯỜNG DUY HÀ',
+                'custom_subtitle' => 'Phường Duy Hà, tỉnh Ninh Bình',
+                'is_visible' => true,
+                'sort_order' => 6,
+                'settings' => [
+                    'footer_logo' => '/logo.jpg',
+                    'org_name' => 'ĐOÀN TNCS HỒ CHÍ MINH PHƯỜNG DUY HÀ',
+                    'address' => 'Số 01 đường Lê Lợi, Phường Duy Hà, thành phố Ninh Bình, tỉnh Ninh Bình',
+                    'working_hours' => 'Sáng: 7h30 - 11h30 | Chiều: 13h30 - 17h00 (Từ Thứ 2 đến Thứ 6, nghỉ T7 & CN)',
+                    'email' => 'thongtin@duyha.ninhbinh.gov.vn',
+                    'phone' => '(0229) 38253536',
+                    'facebook_url' => 'https://facebook.com',
+                    'website_url' => 'https://duyha.ninhbinh.gov.vn',
+                    'copyright_text' => 'Copyright © Đoàn TNCS Hồ Chí Minh phường Duy Hà. All Rights Reserved',
+                    'source_note' => 'Ghi rõ nguồn "Đoàn TNCS Hồ Chí Minh phường Duy Hà" khi phát hành lại thông tin từ Đoàn TNCS Hồ Chí Minh phường Duy Hà.',
+                ],
+            ]);
+            $this->dumpData();
+        }
+
         $this->sections = $this->managedHomepageSectionsQuery()
             ->orderBy('sort_order', 'asc')
             ->get()
@@ -227,6 +276,8 @@ class ManageHomepageLayout extends Page
             $this->isStatsModal = ($sec->section_code === 'stats_cards');
             $this->isTdpMergerModal = ($sec->section_code === 'tdp_merger');
             $this->isFooterModal = ($sec->section_code === 'footer_section');
+            $this->isWasteScheduleModal = in_array($sec->section_code, ['procedures_utilities', 'hdsd_procedure']);
+            $this->isQuickUtilitiesModal = ($sec->section_code === 'quick_utilities');
             $this->isCustomSectionModal = str_starts_with($sec->section_code, 'custom_');
 
             if ($this->isHeaderModal) {
@@ -275,6 +326,15 @@ class ManageHomepageLayout extends Page
                 $this->footerWebsiteUrl = $settings['website_url'] ?? 'https://duyha.ninhbinh.gov.vn';
                 $this->footerCopyright = $settings['copyright_text'] ?? 'Copyright © Đoàn TNCS Hồ Chí Minh phường Duy Hà. All Rights Reserved';
                 $this->footerSourceNote = $settings['source_note'] ?? 'Ghi rõ nguồn "Đoàn TNCS Hồ Chí Minh phường Duy Hà" khi phát hành lại thông tin từ Đoàn TNCS Hồ Chí Minh phường Duy Hà.';
+            } elseif ($this->isWasteScheduleModal) {
+                $this->scheduleBtnText = $settings['schedule_btn_text'] ?? 'Xem chi tiết lịch';
+                $this->scheduleBtnUrl = $settings['schedule_btn_url'] ?? '/waste-schedule.html';
+            } elseif ($this->isQuickUtilitiesModal) {
+                if (!empty($settings['items']) && is_array($settings['items'])) {
+                    $this->quickUtilityItems = $settings['items'];
+                } else {
+                    $this->quickUtilityItems = $this->defaultQuickUtilityItems();
+                }
             } elseif ($this->isCustomSectionModal) {
                 $this->customSectionContent = $settings['content'] ?? '';
                 $this->customSectionBtnText = $settings['btn_text'] ?? '';
@@ -438,6 +498,9 @@ class ManageHomepageLayout extends Page
         $this->isStatsModal = false;
         $this->isTdpMergerModal = false;
         $this->isFooterModal = false;
+        $this->isWasteScheduleModal = false;
+        $this->isQuickUtilitiesModal = false;
+        $this->quickUtilityItems = [];
         $this->isCustomSectionModal = false;
         $this->selectedAgencyIds = [null, null, null, null];
         $this->logoUpload = null;
@@ -554,6 +617,17 @@ class ManageHomepageLayout extends Page
                         'copyright_text' => $this->footerCopyright ?: 'Copyright © Đoàn TNCS Hồ Chí Minh phường Duy Hà. All Rights Reserved',
                         'source_note' => $this->footerSourceNote ?: 'Ghi rõ nguồn "Đoàn TNCS Hồ Chí Minh phường Duy Hà" khi phát hành lại thông tin từ Đoàn TNCS Hồ Chí Minh phường Duy Hà.',
                     ];
+                } elseif ($sec->section_code === 'quick_utilities') {
+                    $sec->name = 'Danh mục Tiện ích trực tuyến (7 tiện ích nhanh)';
+                    $sec->settings = [
+                        'items' => $this->normalizeQuickUtilityItems($this->quickUtilityItems),
+                    ];
+                } elseif (in_array($sec->section_code, ['procedures_utilities', 'hdsd_procedure'])) {
+                    $sec->name = 'Lịch thu gom rác sinh hoạt';
+                    $sec->settings = array_merge($sec->settings ?? [], [
+                        'schedule_btn_text' => $this->scheduleBtnText ?: 'Xem chi tiết lịch',
+                        'schedule_btn_url' => $this->scheduleBtnUrl ?: '/waste-schedule.html',
+                    ]);
                 } elseif (str_starts_with($sec->section_code, 'custom_')) {
                     $sec->settings = [
                         'content' => $this->customSectionContent,
@@ -675,5 +749,44 @@ class ManageHomepageLayout extends Page
                 'is_active' => (bool) ($item['is_active'] ?? true),
             ];
         }, $items, array_keys($items)));
+    }
+
+    public static function getQuickUtilityMeta(): array
+    {
+        return [
+            ['id' => 'tra_cuu_thu_tuc', 'name' => 'Tra cứu thủ tục', 'default_title' => 'Tra cứu thủ tục', 'default_subtitle' => 'Quy trình & hồ sơ', 'icon' => 'search', 'color' => '#dc2626'],
+            ['id' => 'tdp_cu_moi', 'name' => 'Tổ dân phố cũ - mới', 'default_title' => 'TDP cũ - mới', 'default_subtitle' => 'Sáp nhập 2026', 'icon' => 'diversity_3', 'color' => '#d97706'],
+            ['id' => 'chinh_sach', 'name' => 'Gia đình chính sách', 'default_title' => 'Chính sách', 'default_subtitle' => 'Người có công', 'icon' => 'military_tech', 'color' => '#d97706'],
+            ['id' => 'lich_gom_rac', 'name' => 'Lịch thu gom rác', 'default_title' => 'Lịch gom rác', 'default_subtitle' => 'Thời gian chi tiết', 'icon' => 'delete', 'color' => '#9333ea'],
+            ['id' => 'can_bo_phuong', 'name' => 'Danh sách cán bộ Phường', 'default_title' => 'Cán bộ Phường', 'default_subtitle' => 'Danh sách & liên hệ', 'icon' => 'person', 'color' => '#2563eb'],
+            ['id' => 'tiep_cong_dan', 'name' => 'Lịch tiếp công dân', 'default_title' => 'Tiếp công dân', 'default_subtitle' => 'Lịch & địa điểm', 'icon' => 'calendar_month', 'color' => '#0d9488'],
+            ['id' => 'phan_anh_kien_nghi', 'name' => 'Phản ánh kiến nghị', 'default_title' => 'Phản ánh kiến nghị', 'default_subtitle' => 'Gửi ý kiến tới chính quyền Phường', 'icon' => 'campaign', 'color' => '#ea580c'],
+        ];
+    }
+
+    private function defaultQuickUtilityItems(): array
+    {
+        return array_map(function ($meta) {
+            return [
+                'id' => $meta['id'],
+                'title' => $meta['default_title'],
+                'subtitle' => $meta['default_subtitle'],
+            ];
+        }, self::getQuickUtilityMeta());
+    }
+
+    private function normalizeQuickUtilityItems(array $items): array
+    {
+        $metaList = self::getQuickUtilityMeta();
+        $normalized = [];
+        foreach ($metaList as $idx => $meta) {
+            $existing = $items[$idx] ?? [];
+            $normalized[] = [
+                'id' => $meta['id'],
+                'title' => trim((string) ($existing['title'] ?? $meta['default_title'])) ?: $meta['default_title'],
+                'subtitle' => trim((string) ($existing['subtitle'] ?? $meta['default_subtitle'])) ?: $meta['default_subtitle'],
+            ];
+        }
+        return $normalized;
     }
 }

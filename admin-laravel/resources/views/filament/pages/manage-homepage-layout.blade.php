@@ -347,6 +347,61 @@
                                     <span style="background: #ffffff; color: #0284c7; font-weight: 800; font-size: 0.85rem; padding: 0.5rem 1rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">{{ $sec['settings']['btn_text'] }} ↗</span>
                                 @endif
                             </div>
+                        @elseif($sec['section_code'] === 'quick_utilities')
+                            <?php
+                                $utilItems = $sec['settings']['items'] ?? \App\Filament\Pages\ManageHomepageLayout::getQuickUtilityMeta();
+                                $utilMeta = \App\Filament\Pages\ManageHomepageLayout::getQuickUtilityMeta();
+                            ?>
+                            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem 1.25rem;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; border-bottom: 1px dashed #cbd5e1; padding-bottom: 0.65rem;">
+                                    <div style="display: flex; align-items: center; gap: 0.65rem;">
+                                        <div style="width: 36px; height: 36px; border-radius: 0.5rem; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; border: 1px solid #bae6fd;">
+                                            ⚡
+                                        </div>
+                                        <div>
+                                            <div style="font-size: 0.95rem; font-weight: 800; color: #0f172a;" class="dark:text-white">{{ $sec['custom_title'] ?: 'Danh mục Tiện ích trực tuyến' }}</div>
+                                            <div style="font-size: 0.78rem; color: #64748b;">7 nút tiện ích tra cứu nhanh trên phiên bản mobile & desktop</div>
+                                        </div>
+                                    </div>
+                                    <span style="font-size: 0.75rem; font-weight: 800; background: #dbeafe; color: #1e40af; padding: 0.25rem 0.65rem; border-radius: 9999px;">
+                                        7 Danh mục
+                                    </span>
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 0.6rem;">
+                                    @foreach($utilMeta as $mIdx => $meta)
+                                        <?php
+                                            $currItem = $utilItems[$mIdx] ?? [];
+                                            $iTitle = $currItem['title'] ?? $meta['default_title'];
+                                            $iSubtitle = $currItem['subtitle'] ?? $meta['default_subtitle'];
+                                        ?>
+                                        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.6rem; padding: 0.6rem 0.75rem; display: flex; align-items: center; gap: 0.65rem; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                                            <div style="width: 32px; height: 32px; border-radius: 0.5rem; background: {{ $meta['color'] }}15; color: {{ $meta['color'] }}; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 800; shrink: 0; border: 1px solid {{ $meta['color'] }}30;">
+                                                #{{ $mIdx + 1 }}
+                                            </div>
+                                            <div style="min-width: 0; flex: 1;">
+                                                <div style="font-size: 0.82rem; font-weight: 800; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $iTitle }}</div>
+                                                <div style="font-size: 0.72rem; font-weight: 600; color: {{ $meta['color'] }}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $iSubtitle }}</div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @elseif(in_array($sec['section_code'], ['procedures_utilities', 'hdsd_procedure']))
+                            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <div style="width: 42px; height: 42px; border-radius: 0.65rem; background: #ecfdf5; color: #059669; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; border: 1px solid #a7f3d0; shrink: 0;">
+                                        🚛
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 1.05rem; font-weight: 900; color: #0f172a; text-transform: uppercase;" class="dark:text-white">{{ $sec['custom_title'] ?: 'LỊCH THU GOM RÁC THẢI & TIỆN ÍCH TRỰC TUYẾN' }}</div>
+                                        <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; margin-top: 0.15rem;">{{ $sec['custom_subtitle'] ?: 'Thời khóa biểu thu gom rác theo tuần tại 10 Tổ dân phố Phường Duy Hà' }}</div>
+                                    </div>
+                                </div>
+                                <span style="background: #ecfdf5; color: #047857; font-size: 0.8rem; font-weight: 800; padding: 0.35rem 0.85rem; border-radius: 0.5rem; border: 1px solid #a7f3d0; display: inline-flex; align-items: center; gap: 0.35rem;">
+                                    <span>{{ $sec['settings']['schedule_btn_text'] ?? 'Xem chi tiết lịch' }}</span>
+                                    <span>→</span>
+                                </span>
+                            </div>
 
                         @else
                             <div style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin-bottom: 0.25rem;" class="dark:text-white">{{ $sec['custom_title'] ?: $sec['name'] }}</div>
@@ -862,6 +917,88 @@
                                     <label class="modal-field-label">Liên kết nút bấm (URL)</label>
                                     <input type="text" wire:model="customSectionBtnUrl" class="modal-input" placeholder="VD: /procedures.html" />
                                 </div>
+                            </div>
+                        @elseif($isQuickUtilitiesModal)
+                            <!-- Hướng dẫn chỉnh sửa 7 danh mục tiện ích nhanh -->
+                            <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 0.65rem; padding: 0.85rem 1rem; display: flex; align-items: flex-start; gap: 0.75rem;">
+                                <div style="font-size: 1.4rem; line-height: 1;">⚡</div>
+                                <div style="font-size: 0.82rem; color: #1e3a8a; line-height: 1.5;">
+                                    <div style="font-weight: 800; margin-bottom: 0.2rem; color: #1e40af;">Chỉnh sửa nội dung các danh mục tiện ích trực tuyến</div>
+                                    <div>Bạn có thể thay đổi <strong>Tiêu đề</strong> và <strong>Phụ đề (mô tả ngắn)</strong> cho từng danh mục tiện ích bên dưới. Nội dung sẽ tự động đồng bộ ra ngoài trang chủ trên cả bản mobile và desktop.</div>
+                                </div>
+                            </div>
+
+                            <?php
+                                $utilMeta = \App\Filament\Pages\ManageHomepageLayout::getQuickUtilityMeta();
+                            ?>
+
+                            <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+                                @foreach($utilMeta as $uIdx => $uMeta)
+                                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.65rem; padding: 0.85rem; display: flex; flex-direction: column; gap: 0.5rem; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+                                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                <span style="font-size: 0.82rem; font-weight: 800; background: {{ $uMeta['color'] }}15; color: {{ $uMeta['color'] }}; padding: 0.2rem 0.55rem; border-radius: 0.4rem; border: 1px solid {{ $uMeta['color'] }}30;">
+                                                    Mục #{{ $uIdx + 1 }}
+                                                </span>
+                                                <span style="font-size: 0.9rem; font-weight: 800; color: #0f172a;">
+                                                    {{ $uMeta['name'] }}
+                                                </span>
+                                            </div>
+                                            <span style="font-size: 0.75rem; color: #64748b; font-style: italic;">
+                                                Mặc định: {{ $uMeta['default_title'] }}
+                                            </span>
+                                        </div>
+
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem;">
+                                            <div>
+                                                <label style="font-size: 0.78rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.2rem;">
+                                                    Tiêu đề danh mục
+                                                </label>
+                                                <input type="text" 
+                                                    wire:model="quickUtilityItems.{{ $uIdx }}.title" 
+                                                    class="modal-input" 
+                                                    placeholder="{{ $uMeta['default_title'] }}" 
+                                                    style="font-size: 0.85rem; font-weight: 700;" />
+                                            </div>
+                                            <div>
+                                                <label style="font-size: 0.78rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.2rem;">
+                                                    Phụ đề (Mô tả ngắn)
+                                                </label>
+                                                <input type="text" 
+                                                    wire:model="quickUtilityItems.{{ $uIdx }}.subtitle" 
+                                                    class="modal-input" 
+                                                    placeholder="{{ $uMeta['default_subtitle'] }}" 
+                                                    style="font-size: 0.85rem; color: {{ $uMeta['color'] }}; font-weight: 600;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                        @elseif($isWasteScheduleModal)
+                            <!-- Hướng dẫn cấu hình lịch rác -->
+                            <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 0.65rem; padding: 0.85rem 1rem; display: flex; align-items: flex-start; gap: 0.75rem;">
+                                <div style="font-size: 1.5rem; line-height: 1;">🚛</div>
+                                <div style="font-size: 0.82rem; color: #14532d; line-height: 1.5;">
+                                    <div style="font-weight: 800; margin-bottom: 0.2rem; color: #166534;">Cấu hình Khối Lịch thu gom rác thải sinh hoạt</div>
+                                    <div>Khối này trên trang chủ hiển thị <strong>Bảng thời khóa biểu xe thu gom rác theo tuần</strong> tại 10 Tổ dân phố Phường Duy Hà.</div>
+                                    <div style="margin-top: 0.4rem;">
+                                        👉 Để cấu hình hoặc cập nhật khung giờ xe gom rác từng Tổ dân phố, vui lòng vào menu: 
+                                        <a href="/admin/waste-schedules" target="_blank" style="color: #047857; font-weight: 800; text-decoration: underline;">
+                                            Lịch thu gom rác (Quản lý Địa bàn & Dân cư) ↗
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="modal-field-label">Tiêu đề chính Khối</label>
+                                <input type="text" wire:model="customTitle" class="modal-input" placeholder="LỊCH THU GOM RÁC THẢI SINH HOẠT" />
+                            </div>
+
+                            <div>
+                                <label class="modal-field-label">Mô tả / Tiêu đề phụ</label>
+                                <textarea wire:model="customSubtitle" class="modal-input" rows="2" placeholder="Thời khóa biểu thu gom rác theo tuần tại 10 Tổ dân phố Phường Duy Hà"></textarea>
                             </div>
                         @else
                             <div>

@@ -232,6 +232,7 @@ Route::get('/homepage-sections', function () {
         'hero_banner',
         'stats_cards',
         'agencies_grid',
+        'quick_utilities',
         'procedures_utilities',
         'hdsd_procedure',
         'footer_section',

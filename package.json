@@ -2,7 +2,7 @@
   "name": "philanthropy-map-root",
   "private": true,
   "scripts": {
-    "dev": "npm run dev:client",
+    "dev": "npm run dev:all",
     "build": "npm run build:client",
     "dev:client": "cd client && npm run dev",
     "dev:admin": "cd admin-laravel && php artisan serve --port=8005 --no-reload",

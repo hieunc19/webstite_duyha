@@ -221,220 +221,233 @@
     </section>
 
     <!-- SECTION: MAIN CONTENT SPLIT 8:4 (HƯỚNG DẪN THỦ TỤC & 6 TIỆN ÍCH TRỰC TUYẾN) -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 mt-12" id="section-hdsd-procedure">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <section class="max-w-7xl mx-auto px-3.5 sm:px-6 mt-8 sm:mt-12" id="section-hdsd-procedure">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
 
-        <!-- COLUMN 1: LỊCH THU GOM RÁC SINH HOẠT (8 COLS) -->
-        <div
-          class="lg:col-span-8 bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-7 border border-slate-200 dark:border-slate-800 shadow-xl space-y-5">
-          <!-- Header -->
-          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
-            <div class="flex items-center gap-3">
-              <div class="w-11 h-11 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/20 shadow-xs">
-                <span class="material-symbols-outlined text-2xl sm:text-3xl">calendar_month</span>
+        <!-- COLUMN 1: DANH MỤC THỦ TỤC & LỊCH THU GOM RÁC (8 COLS) -->
+        <div class="order-2 lg:order-1 lg:col-span-8 space-y-5 sm:space-y-6">
+
+          <!-- 1. KHỐI DANH MỤC THỦ TỤC HÀNH CHÍNH (Ở BÊN TRÊN LỊCH THU GOM RÁC) -->
+          <div
+            class="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-7 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4 sm:space-y-5">
+            <!-- Header -->
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3.5 sm:pb-4">
+              <div class="flex items-center gap-2.5 sm:gap-3">
+                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-sky-500/10 text-[#1d7fe0] dark:text-sky-400 flex items-center justify-center shrink-0 border border-sky-500/20 shadow-xs">
+                  <span class="material-symbols-outlined text-2xl sm:text-3xl">assignment</span>
+                </div>
+                <div>
+                  <h3 class="text-base sm:text-lg lg:text-xl font-black text-slate-900 dark:text-white tracking-tight uppercase flex items-center gap-2">
+                    DANH MỤC THỦ TỤC HÀNH CHÍNH
+                  </h3>
+                  <p class="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 mt-0.5">
+                    Tra cứu quy trình, hồ sơ thủ tục và dịch vụ công trực tuyến theo lĩnh vực
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 id="title-procedures_utilities"
-                  class="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight uppercase flex items-center gap-2">
-                  LỊCH THU GOM RÁC SINH HOẠT
-                </h3>
-                <p id="subtitle-procedures_utilities" class="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 mt-0.5">
-                  Thời khóa biểu thu gom rác theo tuần tại 10 Tổ dân phố Phường Duy Hà
-                </p>
-              </div>
+
+              <a href="/procedures.html"
+                class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl border border-sky-200/90 dark:border-sky-800 bg-sky-50/90 dark:bg-sky-950/60 hover:bg-[#1d7fe0] text-[#1d7fe0] dark:text-sky-300 hover:text-white dark:hover:text-white text-xs sm:text-sm font-bold transition-all shadow-xs shrink-0 active:scale-95 group">
+                <span>Xem tất cả thủ tục</span>
+                <span class="material-symbols-outlined text-base group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+              </a>
             </div>
 
-            <a href="/waste-schedule.html"
-              class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-emerald-200/90 dark:border-emerald-800 bg-emerald-50/90 dark:bg-emerald-950/60 hover:bg-emerald-600 text-emerald-700 dark:text-emerald-300 hover:text-white dark:hover:text-white text-xs sm:text-sm font-bold transition-all shadow-xs shrink-0 active:scale-95 group">
-              <span>Xem chi tiết lịch</span>
-              <span class="material-symbols-outlined text-base group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
-            </a>
-          </div>
-
-          <!-- Waste Schedule Table Container -->
-          <div id="homepage-waste-schedule-container" class="space-y-4">
-            <!-- Dynamic Timetable Matrix Injected by JavaScript -->
-          </div>
-
-          <!-- Footer Legend Bar -->
-          <div class="flex flex-wrap items-center justify-between gap-3 pt-3 text-xs font-bold border-t border-slate-100 dark:border-slate-800">
-            <div class="flex items-center gap-3">
-              <span class="inline-flex items-center gap-1.5 text-emerald-700 dark:text-emerald-400">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Khung giờ thu gom
-              </span>
-              <span class="inline-flex items-center gap-1.5 text-slate-400">
-                <span class="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-700"></span> — : Không thu gom
-              </span>
+            <!-- Grid / Slider Danh mục các lĩnh vực thủ tục -->
+            <div id="homepage-procedure-categories-container" class="relative">
+              <!-- Dynamically populated by JavaScript -->
             </div>
-            <a href="/waste-schedule.html" class="text-[#1d7fe0] hover:underline font-extrabold flex items-center gap-1">
-              <span>Hướng dẫn phân loại rác & Gửi phản ánh</span>
-              <span class="material-symbols-outlined text-sm">open_in_new</span>
-            </a>
           </div>
+
+          <!-- 2. KHỐI LỊCH THU GOM RÁC SINH HOẠT (Ở BÊN DƯỚI) -->
+          <div
+            class="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-7 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4 sm:space-y-5">
+            <!-- Header -->
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-3.5 sm:pb-4">
+              <div class="flex items-center gap-2.5 sm:gap-3">
+                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/20 shadow-xs">
+                  <span class="material-symbols-outlined text-2xl sm:text-3xl">calendar_month</span>
+                </div>
+                <div>
+                  <h3 id="title-procedures_utilities"
+                    class="text-base sm:text-lg lg:text-xl font-black text-slate-900 dark:text-white tracking-tight uppercase flex items-center gap-2">
+                    LỊCH THU GOM RÁC THẢI & TIỆN ÍCH TRỰC TUYẾN
+                  </h3>
+                  <p id="subtitle-procedures_utilities" class="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 mt-0.5">
+                    Thời khóa biểu thu gom rác theo tuần tại 10 Tổ dân phố Phường Duy Hà
+                  </p>
+                </div>
+              </div>
+
+              <a href="/waste-schedule.html" id="btn-procedures_utilities"
+                class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl border border-emerald-200/90 dark:border-emerald-800 bg-emerald-50/90 dark:bg-emerald-950/60 hover:bg-emerald-600 text-emerald-700 dark:text-emerald-300 hover:text-white dark:hover:text-white text-xs sm:text-sm font-bold transition-all shadow-xs shrink-0 active:scale-95 group">
+                <span id="btn-text-procedures_utilities">Xem chi tiết lịch</span>
+                <span class="material-symbols-outlined text-base group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+              </a>
+            </div>
+
+            <!-- Waste Schedule Table Container -->
+            <div id="homepage-waste-schedule-container" class="space-y-4">
+              <!-- Dynamic Timetable Matrix Injected by JavaScript -->
+            </div>
+          </div>
+
         </div>
 
-        <!-- COLUMN 2: 6 TIỆN ÍCH TRỰC TUYẾN PHÓNG TO (4 COLS - KHÔNG KHUNG NỀN) -->
-        <div class="lg:col-span-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3.5">
+        <!-- COLUMN 2: 7 TIỆN ÍCH TRỰC TUYẾN (GỌN GÀNG 2 CỘT TRÊN MOBILE & TABLET, 1 CỘT TRÊN DESKTOP) -->
+        <div id="section-quick-utilities" class="order-1 lg:order-2 lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 gap-2.5 sm:gap-3.5">
 
           <!-- Button 1: Tra cứu thủ tục hành chính -->
           <a href="/procedures.html"
             style="background-image: linear-gradient(110deg, rgba(255, 255, 255, 0.96) 0%, rgba(254, 242, 242, 0.92) 100%), url('/hero-bg.jpg'); background-size: cover; background-position: center;"
-            class="w-full p-4 sm:p-4.5 rounded-2xl border border-red-200 dark:border-slate-800 shadow-md hover:shadow-xl hover:border-red-400 transition-all duration-300 flex items-center justify-between gap-4 group active:scale-[0.98] relative overflow-hidden">
-            <div class="flex items-center gap-4 relative z-10">
+            class="w-full p-2.5 sm:p-3.5 rounded-2xl border border-red-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-red-400 transition-all duration-300 flex items-center justify-between gap-2 group active:scale-[0.98] relative overflow-hidden">
+            <div class="flex items-center gap-2 sm:gap-3 relative z-10 min-w-0">
               <div
-                class="w-12 h-12 rounded-2xl bg-red-600 text-white flex items-center justify-center text-2xl shrink-0 shadow-md group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-2xl">search</span>
+                class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-red-600 text-white flex items-center justify-center text-lg sm:text-2xl shrink-0 shadow-xs group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-lg sm:text-2xl">search</span>
               </div>
-              <div class="text-left">
-                <span
-                  class="text-sm sm:text-base font-black text-slate-900 dark:text-slate-100 block tracking-tight">Tra
-                  cứu thủ tục hành chính</span>
-                <span class="text-xs font-bold text-red-600 dark:text-red-400 mt-0.5 block">Tra cứu quy trình & hồ
-                  sơ</span>
+              <div class="text-left min-w-0">
+                <span id="quick-util-title-0"
+                  class="text-xs sm:text-sm lg:text-base font-black text-slate-900 dark:text-slate-100 block tracking-tight leading-tight truncate">Tra cứu thủ tục</span>
+                <span id="quick-util-subtitle-0" class="text-[10px] sm:text-xs font-bold text-red-600 dark:text-red-400 mt-0.5 block truncate">Quy trình & hồ sơ</span>
               </div>
             </div>
             <div
-              class="w-9 h-9 rounded-xl bg-red-500/10 text-red-600 flex items-center justify-center shrink-0 group-hover:bg-red-600 group-hover:text-white transition-all relative z-10">
+              class="hidden sm:flex w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-red-500/10 text-red-600 items-center justify-center shrink-0 group-hover:bg-red-600 group-hover:text-white transition-all relative z-10">
               <span
-                class="material-symbols-outlined text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                class="material-symbols-outlined text-base sm:text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
             </div>
           </a>
 
           <!-- Button 2: Tổ dân phố cũ - mới -->
           <a href="/tdp-merger.html"
             style="background-image: linear-gradient(110deg, rgba(255, 255, 255, 0.96) 0%, rgba(254, 243, 199, 0.92) 100%), url('/hero-bg.jpg'); background-size: cover; background-position: center;"
-            class="w-full p-4 sm:p-4.5 rounded-2xl border border-amber-200 dark:border-slate-800 shadow-md hover:shadow-xl hover:border-amber-400 transition-all duration-300 flex items-center justify-between gap-4 group active:scale-[0.98] relative overflow-hidden">
-            <div class="flex items-center gap-4 relative z-10">
+            class="w-full p-2.5 sm:p-3.5 rounded-2xl border border-amber-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-amber-400 transition-all duration-300 flex items-center justify-between gap-2 group active:scale-[0.98] relative overflow-hidden">
+            <div class="flex items-center gap-2 sm:gap-3 relative z-10 min-w-0">
               <div
-                class="w-12 h-12 rounded-2xl bg-amber-600 text-white flex items-center justify-center text-2xl shrink-0 shadow-md group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-2xl">diversity_3</span>
+                class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-amber-600 text-white flex items-center justify-center text-lg sm:text-2xl shrink-0 shadow-xs group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-lg sm:text-2xl">diversity_3</span>
               </div>
-              <div class="text-left">
-                <span class="text-sm sm:text-base font-black text-slate-900 dark:text-slate-100 block tracking-tight">Tổ
-                  dân phố cũ - mới</span>
-                <span class="text-xs font-bold text-amber-700 dark:text-amber-400 mt-0.5 block">Phương án sáp nhập
-                  2026</span>
+              <div class="text-left min-w-0">
+                <span id="quick-util-title-1"
+                  class="text-xs sm:text-sm lg:text-base font-black text-slate-900 dark:text-slate-100 block tracking-tight leading-tight truncate">TDP cũ - mới</span>
+                <span id="quick-util-subtitle-1" class="text-[10px] sm:text-xs font-bold text-amber-700 dark:text-amber-400 mt-0.5 block truncate">Sáp nhập 2026</span>
               </div>
             </div>
             <div
-              class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 group-hover:bg-amber-600 group-hover:text-white transition-all relative z-10">
+              class="hidden sm:flex w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-500/10 text-amber-600 items-center justify-center shrink-0 group-hover:bg-amber-600 group-hover:text-white transition-all relative z-10">
               <span
-                class="material-symbols-outlined text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                class="material-symbols-outlined text-base sm:text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
             </div>
           </a>
 
-          <!-- Button: Gia đình chính sách -->
+          <!-- Button 3: Gia đình chính sách -->
           <a href="/meritorious-families.html"
             style="background-image: linear-gradient(110deg, rgba(255, 255, 255, 0.96) 0%, rgba(254, 243, 199, 0.92) 100%), url('/hero-bg.jpg'); background-size: cover; background-position: center;"
-            class="w-full p-4 sm:p-4.5 rounded-2xl border border-amber-200 dark:border-slate-800 shadow-md hover:shadow-xl hover:border-amber-400 transition-all duration-300 flex items-center justify-between gap-4 group active:scale-[0.98] relative overflow-hidden">
-            <div class="flex items-center gap-4 relative z-10">
+            class="w-full p-2.5 sm:p-3.5 rounded-2xl border border-amber-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-amber-400 transition-all duration-300 flex items-center justify-between gap-2 group active:scale-[0.98] relative overflow-hidden">
+            <div class="flex items-center gap-2 sm:gap-3 relative z-10 min-w-0">
               <div
-                class="w-12 h-12 rounded-2xl bg-amber-600 text-white flex items-center justify-center text-2xl shrink-0 shadow-md group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-2xl">military_tech</span>
+                class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-amber-600 text-white flex items-center justify-center text-lg sm:text-2xl shrink-0 shadow-xs group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-lg sm:text-2xl">military_tech</span>
               </div>
-              <div class="text-left">
-                <span
-                  class="text-sm sm:text-base font-black text-slate-900 dark:text-slate-100 block tracking-tight">Gia
-                  đình chính sách</span>
-
+              <div class="text-left min-w-0">
+                <span id="quick-util-title-2"
+                  class="text-xs sm:text-sm lg:text-base font-black text-slate-900 dark:text-slate-100 block tracking-tight leading-tight truncate">Chính sách</span>
+                <span id="quick-util-subtitle-2" class="text-[10px] sm:text-xs font-bold text-amber-700 dark:text-amber-400 mt-0.5 block truncate">Người có công</span>
               </div>
             </div>
             <div
-              class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 group-hover:bg-amber-600 group-hover:text-white transition-all relative z-10">
+              class="hidden sm:flex w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-500/10 text-amber-600 items-center justify-center shrink-0 group-hover:bg-amber-600 group-hover:text-white transition-all relative z-10">
               <span
-                class="material-symbols-outlined text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                class="material-symbols-outlined text-base sm:text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
             </div>
           </a>
-
 
           <!-- Button 4: Lịch thu gom rác -->
           <a href="/waste-schedule.html"
             style="background-image: linear-gradient(110deg, rgba(255, 255, 255, 0.96) 0%, rgba(243, 232, 255, 0.92) 100%), url('/hero-bg.jpg'); background-size: cover; background-position: center;"
-            class="w-full p-4 sm:p-4.5 rounded-2xl border border-purple-200 dark:border-slate-800 shadow-md hover:shadow-xl hover:border-purple-400 transition-all duration-300 flex items-center justify-between gap-4 group active:scale-[0.98] relative overflow-hidden">
-            <div class="flex items-center gap-4 relative z-10">
+            class="w-full p-2.5 sm:p-3.5 rounded-2xl border border-purple-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-purple-400 transition-all duration-300 flex items-center justify-between gap-2 group active:scale-[0.98] relative overflow-hidden">
+            <div class="flex items-center gap-2 sm:gap-3 relative z-10 min-w-0">
               <div
-                class="w-12 h-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center text-2xl shrink-0 shadow-md group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-2xl">delete</span>
+                class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-purple-600 text-white flex items-center justify-center text-lg sm:text-2xl shrink-0 shadow-xs group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-lg sm:text-2xl">delete</span>
               </div>
-              <div class="text-left">
-                <span
-                  class="text-sm sm:text-base font-black text-slate-900 dark:text-slate-100 block tracking-tight">Lịch
-                  thu gom rác</span>
-
+              <div class="text-left min-w-0">
+                <span id="quick-util-title-3"
+                  class="text-xs sm:text-sm lg:text-base font-black text-slate-900 dark:text-slate-100 block tracking-tight leading-tight truncate">Lịch gom rác</span>
+                <span id="quick-util-subtitle-3" class="text-[10px] sm:text-xs font-bold text-purple-700 dark:text-purple-400 mt-0.5 block truncate">Thời gian chi tiết</span>
               </div>
             </div>
             <div
-              class="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center shrink-0 group-hover:bg-purple-600 group-hover:text-white transition-all relative z-10">
+              class="hidden sm:flex w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-purple-500/10 text-purple-600 items-center justify-center shrink-0 group-hover:bg-purple-600 group-hover:text-white transition-all relative z-10">
               <span
-                class="material-symbols-outlined text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                class="material-symbols-outlined text-base sm:text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
             </div>
           </a>
 
           <!-- Button 5: Tìm cán bộ -->
           <a href="/officials.html"
             style="background-image: linear-gradient(110deg, rgba(255, 255, 255, 0.96) 0%, rgba(239, 246, 255, 0.92) 100%), url('/hero-bg.jpg'); background-size: cover; background-position: center;"
-            class="w-full p-4 sm:p-4.5 rounded-2xl border border-blue-200 dark:border-slate-800 shadow-md hover:shadow-xl hover:border-blue-400 transition-all duration-300 flex items-center justify-between gap-4 group active:scale-[0.98] relative overflow-hidden">
-            <div class="flex items-center gap-4 relative z-10">
+            class="w-full p-2.5 sm:p-3.5 rounded-2xl border border-blue-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-blue-400 transition-all duration-300 flex items-center justify-between gap-2 group active:scale-[0.98] relative overflow-hidden">
+            <div class="flex items-center gap-2 sm:gap-3 relative z-10 min-w-0">
               <div
-                class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-2xl shrink-0 shadow-md group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-2xl">person</span>
+                class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-blue-600 text-white flex items-center justify-center text-lg sm:text-2xl shrink-0 shadow-xs group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-lg sm:text-2xl">person</span>
               </div>
-              <div class="text-left">
-                <span
-                  class="text-sm sm:text-base font-black text-slate-900 dark:text-slate-100 block tracking-tight">Danh
-                  sách cán bộ Phường</span>
-
+              <div class="text-left min-w-0">
+                <span id="quick-util-title-4"
+                  class="text-xs sm:text-sm lg:text-base font-black text-slate-900 dark:text-slate-100 block tracking-tight leading-tight truncate">Cán bộ Phường</span>
+                <span id="quick-util-subtitle-4" class="text-[10px] sm:text-xs font-bold text-blue-700 dark:text-blue-400 mt-0.5 block truncate">Danh sách & liên hệ</span>
               </div>
             </div>
             <div
-              class="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-all relative z-10">
+              class="hidden sm:flex w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-500/10 text-blue-600 items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-all relative z-10">
               <span
-                class="material-symbols-outlined text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                class="material-symbols-outlined text-base sm:text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
             </div>
           </a>
 
           <!-- Button 6: Lịch tiếp công dân -->
           <a href="/citizen-reception.html"
             style="background-image: linear-gradient(110deg, rgba(255, 255, 255, 0.96) 0%, rgba(240, 253, 250, 0.92) 100%), url('/hero-bg.jpg'); background-size: cover; background-position: center;"
-            class="w-full p-4 sm:p-4.5 rounded-2xl border border-teal-200 dark:border-slate-800 shadow-md hover:shadow-xl hover:border-teal-400 transition-all duration-300 flex items-center justify-between gap-4 group active:scale-[0.98] relative overflow-hidden">
-            <div class="flex items-center gap-4 relative z-10">
+            class="w-full p-2.5 sm:p-3.5 rounded-2xl border border-teal-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-teal-400 transition-all duration-300 flex items-center justify-between gap-2 group active:scale-[0.98] relative overflow-hidden">
+            <div class="flex items-center gap-2 sm:gap-3 relative z-10 min-w-0">
               <div
-                class="w-12 h-12 rounded-2xl bg-teal-600 text-white flex items-center justify-center text-2xl shrink-0 shadow-md group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-2xl">calendar_month</span>
+                class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-teal-600 text-white flex items-center justify-center text-lg sm:text-2xl shrink-0 shadow-xs group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-lg sm:text-2xl">calendar_month</span>
               </div>
-              <div class="text-left">
-                <span
-                  class="text-sm sm:text-base font-black text-slate-900 dark:text-slate-100 block tracking-tight">Lịch
-                  tiếp công dân</span>
-
+              <div class="text-left min-w-0">
+                <span id="quick-util-title-5"
+                  class="text-xs sm:text-sm lg:text-base font-black text-slate-900 dark:text-slate-100 block tracking-tight leading-tight truncate">Tiếp công dân</span>
+                <span id="quick-util-subtitle-5" class="text-[10px] sm:text-xs font-bold text-teal-700 dark:text-teal-400 mt-0.5 block truncate">Lịch & địa điểm</span>
               </div>
             </div>
             <div
-              class="w-9 h-9 rounded-xl bg-teal-500/10 text-teal-600 flex items-center justify-center shrink-0 group-hover:bg-teal-600 group-hover:text-white transition-all relative z-10">
+              class="hidden sm:flex w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-teal-500/10 text-teal-600 items-center justify-center shrink-0 group-hover:bg-teal-600 group-hover:text-white transition-all relative z-10">
               <span
-                class="material-symbols-outlined text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                class="material-symbols-outlined text-base sm:text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
             </div>
           </a>
 
-          <!-- Button 7: Phản ánh kiến nghị -->
+          <!-- Button 7: Phản ánh kiến nghị (Trải rộng 2 cột ở cuối hàng) -->
           <a href="/feedback.html"
             style="background-image: linear-gradient(110deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 247, 237, 0.92) 100%), url('/hero-bg.jpg'); background-size: cover; background-position: center;"
-            class="w-full p-4 sm:p-4.5 rounded-2xl border border-orange-200 dark:border-slate-800 shadow-md hover:shadow-xl hover:border-orange-400 transition-all duration-300 flex items-center justify-between gap-4 group active:scale-[0.98] relative overflow-hidden">
-            <div class="flex items-center gap-4 relative z-10">
+            class="col-span-2 lg:col-span-1 w-full p-2.5 sm:p-3.5 rounded-2xl border border-orange-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-orange-400 transition-all duration-300 flex items-center justify-between gap-2.5 group active:scale-[0.98] relative overflow-hidden">
+            <div class="flex items-center gap-2.5 sm:gap-3.5 relative z-10 min-w-0">
               <div
-                class="w-12 h-12 rounded-2xl bg-orange-600 text-white flex items-center justify-center text-2xl shrink-0 shadow-md group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined text-2xl">campaign</span>
+                class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-orange-600 text-white flex items-center justify-center text-lg sm:text-2xl shrink-0 shadow-xs group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-lg sm:text-2xl">campaign</span>
               </div>
-              <div class="text-left">
-                <span
-                  class="text-sm sm:text-base font-black text-slate-900 dark:text-slate-100 block tracking-tight">Phản
-                  ánh kiến nghị</span>
+              <div class="text-left min-w-0">
+                <span id="quick-util-title-6"
+                  class="text-xs sm:text-sm lg:text-base font-black text-slate-900 dark:text-slate-100 block tracking-tight leading-tight truncate">Phản ánh kiến nghị</span>
+                <span id="quick-util-subtitle-6" class="text-[10px] sm:text-xs font-bold text-orange-700 dark:text-orange-400 mt-0.5 block truncate">Gửi ý kiến tới chính quyền Phường</span>
               </div>
             </div>
             <div
-              class="w-9 h-9 rounded-xl bg-orange-500/10 text-orange-600 flex items-center justify-center shrink-0 group-hover:bg-orange-600 group-hover:text-white transition-all relative z-10">
+              class="w-7 h-7 sm:w-9 sm:h-9 rounded-xl bg-orange-500/10 text-orange-600 flex items-center justify-center shrink-0 group-hover:bg-orange-600 group-hover:text-white transition-all relative z-10">
               <span
-                class="material-symbols-outlined text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                class="material-symbols-outlined text-sm sm:text-lg group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
             </div>
           </a>
 

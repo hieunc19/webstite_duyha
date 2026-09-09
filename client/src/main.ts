@@ -22,6 +22,16 @@ import proceduresData from './data/procedures.json';
 import procedureVideosData from './data/procedure_videos.json';
 import policiesData from './data/policies.json';
 import wasteSchedulesData from './data/waste_schedules.json';
+import procedureCategoriesData from './data/procedure_categories.json';
+
+const HOMEPAGE_FALLBACK_PROC_CATEGORIES = [
+  { id: 1, slug: 'residence', name: 'Cư trú & Định danh điện tử' },
+  { id: 2, slug: 'vneid', name: 'Định danh VNeID' },
+  { id: 3, slug: 'civil', name: 'Hộ tịch & Chứng thực' },
+  { id: 4, slug: 'land', name: 'Đất đai & Xây dựng' },
+  { id: 5, slug: 'social', name: 'An sinh xã hội & Người có công' },
+  { id: 6, slug: 'other', name: 'Lĩnh vực khác' }
+];
 
 const HOMEPAGE_FALLBACK_TDPS = [
   { id: 1, tdp_name: "TDP Duy Minh", morning_shift: "05h30 - 07h00", collection_days: ["thu_2", "thu_5"] },
@@ -118,6 +128,7 @@ class PortalApp {
   private procedureVideos: any[] = procedureVideosData as any[];
   private policiesList: any[] = policiesData as any[];
   private wasteSchedulesList: any[] = (wasteSchedulesData as any[]) || [];
+  private procedureCategoriesList: any[] = (procedureCategoriesData as any[]) || HOMEPAGE_FALLBACK_PROC_CATEGORIES;
   private activeCategory: string = 'all';
   private currentPlace: Place | null = null;
   private procedureActiveTab = 'popular';
@@ -151,6 +162,7 @@ class PortalApp {
     this.renderTdpModalTables();
     this.renderMeritoriousSection();
     this.renderProceduresSection();
+    this.renderHomepageProcedureCategories();
     this.renderHomepageWasteSchedule();
 
     this.initSearch();
@@ -178,7 +190,7 @@ class PortalApp {
     window.openAllAgenciesModal = this.openAllAgenciesModal.bind(this);
     window.closeAllAgenciesModal = this.closeAllAgenciesModal.bind(this);
     window.showMeritoriousDetail = this.showMeritoriousDetail.bind(this);
-    window.closeMeritoriousModal = () => {};
+    window.closeMeritoriousModal = () => { };
     window.filterMeritoriousByEvent = (_eventId: number | 'all') => {
       this.renderMeritoriousSection();
     };
@@ -329,15 +341,29 @@ class PortalApp {
 
   private async initPortalData() {
     try {
-      const [placesRes, officialsRes, departmentsRes, neighborhoodsRes, familiesRes, tdpOfficialsRes, settingsRes, sectionsRes] = await Promise.all([
-        fetch('/api/places').catch(() => null),
-        fetch('/api/officials').catch(() => null),
-        fetch('/api/departments').catch(() => null),
-        fetch('/api/neighborhoods').catch(() => null),
-        fetch('/api/meritorious-families').catch(() => null),
-        fetch('/api/tdp-officials').catch(() => null),
-        fetch('/api/settings').catch(() => null),
-        fetch('/api/homepage-sections').catch(() => null)
+      const cacheBust = `?v=${Date.now()}`;
+      const [
+        placesRes,
+        officialsRes,
+        departmentsRes,
+        neighborhoodsRes,
+        familiesRes,
+        tdpOfficialsRes,
+        settingsRes,
+        sectionsRes,
+        wasteRes,
+        catRes
+      ] = await Promise.all([
+        fetch('/api/places' + cacheBust, { cache: 'no-store' }).catch(() => null),
+        fetch('/api/officials' + cacheBust, { cache: 'no-store' }).catch(() => null),
+        fetch('/api/departments' + cacheBust, { cache: 'no-store' }).catch(() => null),
+        fetch('/api/neighborhoods' + cacheBust, { cache: 'no-store' }).catch(() => null),
+        fetch('/api/meritorious-families' + cacheBust, { cache: 'no-store' }).catch(() => null),
+        fetch('/api/tdp-officials' + cacheBust, { cache: 'no-store' }).catch(() => null),
+        fetch('/api/settings' + cacheBust, { cache: 'no-store' }).catch(() => null),
+        fetch('/api/homepage-sections' + cacheBust, { cache: 'no-store' }).catch(() => null),
+        fetch('/api/waste-schedules' + cacheBust, { cache: 'no-store' }).catch(() => null),
+        fetch('/api/procedure-categories' + cacheBust, { cache: 'no-store' }).catch(() => null)
       ]);
 
       if (placesRes && placesRes.ok) {
@@ -437,19 +463,25 @@ class PortalApp {
         }
       }
 
-      // Sync Waste Schedules from API or JSON
-      try {
-        const wasteRes = await fetch('/api/waste-schedules?v=' + Date.now()).catch(() => null);
-        if (wasteRes && wasteRes.ok) {
-          const wData = await wasteRes.json();
-          if (Array.isArray(wData) && wData.length > 0) {
-            this.wasteSchedulesList = wData;
-            this.renderHomepageWasteSchedule();
-          }
+      // Sync Waste Schedules directly from DB API
+      if (wasteRes && wasteRes.ok) {
+        const wData = await wasteRes.json();
+        if (Array.isArray(wData) && wData.length > 0) {
+          this.wasteSchedulesList = wData;
+          this.renderHomepageWasteSchedule();
         }
-      } catch (_) {}
+      }
+
+      // Sync Procedure Categories directly from DB API
+      if (catRes && catRes.ok) {
+        const cData = await catRes.json();
+        if (Array.isArray(cData) && cData.length > 0) {
+          this.procedureCategoriesList = cData;
+          this.renderHomepageProcedureCategories();
+        }
+      }
     } catch (e) {
-      console.log('API call fallback to seed data');
+      console.log('API call fallback to bundled data');
     }
   }
 
@@ -492,6 +524,27 @@ class PortalApp {
 
       if (sec.section_code === 'footer_section') {
         applySharedFooterConfig(sec);
+        return;
+      }
+
+      if (sec.section_code === 'quick_utilities') {
+        const utilEl = document.getElementById('section-quick-utilities');
+        if (utilEl) {
+          if (sec.is_visible === false) {
+            utilEl.classList.add('hidden');
+          } else {
+            utilEl.classList.remove('hidden');
+          }
+        }
+        const items = sec.settings?.items;
+        if (Array.isArray(items)) {
+          items.forEach((item: any, idx: number) => {
+            const tEl = document.getElementById(`quick-util-title-${idx}`);
+            const sEl = document.getElementById(`quick-util-subtitle-${idx}`);
+            if (tEl && item.title) tEl.textContent = item.title;
+            if (sEl && item.subtitle) sEl.textContent = item.subtitle;
+          });
+        }
         return;
       }
 
@@ -575,7 +628,7 @@ class PortalApp {
             heroVideo.style.objectFit = fitMode;
             heroVideo.style.objectPosition = posMode;
             heroVideo.classList.remove('hidden');
-            heroVideo.play().catch(() => {});
+            heroVideo.play().catch(() => { });
           }
           if (heroOverlay) heroOverlay.classList.remove('hidden');
           if (heroSection) {
@@ -599,6 +652,17 @@ class PortalApp {
         if (Array.isArray(sec.settings?.selected_ids) && sec.settings.selected_ids.length > 0) {
           this.selectedAgencyIds = sec.settings.selected_ids.map(Number);
           this.renderPortalGrid();
+        }
+      }
+
+      if (sec.section_code === 'procedures_utilities' || sec.section_code === 'hdsd_procedure') {
+        const schedBtn = document.getElementById('btn-procedures_utilities') as HTMLAnchorElement;
+        const schedBtnText = document.getElementById('btn-text-procedures_utilities');
+        if (schedBtn && sec.settings?.schedule_btn_url) {
+          schedBtn.href = sec.settings.schedule_btn_url;
+        }
+        if (schedBtnText && sec.settings?.schedule_btn_text) {
+          schedBtnText.textContent = sec.settings.schedule_btn_text;
         }
       }
 
@@ -1103,7 +1167,7 @@ class PortalApp {
               <a href="tel:${phone}" onclick="event.stopPropagation()"
                 class="flex-1 bg-white hover:bg-slate-100 text-slate-900 rounded-xl py-3 px-3.5 font-extrabold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-95 whitespace-nowrap">
                 <span class="material-symbols-outlined text-base sm:text-lg text-blue-700">call</span>
-                <span>Hotline & Trực ban</span>
+                <span>Hotline</span>
               </a>
             ` : ''}
             <a href="${directionsUrl}" target="_blank" onclick="event.stopPropagation()"
@@ -1515,10 +1579,11 @@ class PortalApp {
 
   private async fetchProceduresData() {
     try {
+      const cacheBust = `?v=${Date.now()}`;
       const [procRes, videoRes, polRes] = await Promise.all([
-        fetch('/api/procedures').catch(() => null),
-        fetch('/api/procedure-videos').catch(() => null),
-        fetch('/api/policies').catch(() => null)
+        fetch('/api/procedures' + cacheBust, { cache: 'no-store' }).catch(() => null),
+        fetch('/api/procedure-videos' + cacheBust, { cache: 'no-store' }).catch(() => null),
+        fetch('/api/policies' + cacheBust, { cache: 'no-store' }).catch(() => null)
       ]);
 
       if (procRes && procRes.ok) {
@@ -1717,8 +1782,8 @@ class PortalApp {
         <!-- Policy Documents Tab Content (Real DB Data) -->
         <div class="space-y-3.5 pt-2">
           ${displayPolicies.map(doc => {
-            const docLink = doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : '/procedures.html?tab=policies';
-            return `
+        const docLink = doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : '/procedures.html?tab=policies';
+        return `
               <div onclick="window.location.href='/procedures.html?tab=policies'"
                 class="p-4 sm:p-5 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl hover:border-[#1d7fe0] hover:shadow-md transition-all cursor-pointer group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div class="flex-1 min-w-0 space-y-1">
@@ -1741,7 +1806,7 @@ class PortalApp {
                 </a>
               </div>
             `;
-          }).join('')}
+      }).join('')}
         </div>
       `;
     }
@@ -1768,6 +1833,226 @@ class PortalApp {
     container.innerHTML = html;
   }
 
+  private renderHomepageProcedureCategories() {
+    const container = document.getElementById('homepage-procedure-categories-container');
+    if (!container) return;
+
+    const rawList = (this.procedureCategoriesList && this.procedureCategoriesList.length > 0)
+      ? this.procedureCategoriesList.filter((c: any) => c.is_active !== false)
+      : HOMEPAGE_FALLBACK_PROC_CATEGORIES;
+
+    const colorClassesMap: Record<string, string> = {
+      'info': 'bg-sky-500/10 text-[#1d7fe0] dark:text-sky-400 border-sky-500/20',
+      'success': 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+      'warning': 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
+      'danger': 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20',
+      'primary': 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20',
+      'gray': 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20'
+    };
+
+    const iconSlugMap: Record<string, string> = {
+      'residence': 'badge',
+      'vneid': 'smartphone',
+      'civil': 'history_edu',
+      'land': 'home_work',
+      'social': 'volunteer_activism',
+      'other': 'apps'
+    };
+
+    (window as any).slideProcCat = (dir: 'prev' | 'next') => {
+      const slider = document.getElementById('mobile-proc-cat-slider');
+      if (slider) {
+        const width = slider.clientWidth;
+        const maxScroll = slider.scrollWidth - width;
+        const currentScroll = slider.scrollLeft;
+
+        if (dir === 'next') {
+          if (currentScroll >= maxScroll - 15) {
+            // Slider loop: đang ở slide cuối, loop mượt về slide đầu tiên
+            slider.scrollTo({ left: 0, behavior: 'smooth' });
+          } else {
+            slider.scrollBy({ left: width, behavior: 'smooth' });
+          }
+        } else {
+          if (currentScroll <= 15) {
+            // Slider loop: đang ở slide đầu, loop mượt về slide cuối cùng
+            slider.scrollTo({ left: maxScroll, behavior: 'smooth' });
+          } else {
+            slider.scrollBy({ left: -width, behavior: 'smooth' });
+          }
+        }
+      }
+    };
+
+    // Helper: Card dạng dọc căn giữa (Dành cho Mobile Slider 2x2 tương tự ảnh mẫu)
+    const renderMobileCard = (cat: any) => {
+      if (!cat) {
+        return `
+          <a href="/procedures.html"
+            class="group p-3 rounded-2xl bg-sky-50/60 hover:bg-sky-100/80 dark:bg-slate-800/60 dark:hover:bg-slate-800 border border-dashed border-sky-300 dark:border-sky-800 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col items-center justify-center text-center gap-2 active:scale-[0.97] min-h-[125px]">
+            <div class="w-12 h-12 rounded-2xl bg-sky-500/10 text-[#1d7fe0] dark:text-sky-400 flex items-center justify-center border border-sky-500/20 shadow-2xs group-hover:scale-110 transition-transform shrink-0">
+              <span class="material-symbols-outlined text-2xl">read_more</span>
+            </div>
+            <div class="w-full">
+              <h4 class="text-xs font-black text-[#1d7fe0] dark:text-sky-400 leading-snug">
+                Xem tất cả
+              </h4>
+            </div>
+          </a>
+        `;
+      }
+
+      const slug = cat.slug || 'all';
+      const colorClass = (cat.color && colorClassesMap[cat.color])
+        ? colorClassesMap[cat.color]
+        : (slug === 'vneid' ? colorClassesMap['success'] : (slug === 'civil' ? colorClassesMap['warning'] : (slug === 'land' ? colorClassesMap['danger'] : (slug === 'social' ? colorClassesMap['primary'] : colorClassesMap['info']))));
+
+      const iconName = cat.icon || iconSlugMap[slug] || 'description';
+
+      return `
+        <a href="/procedures.html?cat=${slug}"
+          class="group p-3 rounded-2xl bg-white dark:bg-slate-850 hover:bg-sky-50/40 dark:hover:bg-slate-800 border border-slate-200/90 hover:border-[#1d7fe0] dark:border-slate-700/80 dark:hover:border-sky-400 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col items-center justify-center text-center gap-2 active:scale-[0.97] min-h-[125px]">
+          <div class="w-12 h-12 rounded-2xl ${colorClass} flex items-center justify-center border shadow-2xs group-hover:scale-110 transition-transform shrink-0">
+            <span class="material-symbols-outlined text-2xl">${iconName}</span>
+          </div>
+          <div class="w-full">
+            <h4 class="text-xs font-black text-slate-900 dark:text-white group-hover:text-[#1d7fe0] dark:group-hover:text-sky-400 transition-colors leading-snug line-clamp-2">
+              ${cat.name}
+            </h4>
+          </div>
+        </a>
+      `;
+    };
+
+    // Helper: Card dạng ngang (Dành cho Tablet & Desktop Grid)
+    const renderDesktopCard = (cat: any) => {
+      const slug = cat.slug || 'all';
+      const colorClass = (cat.color && colorClassesMap[cat.color])
+        ? colorClassesMap[cat.color]
+        : (slug === 'vneid' ? colorClassesMap['success'] : (slug === 'civil' ? colorClassesMap['warning'] : (slug === 'land' ? colorClassesMap['danger'] : (slug === 'social' ? colorClassesMap['primary'] : colorClassesMap['info']))));
+
+      const iconName = cat.icon || iconSlugMap[slug] || 'description';
+
+      return `
+        <a href="/procedures.html?cat=${slug}"
+          class="group p-3.5 sm:p-4 rounded-2xl bg-slate-50/90 hover:bg-white dark:bg-slate-800/70 dark:hover:bg-slate-800 border border-slate-200/80 hover:border-[#1d7fe0] dark:border-slate-700/80 dark:hover:border-sky-400 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between gap-3 active:scale-[0.98]">
+          <div class="flex items-center justify-between">
+            <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl ${colorClass} flex items-center justify-center border shadow-2xs group-hover:scale-110 transition-transform shrink-0">
+              <span class="material-symbols-outlined text-xl sm:text-2xl">${iconName}</span>
+            </div>
+            <span class="material-symbols-outlined text-slate-300 dark:text-slate-600 group-hover:text-[#1d7fe0] dark:group-hover:text-sky-400 text-lg group-hover:translate-x-0.5 transition-all">
+              arrow_forward
+            </span>
+          </div>
+          <div>
+            <h4 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white group-hover:text-[#1d7fe0] dark:group-hover:text-sky-400 transition-colors leading-snug line-clamp-2">
+              ${cat.name}
+            </h4>
+          </div>
+        </a>
+      `;
+    };
+
+    // Tạo các slide sao cho mỗi slide hiển thị 2 cột x 2 hàng:
+    // 2 danh mục ở cột cuối của slide trước (Định danh & Đất đai) sẽ trở thành cột đầu của slide tiếp theo
+    const slides: any[][] = [];
+    if (rawList.length <= 4) {
+      slides.push(rawList);
+    } else {
+      // Phân chia danh mục thành các cặp cột dọc:
+      // Cột 0: [rawList[0]: Cư trú, rawList[2]: Hộ tịch]
+      // Cột 1: [rawList[1]: Định danh VNeID, rawList[3]: Đất đai]
+      // Cột 2: [rawList[4]: An sinh xã hội, rawList[5]: Lĩnh vực khác]
+      const colPairs: { top: any; bot: any }[] = [
+        { top: rawList[0], bot: rawList[2] || null },
+        { top: rawList[1], bot: rawList[3] || null }
+      ];
+
+      for (let i = 4; i < rawList.length; i += 2) {
+        colPairs.push({
+          top: rawList[i],
+          bot: rawList[i + 1] || null
+        });
+      }
+
+      // Mỗi slide ghép 2 cột liên tiếp (trượt tịnh tiến theo từng cột):
+      // Slide 1: Cột 0 (Trái) + Cột 1 (Phải: Định danh, Đất đai)
+      // Slide 2: Cột 1 (Trái: Định danh, Đất đai) + Cột 2 (Phải: An sinh, Khác)
+      for (let c = 0; c < colPairs.length - 1; c++) {
+        const leftCol = colPairs[c];
+        const rightCol = colPairs[c + 1];
+        slides.push([
+          leftCol.top,   // Top Left
+          rightCol.top,  // Top Right
+          leftCol.bot,   // Bottom Left
+          rightCol.bot   // Bottom Right
+        ]);
+      }
+    }
+
+    container.innerHTML = `
+      <!-- 1. MOBILE SLIDER: HIỂN THỊ 4 DANH MỤC TRÊN MỖI VIEW (LƯỚI 2x2) KÈM NÚT MŨI TÊN LOOP (SM:HIDDEN) -->
+      <div class="relative sm:hidden py-1">
+        ${slides.length > 1 ? `
+          <button onclick="window.slideProcCat('prev')" aria-label="Danh mục trước"
+            class="absolute -left-2.5 top-[46%] -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg flex items-center justify-center text-slate-700 dark:text-slate-200 hover:text-[#1d7fe0] active:scale-90 transition-all">
+            <span class="material-symbols-outlined text-lg">arrow_back</span>
+          </button>
+        ` : ''}
+
+        <div id="mobile-proc-cat-slider" class="overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar flex w-full">
+          ${slides.map((slide) => `
+            <div class="w-full shrink-0 snap-center grid grid-cols-2 gap-2.5 px-1">
+              ${slide.map(c => renderMobileCard(c)).join('')}
+            </div>
+          `).join('')}
+        </div>
+
+        ${slides.length > 1 ? `
+          <button onclick="window.slideProcCat('next')" aria-label="Danh mục tiếp theo"
+            class="absolute -right-2.5 top-[46%] -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg flex items-center justify-center text-slate-700 dark:text-slate-200 hover:text-[#1d7fe0] active:scale-90 transition-all">
+            <span class="material-symbols-outlined text-lg">arrow_forward</span>
+          </button>
+        ` : ''}
+
+        ${slides.length > 1 ? `
+          <div class="flex justify-center items-center gap-1.5 pt-3">
+            ${slides.map((_, i) => `
+              <span id="proc-cat-dot-${i}" class="h-1.5 rounded-full transition-all duration-300 ${i === 0 ? 'w-5 bg-[#1d7fe0]' : 'w-1.5 bg-slate-300 dark:bg-slate-700'}"></span>
+            `).join('')}
+          </div>
+        ` : ''}
+      </div>
+
+      <!-- 2. DESKTOP & TABLET GRID: HIỂN THỊ ĐẦY ĐỦ DẠNG LƯỚI 3 CỘT (HIDDEN SM:GRID) -->
+      <div class="hidden sm:grid sm:grid-cols-3 gap-3 sm:gap-3.5">
+        ${rawList.map(c => renderDesktopCard(c)).join('')}
+      </div>
+    `;
+
+    // Đồng bộ trạng thái chấm tròn Dots khi vuốt cảm ứng trên điện thoại
+    setTimeout(() => {
+      const slider = document.getElementById('mobile-proc-cat-slider');
+      if (slider && slides.length > 1) {
+        slider.addEventListener('scroll', () => {
+          const scrollLeft = slider.scrollLeft;
+          const width = slider.clientWidth || 1;
+          const activeIdx = Math.min(slides.length - 1, Math.max(0, Math.round(scrollLeft / width)));
+          for (let i = 0; i < slides.length; i++) {
+            const dot = document.getElementById(`proc-cat-dot-${i}`);
+            if (dot) {
+              if (i === activeIdx) {
+                dot.className = 'h-1.5 rounded-full transition-all duration-300 w-5 bg-[#1d7fe0]';
+              } else {
+                dot.className = 'h-1.5 rounded-full transition-all duration-300 w-1.5 bg-slate-300 dark:bg-slate-700';
+              }
+            }
+          }
+        }, { passive: true });
+      }
+    }, 150);
+  }
+
   private renderHomepageWasteSchedule() {
     const container = document.getElementById('homepage-waste-schedule-container');
     if (!container) return;
@@ -1789,60 +2074,157 @@ class PortalApp {
       }))
       .slice(0, 10);
 
-    const days = [
-      { key: 'thu_2', label: 'THỨ 2' },
-      { key: 'thu_3', label: 'THỨ 3' },
-      { key: 'thu_4', label: 'THỨ 4' },
-      { key: 'thu_5', label: 'THỨ 5' },
-      { key: 'thu_6', label: 'THỨ 6' },
-      { key: 'thu_7', label: 'THỨ 7' },
-      { key: 'chu_nhat', label: 'CHỦ NHẬT' }
-    ];
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0: CN, 1: T2, 2: T3, 3: T4, 4: T5, 5: T6, 6: T7
+    const dayMapToKey: Record<number, string> = {
+      0: 'chu_nhat',
+      1: 'thu_2',
+      2: 'thu_3',
+      3: 'thu_4',
+      4: 'thu_5',
+      5: 'thu_6',
+      6: 'thu_7'
+    };
+    const todayKey = dayMapToKey[dayOfWeek];
+
+    const dayLabels: Record<string, string> = {
+      'thu_2': 'Thứ 2',
+      'thu_3': 'Thứ 3',
+      'thu_4': 'Thứ 4',
+      'thu_5': 'Thứ 5',
+      'thu_6': 'Thứ 6',
+      'thu_7': 'Thứ 7',
+      'chu_nhat': 'Chủ Nhật'
+    };
+
+    const formatDays = (daysList: string[]) => {
+      if (!Array.isArray(daysList) || daysList.length === 0) {
+        return `<span class="text-slate-400 dark:text-slate-500 text-xs italic">Chưa có lịch cố định</span>`;
+      }
+
+      const weekdayKeys = ['thu_2', 'thu_3', 'thu_4', 'thu_5', 'thu_6'];
+      const isEveryWeekday = weekdayKeys.every(k => daysList.includes(k)) && !daysList.includes('thu_7') && !daysList.includes('chu_nhat');
+
+      if (isEveryWeekday) {
+        const isTodayWeekday = weekdayKeys.includes(todayKey);
+        return `
+          <div class="inline-flex items-center gap-1.5 flex-wrap">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg ${isTodayWeekday ? 'bg-emerald-600 text-white font-black shadow-xs' : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-200/80 dark:border-emerald-800'} text-xs">
+              <span class="w-1.5 h-1.5 rounded-full ${isTodayWeekday ? 'bg-white animate-pulse' : 'bg-emerald-500'}"></span>
+              Thứ 2 – Thứ 6 (Hàng ngày)
+            </span>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="inline-flex flex-wrap items-center gap-1 sm:gap-1.5">
+          ${daysList.map(dKey => {
+        const label = dayLabels[dKey] || dKey;
+        const isToday = dKey === todayKey;
+        if (isToday) {
+          return `
+                <span class="inline-flex items-center gap-1 px-2 sm:px-2.5 py-0.5 rounded-md bg-emerald-600 text-white font-black text-[11px] sm:text-xs shadow-xs" title="Hôm nay có xe gom rác">
+                  <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                  ${label} <span class="hidden xs:inline">(Hôm nay)</span>
+                </span>
+              `;
+        }
+        return `
+              <span class="inline-block px-2 sm:px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[11px] sm:text-xs border border-slate-200/80 dark:border-slate-700/80">
+                ${label}
+              </span>
+            `;
+      }).join('')}
+        </div>
+      `;
+    };
 
     container.innerHTML = `
-      <div class="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs bg-white dark:bg-slate-900">
-        <table class="w-full text-left border-collapse min-w-[620px]">
-          <thead>
-            <tr class="bg-gradient-to-r from-[#1d7fe0] via-[#268df5] to-[#1464b8] text-white text-[11px] font-black uppercase tracking-wider">
-              <th class="py-2.5 px-3.5 border-r border-white/20 w-44">TỔ DÂN PHỐ (TDP)</th>
-              ${days.map((d, i) => `
-                <th class="py-2.5 px-2 ${i === days.length - 1 ? '' : 'border-r border-white/20'} text-center">${d.label}</th>
-              `).join('')}
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-200 dark:divide-slate-800 text-xs font-medium">
-            ${data.map((item: any, index: number) => {
-              const bgClass = index % 2 === 0 ? 'bg-white dark:bg-slate-900' : 'bg-slate-50/70 dark:bg-slate-850/60';
-              const shift = item.morning_shift || 'Có gom';
+      <!-- 1. TABLE VIEW: DÀNH CHO MÀN HÌNH TABLET & DESKTOP (MD TRỞ LÊN) -->
+      <div class="hidden md:block rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs bg-white dark:bg-slate-900 overflow-hidden">
+        <div class="overflow-x-auto scrollbar-thin">
+          <table class="w-full text-left border-collapse min-w-[560px]">
+            <thead>
+              <tr class="bg-gradient-to-r from-[#1d7fe0] via-[#268df5] to-[#1464b8] text-white text-[11px] sm:text-xs font-black uppercase tracking-wider">
+                <th class="py-3 px-3.5 sm:px-4 w-[32%]">TỔ DÂN PHỐ (TDP)</th>
+                <th class="py-3 px-3 sm:px-4 w-[44%]">NGÀY THU GOM TRONG TUẦN</th>
+                <th class="py-3 px-3 sm:px-4 w-[24%] text-right sm:text-left">KHUNG GIỜ XE GOM</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-xs font-medium">
+              ${data.map((item: any, index: number) => {
+      const bgClass = index % 2 === 0 ? 'bg-white dark:bg-slate-900' : 'bg-slate-50/60 dark:bg-slate-850/40';
+      const shift = item.morning_shift || 'Có gom';
 
-              return `
-                <tr class="${bgClass} hover:bg-sky-50/80 dark:hover:bg-slate-800/80 transition-colors">
-                  <td class="py-2.5 px-3.5 border-r border-slate-200 dark:border-slate-800 align-middle">
-                    <b class="text-slate-900 dark:text-white font-extrabold text-xs block whitespace-nowrap">${item.tdp_name}</b>
-                  </td>
-                  ${days.map((d, i) => {
-                    const isCollected = item.collection_days.includes(d.key);
-                    const borderClass = i === days.length - 1 ? '' : 'border-r border-slate-200 dark:border-slate-800';
-                    if (isCollected) {
-                      return `
-                        <td class="p-1.5 ${borderClass} text-center align-middle bg-emerald-50/40 dark:bg-emerald-950/20">
-                          <span class="inline-block px-2 py-0.5 bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 rounded text-[11px] font-black whitespace-nowrap shadow-2xs" title="Khung giờ xe thu gom: ${shift}">
-                            ${shift}
-                          </span>
-                        </td>
-                      `;
-                    }
-                    return `
-                      <td class="p-1.5 ${borderClass} text-center align-middle text-slate-300 dark:text-slate-700 text-xs font-bold">
-                        —
-                      </td>
-                    `;
-                  }).join('')}
-                </tr>
-              `;
-            }).join('')}
-          </tbody>
-        </table>
+      return `
+                  <tr class="${bgClass} hover:bg-sky-50/60 dark:hover:bg-slate-800/60 transition-colors">
+                    <td class="py-2.5 px-3.5 sm:px-4 align-middle">
+                      <div class="flex items-center gap-2 sm:gap-2.5">
+                        <span class="w-5 h-5 sm:w-6 sm:h-6 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center font-bold text-[10px] sm:text-[11px] shrink-0 border border-slate-200/80 dark:border-slate-700/80">
+                          ${index + 1}
+                        </span>
+                        <b class="text-slate-900 dark:text-white font-extrabold text-xs sm:text-sm tracking-tight">${item.tdp_name}</b>
+                      </div>
+                    </td>
+                    <td class="py-2.5 px-3 sm:px-4 align-middle">
+                      ${formatDays(item.collection_days)}
+                    </td>
+                    <td class="py-2.5 px-3 sm:px-4 align-middle text-right sm:text-left">
+                      <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 font-black text-xs tracking-tight whitespace-nowrap shadow-2xs">
+                        <span class="material-symbols-outlined text-sm text-emerald-600 dark:text-emerald-400">schedule</span>
+                        <span>${shift}</span>
+                      </div>
+                    </td>
+                  </tr>
+                `;
+    }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 2. CARD VIEW: DÀNH CHO MÀN HÌNH DI ĐỘNG (MOBILE < 768PX) -->
+      <div class="md:hidden space-y-2.5">
+        ${data.map((item: any, index: number) => {
+      const shift = item.morning_shift || 'Có gom';
+      const hasToday = Array.isArray(item.collection_days) && item.collection_days.includes(todayKey);
+
+      return `
+            <div class="p-3 sm:p-3.5 rounded-2xl bg-white dark:bg-slate-900 border ${hasToday ? 'border-emerald-300 dark:border-emerald-800 shadow-sm ring-1 ring-emerald-400/20' : 'border-slate-200/90 dark:border-slate-800'} space-y-2.5 transition-all">
+              <!-- Top Header: Tên TDP & Khung giờ gom -->
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="w-5 h-5 rounded-md ${hasToday ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'} flex items-center justify-center font-black text-[10px] shrink-0">
+                    ${index + 1}
+                  </span>
+                  <h4 class="text-xs font-black text-slate-900 dark:text-white truncate">
+                    ${item.tdp_name}
+                  </h4>
+                  ${hasToday ? `
+                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-extrabold text-[10px] shrink-0">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                      Hôm nay
+                    </span>
+                  ` : ''}
+                </div>
+
+                <div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 font-black text-[11px] shrink-0 whitespace-nowrap">
+                  <span class="material-symbols-outlined text-[13px] text-emerald-600 dark:text-emerald-400">schedule</span>
+                  <span>${shift}</span>
+                </div>
+              </div>
+
+              <!-- Bottom: Danh sách ngày gom -->
+              <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
+                <span class="text-[11px] font-semibold text-slate-400 dark:text-slate-500 shrink-0">Ngày gom:</span>
+                <div class="flex-1 flex justify-end">
+                  ${formatDays(item.collection_days)}
+                </div>
+              </div>
+            </div>
+          `;
+    }).join('')}
       </div>
     `;
   }
@@ -2169,23 +2551,23 @@ class PortalApp {
                   </td>
                 </tr>
               ` : pageRows.map((row, rIdx) => {
-                const globalRowIdx = startIdx + rIdx + 1;
-                const isTotalRow = row.some(cell => String(cell || '').toLowerCase().includes('tổng cộng'));
-                return `
+      const globalRowIdx = startIdx + rIdx + 1;
+      const isTotalRow = row.some(cell => String(cell || '').toLowerCase().includes('tổng cộng'));
+      return `
                   <tr class="hover:bg-amber-50/80 dark:hover:bg-slate-800/80 transition-colors ${isTotalRow ? 'bg-amber-100/60 dark:bg-amber-950/40 font-black text-amber-950 dark:text-amber-200' : ''}">
                     <td class="py-2 px-3 text-center text-slate-400 font-bold border-r border-slate-200/60 dark:border-slate-800/60">${globalRowIdx}</td>
                     ${validColIndices.map((origColIdx) => {
-                      const val = row[origColIdx] !== undefined && row[origColIdx] !== null ? String(row[origColIdx]) : '';
-                      const isNum = val && !isNaN(Number(val.replace(/[,\.]/g, ''))) && val.trim() !== '';
-                      return `
+        const val = row[origColIdx] !== undefined && row[origColIdx] !== null ? String(row[origColIdx]) : '';
+        const isNum = val && !isNaN(Number(val.replace(/[,\.]/g, ''))) && val.trim() !== '';
+        return `
                         <td class="py-2 px-3 ${isNum && val.length < 10 ? 'text-right' : ''} border-r border-slate-200/60 dark:border-slate-800/60 last:border-r-0 whitespace-nowrap">
                           ${val || '—'}
                         </td>
                       `;
-                    }).join('')}
+      }).join('')}
                   </tr>
                 `;
-              }).join('')}
+    }).join('')}
             </tbody>
           </table>
         </div>
@@ -2238,7 +2620,7 @@ class PortalApp {
     if (!grid) return;
 
     // Lấy tất cả phòng ban đang có trạng thái hoạt động (active)
-    const activeDepartments = this.departments.filter(dept => 
+    const activeDepartments = this.departments.filter(dept =>
       dept.status === 'active' || dept.status !== 'inactive'
     );
 
@@ -2247,7 +2629,7 @@ class PortalApp {
       const fDept = filterDept.toLowerCase().trim();
       items = items.filter(o => {
         const oDept = (o.department || '').toLowerCase().trim();
-        const oNb = Array.isArray(o.neighborhood_name) 
+        const oNb = Array.isArray(o.neighborhood_name)
           ? o.neighborhood_name.map(n => String(n).toLowerCase().trim()).join(' ')
           : String(o.neighborhood_name || '').toLowerCase().trim();
         return oDept === fDept || oNb.includes(fDept);
@@ -2298,7 +2680,7 @@ class PortalApp {
       const deptOfficials = items.filter(o => {
         const oDept = (o.department || '').toLowerCase().trim();
         if (oDept && (oDept === dCode || oDept === dName)) return true;
-        
+
         if (Array.isArray(o.neighborhood_name)) {
           return o.neighborhood_name.some((n: string) => {
             const nStr = String(n).toLowerCase().trim();

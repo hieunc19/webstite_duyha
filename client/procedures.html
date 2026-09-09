@@ -1445,7 +1445,8 @@
     async function safeFetchJson(urls) {
       for (const url of urls) {
         try {
-          const res = await fetch(url);
+          const fetchUrl = url.startsWith('/api') ? `${url}${url.includes('?') ? '&' : '?'}v=${Date.now()}` : url;
+          const res = await fetch(fetchUrl, { cache: 'no-store' });
           if (res.ok && (res.headers.get('content-type') || '').includes('application/json')) {
             const json = await res.json();
             if (Array.isArray(json)) {
@@ -1529,6 +1530,11 @@
         switchMainTab('procedures');
       }
 
+      const catParam = params.get('cat') || params.get('category');
+      if (catParam) {
+        currentCat = catParam;
+      }
+
       loadProcedureCategories();
       loadProceduresData();
       loadVideosData();
@@ -1581,6 +1587,11 @@
         const procItems = procMenu.querySelectorAll('.proc-opt-item');
         const procCatLabel = document.getElementById('procedure-category-selected-label');
         const procCatArrow = document.getElementById('procedure-category-arrow');
+
+        if (procCatLabel && currentCat !== 'all') {
+          const found = MASTER_PROC_CATEGORIES.find(c => c.slug === currentCat);
+          if (found) procCatLabel.textContent = found.name;
+        }
 
         procItems.forEach(item => {
           item.addEventListener('click', () => {

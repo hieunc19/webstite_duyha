@@ -613,7 +613,7 @@ class PortalApp {
           }
           if (logoContainer) {
             logoContainer.classList.remove('hidden');
-            logoContainer.style.display = '';
+            logoContainer.style.display = 'flex';
           }
         } else {
           // Không thêm hình ảnh hoặc đã xóa logo -> Ẩn hoàn toàn logo ở giữa banner

@@ -47,14 +47,84 @@
       font-family: 'Material Symbols Outlined' !important;
     }
 
-    /* FOUC Prevention: Hide dynamic content until JS hydration completes */
+    /* DB-first homepage: do not expose bundled/default markup before live data arrives. */
+    #app-header,
+    #portal-main-view,
+    body > footer,
+    #map-view-container {
+      visibility: hidden;
+    }
+
     #portal-main-view {
       opacity: 0;
       transition: opacity 0.15s ease-out;
     }
 
-    body.js-hydrated #portal-main-view {
+    body.homepage-db-ready #app-header,
+    body.homepage-db-ready #portal-main-view,
+    body.homepage-db-ready > footer,
+    body.homepage-db-ready #map-view-container {
+      visibility: visible;
+    }
+
+    body.homepage-db-ready #portal-main-view {
       opacity: 1;
+    }
+
+    #homepage-db-loader {
+      position: fixed;
+      inset: 0;
+      z-index: 4000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: #fffdf5;
+      color: #0f172a;
+      text-align: center;
+    }
+
+    #homepage-db-loader .loader-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      max-width: 28rem;
+    }
+
+    #homepage-db-loader .loader-spinner {
+      width: 2.25rem;
+      height: 2.25rem;
+      border: 3px solid rgba(29, 127, 224, 0.2);
+      border-top-color: #1d7fe0;
+      border-radius: 9999px;
+      animation: homepage-db-spin 0.8s linear infinite;
+    }
+
+    #homepage-db-loader .loader-title {
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    #homepage-db-loader .loader-detail {
+      color: #64748b;
+      font-size: 0.875rem;
+    }
+
+    @keyframes homepage-db-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    body.homepage-db-ready #homepage-db-loader {
+      display: none;
+    }
+
+    body.homepage-db-error #homepage-db-loader .loader-spinner {
+      display: none;
+    }
+
+    body.homepage-db-error #homepage-db-loader .loader-title {
+      color: #b91c1c;
     }
   </style>
   <script>
@@ -70,6 +140,15 @@
 
 <body
   class="portal-active bg-[#FFFDF5] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-full font-['Inter'] font-sans antialiased">
+
+  <!-- The homepage remains hidden until the live database payload is loaded. -->
+  <div id="homepage-db-loader" role="status" aria-live="polite">
+    <div class="loader-card">
+      <div class="loader-spinner" aria-hidden="true"></div>
+      <div class="loader-title" id="homepage-db-loader-title">Đang tải dữ liệu từ máy chủ...</div>
+      <div class="loader-detail" id="homepage-db-loader-detail">Vui lòng chờ trong giây lát.</div>
+    </div>
+  </div>
 
   <!-- Celebration Banner (If active) -->
   <div id="celebration-banner"

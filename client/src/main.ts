@@ -146,33 +146,43 @@ class PortalApp {
   private map: L.Map | null = null;
 
   constructor() {
+    const isHomepage = Boolean(document.getElementById('portal-main-view'));
+
     this.initTheme();
 
-    // 0ms Immediate Synchronous Render from pre-bundled data (Eliminates 1s mock flash and layout shift)
-    if (settingsData && (settingsData as any).cards) {
-      this.renderStatCardsList((settingsData as any).cards);
-    }
-    if (homepageSectionsData && Array.isArray(homepageSectionsData)) {
-      this.applyHomepageLayout(homepageSectionsData);
-    }
+    // Subpages keep their bundled data fallback. The homepage is DB-first and
+    // must not render bundled/default data before the live API payload arrives.
+    if (!isHomepage) {
+      if (settingsData && (settingsData as any).cards) {
+        this.renderStatCardsList((settingsData as any).cards);
+      }
+      if (homepageSectionsData && Array.isArray(homepageSectionsData)) {
+        this.applyHomepageLayout(homepageSectionsData);
+      }
 
-    this.renderPortalGrid();
-    this.renderOfficialsGrid();
-    this.populateOfficialNeighborhoodSelect();
-    this.renderTdpModalTables();
-    this.renderMeritoriousSection();
-    this.renderProceduresSection();
-    this.renderHomepageProcedureCategories();
-    this.renderHomepageWasteSchedule();
+      this.renderPortalGrid();
+      this.renderOfficialsGrid();
+      this.populateOfficialNeighborhoodSelect();
+      this.renderTdpModalTables();
+      this.renderMeritoriousSection();
+      this.renderProceduresSection();
+      this.renderHomepageProcedureCategories();
+      this.renderHomepageWasteSchedule();
+    }
 
     this.initSearch();
     this.initEventListeners();
 
-    // FOUC Prevention: Reveal content now that all synchronous renders are complete
-    document.body.classList.add('js-hydrated');
+    // Reveal subpages after their synchronous fallback render. The homepage
+    // is revealed only after all required live DB endpoints succeed.
+    if (!isHomepage) {
+      document.body.classList.add('js-hydrated');
+      this.initPortalData();
+    } else {
+      this.initHomepageFromDatabase();
+    }
 
-    // Background asynchronous re-fetch to sync any real-time DB changes
-    this.initPortalData();
+    // Background asynchronous re-fetch for procedure pages.
     this.fetchProceduresData();
 
     // Wire global window methods
@@ -303,8 +313,11 @@ class PortalApp {
       this.applyHomepageLayout(homepageSectionsData);
     }
 
-    // Auto open map view if navigating with #map-view hash
-    this.checkInitialRoute();
+    // Auto open map view if navigating with #map-view hash. For the homepage
+    // this is deferred until the DB-backed places/layout have been loaded.
+    if (!isHomepage) {
+      this.checkInitialRoute();
+    }
     window.addEventListener('hashchange', () => this.checkInitialRoute());
   }
 
@@ -339,7 +352,29 @@ class PortalApp {
     applyThemeState(false);
   }
 
-  private async initPortalData() {
+  /**
+   * Homepage bootstrap: live database data is the only source of truth.
+   * Bundled JSON remains available to subpages as an offline fallback, but is
+   * intentionally never rendered on the homepage before this completes.
+   */
+  private async initHomepageFromDatabase(): Promise<void> {
+    const loaded = await this.initPortalData();
+
+    if (loaded) {
+      this.checkInitialRoute();
+      document.body.classList.remove('homepage-db-error');
+      document.body.classList.add('homepage-db-ready');
+      return;
+    }
+
+    const title = document.getElementById('homepage-db-loader-title');
+    const detail = document.getElementById('homepage-db-loader-detail');
+    if (title) title.textContent = 'Không thể tải dữ liệu từ máy chủ';
+    if (detail) detail.textContent = 'Vui lòng kiểm tra kết nối API và thử tải lại trang.';
+    document.body.classList.add('homepage-db-error');
+  }
+
+  private async initPortalData(): Promise<boolean> {
     try {
       const cacheBust = `?v=${Date.now()}`;
       const [
@@ -365,6 +400,24 @@ class PortalApp {
         fetch('/api/waste-schedules' + cacheBust, { cache: 'no-store' }).catch(() => null),
         fetch('/api/procedure-categories' + cacheBust, { cache: 'no-store' }).catch(() => null)
       ]);
+
+      // These endpoints supply the homepage. Do not silently fall back to
+      // bundled JSON here: showing stale data would recreate the old flash.
+      const homepageResponses = [
+        placesRes,
+        officialsRes,
+        departmentsRes,
+        neighborhoodsRes,
+        familiesRes,
+        tdpOfficialsRes,
+        settingsRes,
+        sectionsRes,
+        wasteRes,
+        catRes,
+      ];
+      if (homepageResponses.some((response) => !response || !response.ok)) {
+        throw new Error('One or more homepage database endpoints failed');
+      }
 
       if (placesRes && placesRes.ok) {
         const data = await placesRes.json();
@@ -458,9 +511,16 @@ class PortalApp {
 
       if (sectionsRes && sectionsRes.ok) {
         const sectionsData = await sectionsRes.json();
-        if (Array.isArray(sectionsData) && sectionsData.length > 0) {
-          this.applyHomepageLayout(sectionsData);
+        if (!Array.isArray(sectionsData) || sectionsData.length === 0) {
+          throw new Error('Homepage layout data is empty');
         }
+
+        const sectionCodes = new Set(sectionsData.map((section: any) => section?.section_code));
+        if (!sectionCodes.has('header_navbar') || !sectionCodes.has('footer_section')) {
+          throw new Error('Homepage header/footer data is missing');
+        }
+
+        this.applyHomepageLayout(sectionsData);
       }
 
       // Sync Waste Schedules directly from DB API
@@ -480,8 +540,11 @@ class PortalApp {
           this.renderHomepageProcedureCategories();
         }
       }
+
+      return true;
     } catch (e) {
-      console.log('API call fallback to bundled data');
+      console.warn('Homepage live database load failed', e);
+      return false;
     }
   }
 
@@ -510,11 +573,18 @@ class PortalApp {
       'procedures_utilities': 'subtitle-procedures_utilities',
     };
 
+    // A missing section in the DB must stay hidden instead of exposing the
+    // hard-coded HTML section that exists only as a structural template.
+    [...Object.values(codeToIdMap), 'section-quick-utilities'].forEach((id) => {
+      const section = document.getElementById(id);
+      if (section) {
+        section.classList.add('hidden');
+        section.style.display = 'none';
+      }
+    });
+
 
     const sorted = [...sections].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
-
-    // Track which section IDs were processed by the API sort order
-    const processedIds = new Set<string>();
 
     sorted.forEach((sec: any) => {
       if (sec.section_code === 'header_navbar') {
@@ -586,8 +656,6 @@ class PortalApp {
 
       const el = document.getElementById(elementId);
       if (!el) return;
-
-      processedIds.add(elementId);
 
       if (sec.is_visible === false) {
         el.classList.add('hidden');
@@ -700,14 +768,6 @@ class PortalApp {
       }
     });
 
-    // Append remaining unprocessed sections in original HTML order
-    const allSectionIds = Object.values(codeToIdMap);
-    allSectionIds.forEach(id => {
-      if (!processedIds.has(id)) {
-        const el = document.getElementById(id);
-        if (el) parentContainer.appendChild(el);
-      }
-    });
   }
 
   private renderStatCardsList(cards: any[]) {

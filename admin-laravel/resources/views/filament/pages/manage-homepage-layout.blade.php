@@ -287,11 +287,13 @@
                                     </div>
                                 @endif
                                 <div style="position: relative; z-index: 5;">
+                                    @if(!empty($sec['settings']['logo_doan_url']))
                                     <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 0.75rem;">
                                         <div style="width: 46px; height: 46px; padding: 3px; background: rgba(255,255,255,0.25); border-radius: 9999px; border: 2px solid #fde047; display: flex; align-items: center; justify-content: center;">
-                                            <img src="{{ $sec['settings']['logo_doan_url'] ?? '/logo-doan.png' }}" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.onerror=null; this.src='/logo-doan.png'" />
+                                            <img src="{{ $sec['settings']['logo_doan_url'] }}" style="width: 100%; height: 100%; object-fit: contain;" />
                                         </div>
                                     </div>
+                                    @endif
                                     <div style="font-size: 1.25rem; font-weight: 900; color: #fef08a; text-transform: uppercase; letter-spacing: -0.01em; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">{{ $sec['custom_title'] ?: 'CỔNG TRA CỨU THÔNG TIN PHƯỜNG DUY HÀ' }}</div>
                                 </div>
                             </div>
@@ -693,28 +695,44 @@
 
                             <!-- Logo hiển thị trong Banner Hero -->
                             <div style="border-top: 1px solid #e2e8f0; padding-top: 0.85rem; display: flex; flex-direction: column; gap: 0.5rem;">
-                                <label class="modal-field-label">Logo biểu tượng chính giữa Banner</label>
+                                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                                    <label class="modal-field-label" style="margin-bottom: 0;">Logo biểu tượng chính giữa Banner</label>
+                                    @if(!empty($logoDoanUrl) || $logoDoanUpload)
+                                        <button type="button" wire:click="removeHeroLogo" style="font-size: 0.75rem; font-weight: 700; color: #ef4444; background: #fee2e2; border: 1px solid #fecaca; border-radius: 0.45rem; padding: 0.25rem 0.65rem; cursor: pointer; display: flex; align-items: center; gap: 0.35rem; transition: all 0.2s;" title="Xóa logo và không hiển thị logo ở giữa banner">
+                                            <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                            <span>Xóa logo (Không hiển thị)</span>
+                                        </button>
+                                    @endif
+                                </div>
                                 <div style="display: flex; align-items: center; gap: 0.85rem; background: #f8fafc; padding: 0.75rem 0.85rem; border-radius: 0.65rem; border: 1px solid #e2e8f0;">
                                     <?php
                                         $tmpDoan = null;
                                         if ($logoDoanUpload && is_object($logoDoanUpload) && method_exists($logoDoanUpload, 'temporaryUrl')) {
                                             try { $tmpDoan = $logoDoanUpload->temporaryUrl(); } catch (\Throwable $e) {}
                                         }
+                                        $hasLogo = $tmpDoan || !empty($logoDoanUrl);
                                     ?>
-                                    <div style="width: 48px; height: 48px; border-radius: 9999px; overflow: hidden; background: rgba(255,255,255,0.8); border: 2px solid #cbd5e1; shrink: 0; display: flex; align-items: center; justify-content: center;">
+                                    <div style="width: 48px; height: 48px; border-radius: 9999px; overflow: hidden; background: {{ $hasLogo ? 'rgba(255,255,255,0.8)' : '#f1f5f9' }}; border: 2px {{ $hasLogo ? 'solid #cbd5e1' : 'dashed #cbd5e1' }}; shrink: 0; display: flex; align-items: center; justify-content: center;">
                                         @if($tmpDoan)
                                             <img src="{{ $tmpDoan }}" style="width: 100%; height: 100%; object-fit: contain;" />
-                                        @else
+                                        @elseif(!empty($logoDoanUrl))
                                             <img src="{{ $logoDoanUrl }}" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.onerror=null; this.src='/logo-doan.png'" />
+                                        @else
+                                            <span style="font-size: 0.65rem; font-weight: 700; color: #94a3b8; text-align: center; line-height: 1.1;">Trống</span>
                                         @endif
                                     </div>
-                                    <label style="flex: 1; margin: 0;">
-                                        <div class="custom-upload-btn">
-                                            <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                                            <span>{{ $logoDoanUpload ? 'Đã chọn ảnh logo mới' : 'Bấm Chọn file ảnh Logo' }}</span>
-                                        </div>
-                                        <input type="file" wire:model="logoDoanUpload" accept="image/*" style="display: none;" />
-                                    </label>
+                                    <div style="flex: 1; display: flex; flex-direction: column; gap: 0.35rem;">
+                                        <label style="margin: 0; cursor: pointer;">
+                                            <div class="custom-upload-btn">
+                                                <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                                                <span>{{ $logoDoanUpload ? 'Đã chọn ảnh logo mới' : (!empty($logoDoanUrl) ? 'Thay đổi file ảnh Logo' : 'Bấm Chọn file ảnh Logo') }}</span>
+                                            </div>
+                                            <input type="file" wire:model="logoDoanUpload" accept="image/*" style="display: none;" />
+                                        </label>
+                                        @if(empty($logoDoanUrl) && !$logoDoanUpload)
+                                            <span style="font-size: 0.75rem; color: #64748b; font-style: italic;">Chưa có ảnh: Banner sẽ không hiển thị logo ở giữa.</span>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
 

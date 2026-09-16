@@ -599,13 +599,30 @@ class PortalApp {
       }
 
       if (sec.section_code === 'hero_banner') {
+        const logoContainer = document.getElementById('hero-logo-container');
         const logoDoan = document.getElementById('hero-logo-doan') as HTMLImageElement;
         const heroTitle = document.getElementById('hero-title-main');
         const heroSection = document.getElementById('section-hero-banner');
         const heroVideo = document.getElementById('hero-bg-video') as HTMLVideoElement;
         const heroOverlay = document.getElementById('hero-video-overlay');
 
-        if (logoDoan && sec.settings?.logo_doan_url) logoDoan.src = sec.settings.logo_doan_url;
+        const logoUrl = sec.settings?.logo_doan_url ? String(sec.settings.logo_doan_url).trim() : '';
+        if (logoUrl && logoUrl !== 'none') {
+          if (logoDoan) {
+            logoDoan.src = logoUrl;
+          }
+          if (logoContainer) {
+            logoContainer.classList.remove('hidden');
+            logoContainer.style.display = '';
+          }
+        } else {
+          // Không thêm hình ảnh hoặc đã xóa logo -> Ẩn hoàn toàn logo ở giữa banner
+          if (logoContainer) {
+            logoContainer.classList.add('hidden');
+            logoContainer.style.display = 'none';
+          }
+        }
+
         if (heroTitle && sec.custom_title) heroTitle.textContent = sec.custom_title;
 
         const bgType = sec.settings?.bg_type || (sec.settings?.hero_video_url ? 'video' : 'image');

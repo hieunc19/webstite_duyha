@@ -49,7 +49,7 @@
         "is_visible": true,
         "sort_order": 1,
         "settings": {
-            "logo_doan_url": "\/logo-doan.png",
+            "logo_doan_url": "",
             "bg_type": "image",
             "hero_bg_url": "\/hero-bg.jpg",
             "hero_video_url": "",

@@ -59,7 +59,7 @@ class ManageHomepageLayout extends Page
     // Hero banner & TDP Merger modal properties
     public $isHeroModal = false;
     public $isTdpMergerModal = false;
-    public $logoDoanUrl = '/logo-doan.png';
+    public $logoDoanUrl = '';
     public $logoDoanUpload = null;
     public $heroBgType = 'image'; // 'image' or 'video'
     public $heroBgUrl = '/hero-bg.jpg';
@@ -294,7 +294,8 @@ class ManageHomepageLayout extends Page
                     $this->navMenuItems = $this->defaultMenuItems();
                 }
             } elseif ($this->isHeroModal) {
-                $this->logoDoanUrl = $settings['logo_doan_url'] ?? '/logo-doan.png';
+                $this->logoDoanUrl = array_key_exists('logo_doan_url', $settings) ? ($settings['logo_doan_url'] ?? '') : '/logo-doan.png';
+                $this->logoDoanUpload = null;
                 $this->heroBgType = $settings['bg_type'] ?? (!empty($settings['hero_video_url']) ? 'video' : 'image');
                 $this->heroBgUrl = $settings['hero_bg_url'] ?? '/hero-bg.jpg';
                 $this->heroVideoUrl = $settings['hero_video_url'] ?? '';
@@ -445,6 +446,12 @@ class ManageHomepageLayout extends Page
         }
     }
 
+    public function removeHeroLogo()
+    {
+        $this->logoDoanUrl = '';
+        $this->logoDoanUpload = null;
+    }
+
     public function createCustomBlock()
     {
         $maxSort = $this->managedHomepageSectionsQuery()->max('sort_order') ?? 0;
@@ -553,7 +560,7 @@ class ManageHomepageLayout extends Page
                     }
 
                     $sec->settings = [
-                        'logo_doan_url' => $this->logoDoanUrl ?: '/logo-doan.png',
+                        'logo_doan_url' => $this->logoDoanUrl ?: '',
                         'bg_type' => $this->heroBgType ?: 'image',
                         'hero_bg_url' => $this->heroBgUrl ?: '/hero-bg.jpg',
                         'hero_video_url' => $this->heroVideoUrl ?: '',

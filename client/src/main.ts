@@ -602,8 +602,10 @@ class PortalApp {
         if (utilEl) {
           if (sec.is_visible === false) {
             utilEl.classList.add('hidden');
+            utilEl.style.display = 'none';
           } else {
             utilEl.classList.remove('hidden');
+            utilEl.style.display = '';
           }
         }
         const items = sec.settings?.items;

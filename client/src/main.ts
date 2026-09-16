@@ -656,11 +656,15 @@ class PortalApp {
             heroVideo.classList.add('hidden');
             heroVideo.pause();
           }
-          if (heroOverlay) heroOverlay.classList.add('hidden');
-          if (heroSection && sec.settings?.hero_bg_url) {
-            heroSection.style.backgroundImage = `linear-gradient(180deg, rgba(0, 0, 0, 0.40) 0%, rgba(0, 0, 0, 0.15) 45%, rgba(0, 0, 0, 0.65) 100%), url('${sec.settings.hero_bg_url}')`;
-            heroSection.style.backgroundSize = fitMode;
-            heroSection.style.backgroundPosition = posMode;
+          if (heroSection) {
+            const bgUrl = sec.settings?.hero_bg_url ? String(sec.settings.hero_bg_url).trim() : '';
+            if (bgUrl && bgUrl !== 'none') {
+              heroSection.style.backgroundImage = `linear-gradient(180deg, rgba(0, 0, 0, 0.40) 0%, rgba(0, 0, 0, 0.15) 45%, rgba(0, 0, 0, 0.65) 100%), url('${bgUrl}')`;
+              heroSection.style.backgroundSize = fitMode;
+              heroSection.style.backgroundPosition = posMode;
+            } else {
+              heroSection.style.backgroundImage = 'linear-gradient(135deg, #1d7fe0 0%, #1668c2 45%, #0d4a94 100%)';
+            }
           }
         }
       }

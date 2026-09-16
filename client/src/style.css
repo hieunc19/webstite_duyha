@@ -603,12 +603,9 @@ body.portal-active {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Hero Section Background Image - Hiển thị ảnh chân thực rực rỡ */
+/* Hero Section Background - Gradient xanh trang nhã, chỉ nạp ảnh khi có cấu hình từ Admin */
 .hero-gradient {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.40) 0%, rgba(0, 0, 0, 0.15) 45%, rgba(0, 0, 0, 0.65) 100%), url('/hero-bg.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background: linear-gradient(135deg, #1d7fe0 0%, #1668c2 45%, #0d4a94 100%);
   color: #ffffff;
   position: relative;
   overflow: hidden;

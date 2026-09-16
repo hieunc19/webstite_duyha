@@ -8,8 +8,6 @@
   <meta name="description"
     content="Cổng tra cứu thông tin địa bàn, tổ dân phố, số hộ dân, nhà văn hóa, trụ sở UBND, công an và danh sách cán bộ - Phường Duy Hà, Tỉnh Ninh Bình." />
   <link rel="icon" type="image/jpeg" href="/logo.jpg" />
-  <!-- Preload critical above-the-fold images for faster LCP -->
-  <link rel="preload" as="image" href="/logo-doan.png" fetchpriority="high" />
   <script src="/vendor/tailwindcss.js"></script>
   <!-- Local Self-Hosted Fonts (Inter & Material Symbols) -->
   <link rel="stylesheet" href="/fonts/fonts.css" />
@@ -128,65 +126,7 @@
     <!-- Stats Section -->
     <section class="max-w-7xl mx-auto px-3 sm:px-6 -mt-6 sm:-mt-8 relative z-20" id="section-stats-cards">
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5 lg:gap-4 items-stretch" id="stats-cards-container">
-        <!-- Stat Card 1 -->
-        <div class="stat-card">
-          <div
-            class="w-11 h-11 sm:w-13 sm:h-13 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-2xl sm:text-3xl lg:text-4xl font-bold shrink-0">
-            <span class="material-symbols-outlined text-2xl sm:text-3xl lg:text-4xl">holiday_village</span>
-          </div>
-          <div class="min-w-0 flex-1">
-            <b class="text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[2.6rem] font-black text-slate-900 dark:text-white leading-none block truncate"
-              id="stat-neighborhoods">10</b>
-            <span id="stat-label-1"
-              class="text-[11px] sm:text-xs lg:text-sm xl:text-base font-semibold text-slate-500 dark:text-slate-400 stat-label mt-0.5 lg:mt-1">Tổng
-              số tổ dân phố</span>
-          </div>
-        </div>
-
-        <!-- Stat Card 2 -->
-        <div class="stat-card">
-          <div
-            class="w-11 h-11 sm:w-13 sm:h-13 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-2xl sm:text-3xl lg:text-4xl font-bold shrink-0">
-            <span class="material-symbols-outlined text-2xl sm:text-3xl lg:text-4xl">group</span>
-          </div>
-          <div class="min-w-0 flex-1">
-            <b class="text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[2.6rem] font-black text-slate-900 dark:text-white leading-none block truncate"
-              id="stat-households">6.767</b>
-            <span id="stat-label-2"
-              class="text-[11px] sm:text-xs lg:text-sm xl:text-base font-semibold text-slate-500 dark:text-slate-400 stat-label mt-0.5 lg:mt-1">Tổng
-              số hộ gia đình</span>
-          </div>
-        </div>
-
-        <!-- Stat Card 3 -->
-        <div class="stat-card">
-          <div
-            class="w-11 h-11 sm:w-13 sm:h-13 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-2xl sm:text-3xl lg:text-4xl font-bold shrink-0">
-            <span class="material-symbols-outlined text-2xl sm:text-3xl lg:text-4xl">diversity_3</span>
-          </div>
-          <div class="min-w-0 flex-1">
-            <b class="text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[2.6rem] font-black text-slate-900 dark:text-white leading-none block truncate"
-              id="stat-population">23.615</b>
-            <span id="stat-label-3"
-              class="text-[11px] sm:text-xs lg:text-sm xl:text-base font-semibold text-slate-500 dark:text-slate-400 stat-label mt-0.5 lg:mt-1">Tổng
-              số nhân khẩu</span>
-          </div>
-        </div>
-
-        <!-- Stat Card 4 -->
-        <div class="stat-card">
-          <div
-            class="w-11 h-11 sm:w-13 sm:h-13 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center text-2xl sm:text-3xl lg:text-4xl font-bold shrink-0">
-            <span class="material-symbols-outlined text-2xl sm:text-3xl lg:text-4xl">map</span>
-          </div>
-          <div class="min-w-0 flex-1">
-            <b class="text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[2.6rem] font-black text-slate-900 dark:text-white leading-none block truncate"
-              id="stat-area">15,46 km²</b>
-            <span id="stat-label-4"
-              class="text-[11px] sm:text-xs lg:text-sm xl:text-base font-semibold text-slate-500 dark:text-slate-400 stat-label mt-0.5 lg:mt-1">Diện
-              tích (1.546,30 ha)</span>
-          </div>
-        </div>
+        <!-- Dynamic Stat Cards rendered instantly by JavaScript -->
       </div>
     </section>
 
@@ -299,7 +239,7 @@
 
           <!-- Button 1: Tra cứu thủ tục hành chính -->
           <a href="/procedures.html"
-            style="background-image: linear-gradient(110deg, rgba(255, 255, 255, 0.96) 0%, rgba(254, 242, 242, 0.92) 100%), url('/hero-bg.jpg'); background-size: cover; background-position: center;"
+            style="background: linear-gradient(110deg, rgba(255, 255, 255, 0.98) 0%, rgba(254, 242, 242, 0.95) 100%);"
             class="w-full p-2.5 sm:p-3.5 rounded-2xl border border-red-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-red-400 transition-all duration-300 flex items-center justify-between gap-2 group active:scale-[0.98] relative overflow-hidden">
             <div class="flex items-center gap-2 sm:gap-3 relative z-10 min-w-0">
               <div
@@ -321,7 +261,7 @@
 
           <!-- Button 2: Tổ dân phố cũ - mới -->
           <a href="/tdp-merger.html"
-            style="background-image: linear-gradient(110deg, rgba(255, 255, 255, 0.96) 0%, rgba(254, 243, 199, 0.92) 100%), url('/hero-bg.jpg'); background-size: cover; background-position: center;"
+            style="background: linear-gradient(110deg, rgba(255, 255, 255, 0.98) 0%, rgba(254, 243, 199, 0.95) 100%);"
             class="w-full p-2.5 sm:p-3.5 rounded-2xl border border-amber-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-amber-400 transition-all duration-300 flex items-center justify-between gap-2 group active:scale-[0.98] relative overflow-hidden">
             <div class="flex items-center gap-2 sm:gap-3 relative z-10 min-w-0">
               <div
@@ -343,7 +283,7 @@
 
           <!-- Button 3: Gia đình chính sách -->
           <a href="/meritorious-families.html"
-            style="background-image: linear-gradient(110deg, rgba(255, 255, 255, 0.96) 0%, rgba(254, 243, 199, 0.92) 100%), url('/hero-bg.jpg'); background-size: cover; background-position: center;"
+            style="background: linear-gradient(110deg, rgba(255, 255, 255, 0.98) 0%, rgba(254, 243, 199, 0.95) 100%);"
             class="w-full p-2.5 sm:p-3.5 rounded-2xl border border-amber-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-amber-400 transition-all duration-300 flex items-center justify-between gap-2 group active:scale-[0.98] relative overflow-hidden">
             <div class="flex items-center gap-2 sm:gap-3 relative z-10 min-w-0">
               <div
@@ -365,7 +305,7 @@
 
           <!-- Button 4: Lịch thu gom rác -->
           <a href="/waste-schedule.html"
-            style="background-image: linear-gradient(110deg, rgba(255, 255, 255, 0.96) 0%, rgba(243, 232, 255, 0.92) 100%), url('/hero-bg.jpg'); background-size: cover; background-position: center;"
+            style="background: linear-gradient(110deg, rgba(255, 255, 255, 0.98) 0%, rgba(243, 232, 255, 0.95) 100%);"
             class="w-full p-2.5 sm:p-3.5 rounded-2xl border border-purple-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-purple-400 transition-all duration-300 flex items-center justify-between gap-2 group active:scale-[0.98] relative overflow-hidden">
             <div class="flex items-center gap-2 sm:gap-3 relative z-10 min-w-0">
               <div
@@ -387,7 +327,7 @@
 
           <!-- Button 5: Tìm cán bộ -->
           <a href="/officials.html"
-            style="background-image: linear-gradient(110deg, rgba(255, 255, 255, 0.96) 0%, rgba(239, 246, 255, 0.92) 100%), url('/hero-bg.jpg'); background-size: cover; background-position: center;"
+            style="background: linear-gradient(110deg, rgba(255, 255, 255, 0.98) 0%, rgba(239, 246, 255, 0.95) 100%);"
             class="w-full p-2.5 sm:p-3.5 rounded-2xl border border-blue-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-blue-400 transition-all duration-300 flex items-center justify-between gap-2 group active:scale-[0.98] relative overflow-hidden">
             <div class="flex items-center gap-2 sm:gap-3 relative z-10 min-w-0">
               <div
@@ -409,7 +349,7 @@
 
           <!-- Button 6: Lịch tiếp công dân -->
           <a href="/citizen-reception.html"
-            style="background-image: linear-gradient(110deg, rgba(255, 255, 255, 0.96) 0%, rgba(240, 253, 250, 0.92) 100%), url('/hero-bg.jpg'); background-size: cover; background-position: center;"
+            style="background: linear-gradient(110deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 253, 250, 0.95) 100%);"
             class="w-full p-2.5 sm:p-3.5 rounded-2xl border border-teal-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-teal-400 transition-all duration-300 flex items-center justify-between gap-2 group active:scale-[0.98] relative overflow-hidden">
             <div class="flex items-center gap-2 sm:gap-3 relative z-10 min-w-0">
               <div
@@ -431,7 +371,7 @@
 
           <!-- Button 7: Phản ánh kiến nghị (Trải rộng 2 cột ở cuối hàng) -->
           <a href="/feedback.html"
-            style="background-image: linear-gradient(110deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 247, 237, 0.92) 100%), url('/hero-bg.jpg'); background-size: cover; background-position: center;"
+            style="background: linear-gradient(110deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 247, 237, 0.95) 100%);"
             class="col-span-2 lg:col-span-1 w-full p-2.5 sm:p-3.5 rounded-2xl border border-orange-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-orange-400 transition-all duration-300 flex items-center justify-between gap-2.5 group active:scale-[0.98] relative overflow-hidden">
             <div class="flex items-center gap-2.5 sm:gap-3.5 relative z-10 min-w-0">
               <div

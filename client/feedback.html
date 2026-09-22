@@ -449,17 +449,30 @@
           }).catch(() => null);
         }
 
+        if (!response) {
+          throw new Error('Không thể kết nối tới hệ thống tiếp nhận phản ánh.');
+        }
+
+        const responseType = response.headers.get('content-type') || '';
+        const result = responseType.includes('application/json') ? await response.json() : null;
+
+        if (!response.ok || !result?.id) {
+          throw new Error(result?.message || 'Hệ thống chưa thể tiếp nhận phản ánh. Vui lòng thử lại.');
+        }
+
         form?.reset();
 
-        // Unlock navigation
-        window.removeEventListener('beforeunload', preventNavigationHandler);
+        const googleFormSync = result?.sync?.google_form;
+        const wasSyncedToGoogle = googleFormSync?.synced || result?.sync?.google_sheets_webhook?.synced;
+        const hasGoogleWarning = !wasSyncedToGoogle && (googleFormSync?.configured || result?.sync?.google_sheets_webhook?.configured);
 
-        // Show SweetAlert Success Notification with exact user required text
         if (window.Swal) {
           await window.Swal.fire({
-            icon: 'success',
-            title: 'Đã tiếp nhận phản ánh.',
-            text: 'Thông tin phản ánh kiến nghị sẽ được gửi đến các ban ngành đoàn thể.',
+            icon: hasGoogleWarning ? 'warning' : 'success',
+            title: hasGoogleWarning ? 'Đã lưu phản ánh trong hệ thống.' : 'Đã tiếp nhận phản ánh.',
+            text: hasGoogleWarning
+              ? (googleFormSync?.error || 'Google Form chưa xác nhận tiếp nhận. Cán bộ có thể xử lý bản ghi đã lưu trong hệ thống.')
+              : 'Thông tin phản ánh kiến nghị đã được chuyển tiếp thành công.',
             confirmButtonText: 'Đã hiểu & Đóng',
             confirmButtonColor: '#1d7fe0',
             allowOutsideClick: false,
@@ -471,19 +484,19 @@
             }
           });
         } else {
-          alert('Đã tiếp nhận phản ánh.\nThông tin phản ánh kiến nghị sẽ được gửi đến các ban ngành đoàn thể.');
+          alert(hasGoogleWarning
+            ? 'Phản ánh đã được lưu trong hệ thống, nhưng Google Form chưa xác nhận tiếp nhận.'
+            : 'Đã tiếp nhận phản ánh và chuyển tiếp thành công.');
         }
 
       } catch (err) {
         console.warn('Feedback submit:', err);
-        form?.reset();
-        window.removeEventListener('beforeunload', preventNavigationHandler);
 
         if (window.Swal) {
           await window.Swal.fire({
-            icon: 'success',
-            title: 'Đã tiếp nhận phản ánh.',
-            text: 'Thông tin phản ánh kiến nghị sẽ được gửi đến các ban ngành đoàn thể.',
+            icon: 'error',
+            title: 'Chưa gửi được phản ánh.',
+            text: err?.message || 'Không thể kết nối tới hệ thống. Vui lòng kiểm tra mạng và thử lại.',
             confirmButtonText: 'Đã hiểu & Đóng',
             confirmButtonColor: '#1d7fe0',
             allowOutsideClick: false,
@@ -494,6 +507,8 @@
               confirmButton: 'px-8 py-3.5 font-bold text-base sm:text-lg rounded-2xl shadow-lg'
             }
           });
+        } else {
+          alert(err?.message || 'Chưa gửi được phản ánh. Vui lòng thử lại.');
         }
       } finally {
         window.removeEventListener('beforeunload', preventNavigationHandler);

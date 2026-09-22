@@ -66,8 +66,10 @@ class ManageFeedback extends Page
         $sheetSetting->is_visible = 1;
         $sheetSetting->save();
 
-        // Clear cached Google Form entry mapping
-        \Illuminate\Support\Facades\Cache::forget('gf_entries_' . md5(trim($this->googleFormUrl)));
+        // Clear all cached Google Form entry mappings when the configured form changes.
+        $formUrlHash = md5(trim($this->googleFormUrl));
+        \Illuminate\Support\Facades\Cache::forget('gf_entries_' . $formUrlHash);
+        \Illuminate\Support\Facades\Cache::forget('gf_entries_v2_' . $formUrlHash);
 
         $this->dumpData();
 

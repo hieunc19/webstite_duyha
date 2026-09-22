@@ -23,15 +23,9 @@ function saveJsonBoth($filename, $data, $mainTargetDir) {
     }
     file_put_contents($publicTargetDir . '/' . $filename, $json);
 
-    // Đồng bộ trực tiếp vào client/dist/data (nơi Nginx serve frontend trên VPS)
-    $distDir = __DIR__ . '/../client/dist';
-    if (is_dir($distDir)) {
-        $distTargetDir = $distDir . '/data';
-        if (!is_dir($distTargetDir)) {
-            mkdir($distTargetDir, 0755, true);
-        }
-        file_put_contents($distTargetDir . '/' . $filename, $json);
-    }
+    // client/dist is a generated deployment artifact. Do not overwrite it
+    // while the local preview/build process may be using it. A production
+    // build copies client/public/data into dist during deployment.
 }
 
 // 1. Provinces

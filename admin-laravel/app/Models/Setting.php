@@ -13,11 +13,16 @@ class Setting extends Model
         'label',
         'group',
         'sort_order',
+        'is_visible',
     ];
 
     protected static function booted(): void
     {
         static::saved(function ($setting) {
+            if (app()->runningUnitTests()) {
+                return;
+            }
+
             $scriptPath = base_path('dump_to_json.php');
             if (file_exists($scriptPath)) {
                 @exec("php {$scriptPath}");
@@ -25,6 +30,10 @@ class Setting extends Model
         });
 
         static::deleted(function ($setting) {
+            if (app()->runningUnitTests()) {
+                return;
+            }
+
             $scriptPath = base_path('dump_to_json.php');
             if (file_exists($scriptPath)) {
                 @exec("php {$scriptPath}");

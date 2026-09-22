@@ -377,51 +377,43 @@ class PortalApp {
   private async initPortalData(): Promise<boolean> {
     try {
       const cacheBust = `?v=${Date.now()}`;
-      const [
-        placesRes,
-        officialsRes,
-        departmentsRes,
-        neighborhoodsRes,
-        familiesRes,
-        tdpOfficialsRes,
-        settingsRes,
-        sectionsRes,
-        wasteRes,
-        catRes
-      ] = await Promise.all([
-        fetch('/api/places' + cacheBust, { cache: 'no-store' }).catch(() => null),
-        fetch('/api/officials' + cacheBust, { cache: 'no-store' }).catch(() => null),
-        fetch('/api/departments' + cacheBust, { cache: 'no-store' }).catch(() => null),
-        fetch('/api/neighborhoods' + cacheBust, { cache: 'no-store' }).catch(() => null),
-        fetch('/api/meritorious-families' + cacheBust, { cache: 'no-store' }).catch(() => null),
-        fetch('/api/tdp-officials' + cacheBust, { cache: 'no-store' }).catch(() => null),
-        fetch('/api/settings' + cacheBust, { cache: 'no-store' }).catch(() => null),
-        fetch('/api/homepage-sections' + cacheBust, { cache: 'no-store' }).catch(() => null),
-        fetch('/api/waste-schedules' + cacheBust, { cache: 'no-store' }).catch(() => null),
-        fetch('/api/procedure-categories' + cacheBust, { cache: 'no-store' }).catch(() => null)
-      ]);
+      const homepageRes = await fetch('/api/homepage-data' + cacheBust, { cache: 'no-store' }).catch(() => null);
 
-      // These endpoints supply the homepage. Do not silently fall back to
+      // This payload supplies the homepage. Do not silently fall back to
       // bundled JSON here: showing stale data would recreate the old flash.
-      const homepageResponses = [
-        placesRes,
-        officialsRes,
-        departmentsRes,
-        neighborhoodsRes,
-        familiesRes,
-        tdpOfficialsRes,
-        settingsRes,
-        sectionsRes,
-        wasteRes,
-        catRes,
-      ];
-      if (homepageResponses.some((response) => !response || !response.ok)) {
+      if (!homepageRes || !homepageRes.ok) {
         throw new Error('One or more homepage database endpoints failed');
       }
+      const liveHomepageData = await homepageRes.json();
+      const placesData = liveHomepageData?.places;
+      const officialsData = liveHomepageData?.officials;
+      const departmentsData = liveHomepageData?.departments;
+      const neighborhoodsData = liveHomepageData?.neighborhoods;
+      const familiesData = liveHomepageData?.meritorious_families;
+      const tdpOfficialsData = liveHomepageData?.tdp_officials;
+      const liveSettingsData = liveHomepageData?.settings;
+      const sectionsData = liveHomepageData?.homepage_sections;
+      const wasteData = liveHomepageData?.waste_schedules;
+      const categoriesData = liveHomepageData?.procedure_categories;
 
-      if (placesRes && placesRes.ok) {
-        const data = await placesRes.json();
-        if (Array.isArray(data) && data.length > 0) {
+      const requiredArrays = [
+        placesData,
+        officialsData,
+        departmentsData,
+        neighborhoodsData,
+        familiesData,
+        tdpOfficialsData,
+        sectionsData,
+        wasteData,
+        categoriesData,
+      ];
+      if (requiredArrays.some((data) => !Array.isArray(data)) || !liveSettingsData || typeof liveSettingsData !== 'object' || Array.isArray(liveSettingsData)) {
+        throw new Error('Homepage database payload is incomplete');
+      }
+
+      if (Array.isArray(placesData)) {
+        const data = placesData;
+        if (data.length > 0) {
           this.places = data.map(p => ({
             ...p,
             image: formatStorageUrl(p.image)
@@ -431,29 +423,24 @@ class PortalApp {
         }
       }
 
-      if (departmentsRes && departmentsRes.ok) {
-        const dData = await departmentsRes.json();
-        if (Array.isArray(dData)) {
-          this.departments = dData.sort((a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0));
-        }
+      if (Array.isArray(departmentsData)) {
+        const dData = departmentsData;
+        this.departments = dData.sort((a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0));
       }
 
-      if (officialsRes && officialsRes.ok) {
-        const officialsData = await officialsRes.json();
-        if (Array.isArray(officialsData)) {
-          this.officials = officialsData.map(o => ({
-            ...o,
-            avatar: formatStorageUrl(o.avatar)
-          }));
-        }
+      if (Array.isArray(officialsData)) {
+        this.officials = officialsData.map(o => ({
+          ...o,
+          avatar: formatStorageUrl(o.avatar)
+        }));
       }
 
       this.renderOfficialsGrid();
       this.populateOfficialNeighborhoodSelect();
 
-      if (neighborhoodsRes && neighborhoodsRes.ok) {
-        const nData = await neighborhoodsRes.json();
-        if (Array.isArray(nData) && nData.length > 0) {
+      if (Array.isArray(neighborhoodsData)) {
+        const nData = neighborhoodsData;
+        if (nData.length > 0) {
           this.neighborhoods = nData.map((item: any) => ({
             id: item.id,
             name: item.name,
@@ -470,16 +457,13 @@ class PortalApp {
         }
       }
 
-      if (familiesRes && familiesRes.ok) {
-        const familiesData = await familiesRes.json();
-        if (Array.isArray(familiesData)) {
-          this.meritoriousFamilies = familiesData;
-          this.renderMeritoriousSection();
-        }
+      if (Array.isArray(familiesData)) {
+        this.meritoriousFamilies = familiesData;
+        this.renderMeritoriousSection();
       }
 
-      if (tdpOfficialsRes && tdpOfficialsRes.ok) {
-        const tdpData = await tdpOfficialsRes.json();
+      if (Array.isArray(tdpOfficialsData)) {
+        const tdpData = tdpOfficialsData;
         if (Array.isArray(tdpData) && tdpData.length > 0) {
           ALL_TDP_OFFICIALS.length = 0;
           ALL_TDP_OFFICIALS.push(...tdpData.map((item: any) => ({
@@ -502,16 +486,15 @@ class PortalApp {
         }
       }
 
-      if (settingsRes && settingsRes.ok) {
-        const s = await settingsRes.json();
-        if (s && Array.isArray(s.cards) && s.cards.length > 0) {
+      if (liveSettingsData && typeof liveSettingsData === 'object') {
+        const s = liveSettingsData;
+        if (Array.isArray(s.cards) && s.cards.length > 0) {
           this.renderStatCardsList(s.cards);
         }
       }
 
-      if (sectionsRes && sectionsRes.ok) {
-        const sectionsData = await sectionsRes.json();
-        if (!Array.isArray(sectionsData) || sectionsData.length === 0) {
+      if (Array.isArray(sectionsData)) {
+        if (sectionsData.length === 0) {
           throw new Error('Homepage layout data is empty');
         }
 
@@ -524,18 +507,18 @@ class PortalApp {
       }
 
       // Sync Waste Schedules directly from DB API
-      if (wasteRes && wasteRes.ok) {
-        const wData = await wasteRes.json();
-        if (Array.isArray(wData) && wData.length > 0) {
+      if (Array.isArray(wasteData)) {
+        const wData = wasteData;
+        if (wData.length > 0) {
           this.wasteSchedulesList = wData;
           this.renderHomepageWasteSchedule();
         }
       }
 
       // Sync Procedure Categories directly from DB API
-      if (catRes && catRes.ok) {
-        const cData = await catRes.json();
-        if (Array.isArray(cData) && cData.length > 0) {
+      if (Array.isArray(categoriesData)) {
+        const cData = categoriesData;
+        if (cData.length > 0) {
           this.procedureCategoriesList = cData;
           this.renderHomepageProcedureCategories();
         }
@@ -1621,7 +1604,7 @@ class PortalApp {
     const tdpEl = document.getElementById('meritorious-modal-tdp');
     const summaryEl = document.getElementById('meritorious-modal-summary');
 
-    const downloadUrl = batch.file_url || (batch.file_path ? (batch.file_path.startsWith('http') ? batch.file_path : `http://127.0.0.1:8005/api/storage/${batch.file_path}`) : '#');
+    const downloadUrl = getLocalFileUrl(batch.file_url || batch.file_path) || '#';
     const fileName = batch.file_name || 'Danh-sach-chinh-sach.xlsx';
 
     if (badgeEl) badgeEl.textContent = 'ĐỢT DANH SÁCH CHÍNH SÁCH';

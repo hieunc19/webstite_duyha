@@ -146,13 +146,20 @@
                                             if (!Str::startsWith($previewSrc, 'http') && !Str::startsWith($previewSrc, '/storage/') && !Str::startsWith($previewSrc, '/')) {
                                                 $previewSrc = '/storage/' . $previewSrc;
                                             }
+                                            if (Str::startsWith($previewSrc, '/storage/')) {
+                                                $previewSrc = '/api' . $previewSrc;
+                                            }
                                         ?>
                                         <img src="{{ $previewSrc }}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.onerror=null; this.src='/hero-bg.jpg';" />
                                     @endif
                                 </div>
                                 <div style="flex: 1;">
-                                    <input type="file" wire:model="bgUpload" accept="image/*" class="modal-input" style="font-size: 0.78rem; padding: 0.35rem;" />
-                                    <div style="font-size: 0.7rem; color: #64748b; margin-top: 0.2rem;">Hỗ trợ ảnh JPG, PNG, WEBP (Khuyến nghị tỷ lệ 16:5 hoặc chiều rộng tối thiểu 1200px).</div>
+                                    <input type="file" wire:model="bgUpload" accept="image/jpeg,image/png,image/webp,.jfif" class="modal-input" style="font-size: 0.78rem; padding: 0.35rem;" />
+                                    <div style="font-size: 0.7rem; color: #64748b; margin-top: 0.2rem;">Hỗ trợ ảnh JPEG/JFIF, PNG, WEBP — tối đa 5MB (khuyến nghị tỷ lệ 16:5 hoặc chiều rộng tối thiểu 1200px).</div>
+                                    <div wire:loading wire:target="bgUpload" style="font-size: 0.72rem; color: #0369a1; margin-top: 0.25rem; font-weight: 700;">Đang nạp ảnh...</div>
+                                    @error('bgUpload')
+                                        <div style="font-size: 0.72rem; color: #dc2626; margin-top: 0.25rem; font-weight: 700;">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                         </div>

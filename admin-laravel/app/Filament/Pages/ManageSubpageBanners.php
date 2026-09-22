@@ -7,6 +7,7 @@ use App\Models\Setting;
 use Filament\Notifications\Notification;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ManageSubpageBanners extends Page
 {
@@ -379,6 +380,47 @@ class ManageSubpageBanners extends Page
         $this->wasteCategoryUploads = [];
     }
 
+    private function normalizeBannerImagePath(?string $path): string
+    {
+        $path = trim((string) $path);
+
+        if ($path === '') {
+            return '/hero-bg.jpg';
+        }
+
+        if (Str::startsWith($path, ['http://', 'https://', '/api/storage/', '/api/'])) {
+            return $path;
+        }
+
+        if (Str::startsWith($path, '/storage/')) {
+            return '/api' . $path;
+        }
+
+        if (Str::startsWith($path, 'storage/')) {
+            return '/api/' . $path;
+        }
+
+        // Relative paths from older records refer to Laravel's public disk.
+        if (!Str::startsWith($path, '/')) {
+            return '/api/storage/' . ltrim($path, '/');
+        }
+
+        return $path;
+    }
+
+    public function updatedBgUpload(): void
+    {
+        $this->validateOnly('bgUpload', [
+            // JFIF files are JPEG images and are already used by the legacy
+            // banner library, so they must remain supported.
+            'bgUpload' => 'image|mimetypes:image/jpeg,image/png,image/webp|max:5120',
+        ], [
+            'bgUpload.image' => 'Tệp tải lên phải là hình ảnh.',
+            'bgUpload.mimetypes' => 'Banner chỉ hỗ trợ ảnh JPEG/JFIF, PNG hoặc WEBP.',
+            'bgUpload.max' => 'Dung lượng banner không được vượt quá 5MB.',
+        ]);
+    }
+
     public function saveBanner()
     {
         if (!$this->editingKey || !isset($this->banners[$this->editingKey])) {
@@ -389,16 +431,38 @@ class ManageSubpageBanners extends Page
 
         // Handle banner background image upload
         if ($this->bgUpload) {
-            $filename = 'subpage_banner_' . $key . '_' . time() . '.' . $this->bgUpload->getClientOriginalExtension();
+            $this->validate([
+                'bgUpload' => 'image|mimetypes:image/jpeg,image/png,image/webp|max:5120',
+            ], [
+                'bgUpload.image' => 'Tệp tải lên phải là hình ảnh.',
+                'bgUpload.mimetypes' => 'Banner chỉ hỗ trợ ảnh JPEG/JFIF, PNG hoặc WEBP.',
+                'bgUpload.max' => 'Dung lượng banner không được vượt quá 5MB.',
+            ]);
+
+            $extension = strtolower($this->bgUpload->getClientOriginalExtension() ?: 'jpg');
+            $filename = 'subpage_banner_' . $key . '_' . Str::uuid() . '.' . $extension;
             $path = $this->bgUpload->storeAs('banners', $filename, 'public');
-            $this->editBgImage = '/storage/' . $path;
+
+            if (!$path || !Storage::disk('public')->exists($path)) {
+                Notification::make()
+                    ->title('Không thể lưu ảnh banner')
+                    ->body('Vui lòng kiểm tra quyền ghi thư mục storage/app/public.')
+                    ->danger()
+                    ->send();
+
+                return;
+            }
+
+            // Use the Laravel API endpoint so the image also works when the
+            // frontend is served as a separate static dist behind Nginx.
+            $this->editBgImage = '/api/storage/' . ltrim($path, '/');
         }
 
         $this->banners[$key]['badge_text'] = $this->editBadgeText;
         $this->banners[$key]['badge_icon'] = $this->editBadgeIcon;
         $this->banners[$key]['title'] = $this->editTitle;
         $this->banners[$key]['subtitle'] = $this->editSubtitle;
-        $this->banners[$key]['bg_image'] = $this->editBgImage;
+        $this->banners[$key]['bg_image'] = $this->normalizeBannerImagePath($this->editBgImage);
 
         // Persist banner settings to database
         Setting::updateOrCreate(
@@ -498,7 +562,6 @@ class ManageSubpageBanners extends Page
             );
         }
 
-        $this->dumpData();
         $this->closeModal();
 
         Notification::make()
@@ -524,8 +587,6 @@ class ManageSubpageBanners extends Page
                 ]
             );
 
-            $this->dumpData();
-
             Notification::make()
                 ->title("Đã khôi phục mặc định Banner menu '{$defaults[$key]['page_name']}'")
                 ->success()
@@ -533,11 +594,4 @@ class ManageSubpageBanners extends Page
         }
     }
 
-    private function dumpData()
-    {
-        $scriptPath = base_path('dump_to_json.php');
-        if (file_exists($scriptPath)) {
-            @exec("php {$scriptPath}");
-        }
-    }
 }

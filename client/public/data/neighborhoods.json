@@ -1,6 +1,6 @@
 [
     {
-        "id": 5,
+        "id": 19,
         "name": "TDP Bạch Xá",
         "type": "new",
         "group_code": "bach-xa",
@@ -12,7 +12,7 @@
         "status": "active"
     },
     {
-        "id": 4,
+        "id": 28,
         "name": "TDP Chuông",
         "type": "new",
         "group_code": "chuong",
@@ -24,7 +24,7 @@
         "status": "active"
     },
     {
-        "id": 8,
+        "id": 24,
         "name": "TDP Duy Hải",
         "type": "new",
         "group_code": "duy-hai",
@@ -36,7 +36,7 @@
         "status": "active"
     },
     {
-        "id": 1,
+        "id": 26,
         "name": "TDP Duy Minh",
         "type": "new",
         "group_code": "duy-minh",
@@ -48,7 +48,7 @@
         "status": "active"
     },
     {
-        "id": 6,
+        "id": 29,
         "name": "TDP Hoàng Đông",
         "type": "new",
         "group_code": "hoang-dong",
@@ -60,7 +60,7 @@
         "status": "active"
     },
     {
-        "id": 7,
+        "id": 21,
         "name": "TDP Hương Cát",
         "type": "new",
         "group_code": "huong-cat",
@@ -72,7 +72,7 @@
         "status": "active"
     },
     {
-        "id": 2,
+        "id": 23,
         "name": "TDP Ngọc Tú",
         "type": "new",
         "group_code": "ngoc-tu",
@@ -84,7 +84,7 @@
         "status": "active"
     },
     {
-        "id": 9,
+        "id": 17,
         "name": "TDP Ngọc Động",
         "type": "new",
         "group_code": "ngoc-dong",
@@ -96,7 +96,7 @@
         "status": "active"
     },
     {
-        "id": 10,
+        "id": 20,
         "name": "TDP Đông Hải",
         "type": "new",
         "group_code": "dong-hai",
@@ -108,7 +108,7 @@
         "status": "active"
     },
     {
-        "id": 3,
+        "id": 27,
         "name": "TDP Động Linh Trang",
         "type": "new",
         "group_code": "dong-linh-trang",
@@ -120,7 +120,7 @@
         "status": "active"
     },
     {
-        "id": 16,
+        "id": 3,
         "name": "TDP Bạch Xá",
         "type": "old",
         "group_code": "bach-xa",
@@ -132,7 +132,7 @@
         "status": "active"
     },
     {
-        "id": 15,
+        "id": 30,
         "name": "TDP Chuông",
         "type": "old",
         "group_code": "chuong",
@@ -144,7 +144,7 @@
         "status": "active"
     },
     {
-        "id": 21,
+        "id": 11,
         "name": "TDP Tam Giáp",
         "type": "old",
         "group_code": "duy-hai",
@@ -156,7 +156,7 @@
         "status": "active"
     },
     {
-        "id": 22,
+        "id": 12,
         "name": "TDP Tứ Giáp",
         "type": "old",
         "group_code": "duy-hai",
@@ -168,7 +168,7 @@
         "status": "active"
     },
     {
-        "id": 12,
+        "id": 15,
         "name": "TDP Ninh Lão",
         "type": "old",
         "group_code": "duy-minh",
@@ -180,7 +180,7 @@
         "status": "active"
     },
     {
-        "id": 28,
+        "id": 16,
         "name": "TDP Trung",
         "type": "old",
         "group_code": "duy-minh",
@@ -192,7 +192,7 @@
         "status": "active"
     },
     {
-        "id": 17,
+        "id": 6,
         "name": "TDP An Nhân",
         "type": "old",
         "group_code": "hoang-dong",
@@ -204,7 +204,7 @@
         "status": "active"
     },
     {
-        "id": 19,
+        "id": 8,
         "name": "TDP Hoàng Hạ",
         "type": "old",
         "group_code": "hoang-dong",
@@ -216,7 +216,7 @@
         "status": "active"
     },
     {
-        "id": 18,
+        "id": 7,
         "name": "TDP Hoàng Thượng",
         "type": "old",
         "group_code": "hoang-dong",
@@ -228,7 +228,7 @@
         "status": "active"
     },
     {
-        "id": 20,
+        "id": 5,
         "name": "TDP Hương Cát",
         "type": "old",
         "group_code": "huong-cat",
@@ -240,7 +240,7 @@
         "status": "active"
     },
     {
-        "id": 29,
+        "id": 10,
         "name": "TDP Ngọc Thị",
         "type": "old",
         "group_code": "ngoc-tu",
@@ -252,7 +252,7 @@
         "status": "active"
     },
     {
-        "id": 11,
+        "id": 9,
         "name": "TDP Tú",
         "type": "old",
         "group_code": "ngoc-tu",
@@ -264,7 +264,7 @@
         "status": "active"
     },
     {
-        "id": 23,
+        "id": 1,
         "name": "TDP Ngọc Động",
         "type": "old",
         "group_code": "ngoc-dong",
@@ -276,7 +276,7 @@
         "status": "active"
     },
     {
-        "id": 25,
+        "id": 4,
         "name": "TDP Đông Hải",
         "type": "old",
         "group_code": "dong-hai",

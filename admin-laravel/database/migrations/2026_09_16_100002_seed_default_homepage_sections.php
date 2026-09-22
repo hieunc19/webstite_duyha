@@ -1,0 +1,132 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        if (! Schema::hasTable('homepage_sections') || DB::table('homepage_sections')->exists()) {
+            return;
+        }
+
+        $now = now();
+        DB::table('homepage_sections')->insert([
+            [
+                'section_code' => 'header_navbar',
+                'name' => 'Thanh Header & Menu Điều hướng',
+                'custom_title' => 'CỔNG TRA CỨU THÔNG TIN',
+                'custom_subtitle' => 'Phường Duy Hà — Tỉnh Ninh Bình',
+                'is_visible' => true,
+                'sort_order' => 0,
+                'settings' => json_encode([
+                    'nav_home_label' => 'Trang chủ',
+                    'nav_home_show' => true,
+                    'nav_map_label' => 'Bản đồ số Duy Hà',
+                    'nav_map_show' => true,
+                    'admin_btn_label' => 'Quản trị',
+                    'admin_btn_show' => true,
+                ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'section_code' => 'hero_banner',
+                'name' => 'Banner Hero & Tiêu đề chính',
+                'custom_title' => 'CỔNG TRA CỨU THÔNG TIN PHƯỜNG DUY HÀ',
+                'custom_subtitle' => '',
+                'is_visible' => true,
+                'sort_order' => 1,
+                'settings' => json_encode([
+                    'bg_type' => 'image',
+                    'hero_bg_url' => '/hero-bg.jpg',
+                    'hero_height' => 'compact',
+                    'hero_fit' => 'cover',
+                    'hero_position' => 'center',
+                ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'section_code' => 'stats_cards',
+                'name' => 'Chỉ số Thống kê Địa bàn',
+                'custom_title' => 'Chỉ số thống kê địa bàn',
+                'custom_subtitle' => 'Tổng quan quy mô địa bàn, hộ gia đình, nhân khẩu và diện tích',
+                'is_visible' => true,
+                'sort_order' => 2,
+                'settings' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'section_code' => 'agencies_grid',
+                'name' => 'Cơ quan Hành chính & Công trình',
+                'custom_title' => 'Danh sách cơ quan hành chính',
+                'custom_subtitle' => 'Tra cứu vị trí, thông tin liên hệ và hình ảnh các trụ sở cơ quan công quyền',
+                'is_visible' => true,
+                'sort_order' => 3,
+                'settings' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'section_code' => 'quick_utilities',
+                'name' => 'Danh mục Tiện ích trực tuyến',
+                'custom_title' => 'Danh mục Tiện ích trực tuyến',
+                'custom_subtitle' => 'Các tiện ích tra cứu nhanh của Phường Duy Hà',
+                'is_visible' => true,
+                'sort_order' => 4,
+                'settings' => json_encode([
+                    'items' => [
+                        ['id' => 'tra_cuu_thu_tuc', 'title' => 'Tra cứu thủ tục', 'subtitle' => 'Quy trình & hồ sơ'],
+                        ['id' => 'tdp_cu_moi', 'title' => 'TDP cũ - mới', 'subtitle' => 'Sáp nhập 2026'],
+                        ['id' => 'chinh_sach', 'title' => 'Chính sách', 'subtitle' => 'Người có công'],
+                        ['id' => 'lich_gom_rac', 'title' => 'Lịch gom rác', 'subtitle' => 'Thời gian chi tiết'],
+                        ['id' => 'can_bo_phuong', 'title' => 'Cán bộ Phường', 'subtitle' => 'Danh sách & liên hệ'],
+                        ['id' => 'tiep_cong_dan', 'title' => 'Tiếp công dân', 'subtitle' => 'Lịch & địa điểm'],
+                        ['id' => 'phan_anh_kien_nghi', 'title' => 'Phản ánh kiến nghị', 'subtitle' => 'Gửi ý kiến tới chính quyền Phường'],
+                    ],
+                ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'section_code' => 'procedures_utilities',
+                'name' => 'Lịch thu gom rác sinh hoạt',
+                'custom_title' => 'LỊCH THU GOM RÁC THẢI SINH HOẠT',
+                'custom_subtitle' => 'Thời khóa biểu thu gom rác theo tuần tại các tổ dân phố',
+                'is_visible' => true,
+                'sort_order' => 5,
+                'settings' => json_encode([
+                    'schedule_btn_text' => 'Xem chi tiết lịch',
+                    'schedule_btn_url' => '/waste-schedule.html',
+                ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'section_code' => 'footer_section',
+                'name' => 'Thông tin Chân trang (Footer)',
+                'custom_title' => 'ĐOÀN TNCS HỒ CHÍ MINH PHƯỜNG DUY HÀ',
+                'custom_subtitle' => 'Thông tin liên hệ Phường Duy Hà — Tỉnh Ninh Bình',
+                'is_visible' => true,
+                'sort_order' => 6,
+                'settings' => json_encode([
+                    'org_name' => 'ĐOÀN TNCS HỒ CHÍ MINH PHƯỜNG DUY HÀ',
+                    'address' => 'Phường Duy Hà, Tỉnh Ninh Bình',
+                    'working_hours' => 'Sáng: 7h30 - 11h30 | Chiều: 13h30 - 17h00',
+                    'email' => 'thongtin@duyha.ninhbinh.gov.vn',
+                ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+        ]);
+    }
+
+    public function down(): void
+    {
+        // Do not remove administrator-managed homepage content on rollback.
+    }
+};

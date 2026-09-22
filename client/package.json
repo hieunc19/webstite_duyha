@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port 5174",
-    "dev:all": "concurrently -k \"npm run dev\" \"cd ../admin-laravel && php artisan serve --port=8005 --no-reload\"",
+    "dev:all": "concurrently -k \"npm run dev\" \"powershell -NoProfile -ExecutionPolicy Bypass -File ..\\admin-laravel\\scripts\\serve-local.ps1\"",
     "build": "tsc && vite build --emptyOutDir false",
     "preview": "vite preview --port 5174"
   },

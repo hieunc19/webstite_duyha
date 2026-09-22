@@ -19,7 +19,7 @@ Route::get('/places', function () {
                 'phone' => $place->phone,
                 'lat' => (float) $place->lat,
                 'lng' => (float) $place->lng,
-                'image' => $place->image ? (Str::startsWith($place->image, 'http') ? $place->image : url('/api/storage/' . $place->image)) : null,
+                'image' => $place->image ? (Str::startsWith($place->image, 'http') ? $place->image : '/api/storage/' . ltrim($place->image, '/')) : null,
                 'administrative_unit_id' => $place->administrative_unit_id,
                 'description' => $place->description,
             ];
@@ -38,7 +38,7 @@ Route::get('/places/{id}', function (int $id) {
         'phone' => $place->phone,
         'lat' => (float) $place->lat,
         'lng' => (float) $place->lng,
-        'image' => $place->image ? (Str::startsWith($place->image, 'http') ? $place->image : url('/api/storage/' . $place->image)) : null,
+        'image' => $place->image ? (Str::startsWith($place->image, 'http') ? $place->image : '/api/storage/' . ltrim($place->image, '/')) : null,
         'administrative_unit_id' => $place->administrative_unit_id,
         'description' => $place->description,
     ];
@@ -264,6 +264,22 @@ Route::get('/subpage-banners', function () {
     if ($setting && !empty($setting->value)) {
         $decoded = json_decode($setting->value, true);
         if (is_array($decoded)) {
+            // Uploaded files live on Laravel's public disk. Always expose
+            // them through the API so a separate frontend/static Nginx root
+            // does not try to resolve /storage as a frontend file.
+            foreach ($decoded as &$banner) {
+                if (!is_array($banner) || empty($banner['bg_image']) || !is_string($banner['bg_image'])) {
+                    continue;
+                }
+
+                if (Str::startsWith($banner['bg_image'], '/storage/')) {
+                    $banner['bg_image'] = '/api' . $banner['bg_image'];
+                } elseif (Str::startsWith($banner['bg_image'], 'storage/')) {
+                    $banner['bg_image'] = '/api/' . $banner['bg_image'];
+                }
+            }
+            unset($banner);
+
             return response()->json($decoded);
         }
     }
@@ -436,61 +452,80 @@ Route::post('/submit-feedback', function (Request $request) {
         'synced_to_sheets' => false,
     ]);
 
-    // 2. Automatically Forward to Google Form in background
+    // 2. Forward to Google Form. The feedback is always retained locally first,
+    // so a temporary Google/network outage never loses a citizen submission.
+    $googleFormSync = [
+        'configured' => false,
+        'synced' => false,
+        'error' => null,
+    ];
+
     $googleFormUrl = \App\Models\Setting::where('key', 'feedback_google_form_url')->value('value');
     if (!empty($googleFormUrl)) {
+        $googleFormSync['configured'] = true;
+
         try {
             $formResponseUrl = preg_replace('/(\/(viewform|edit)).*$/', '/formResponse', $googleFormUrl);
             if (!str_contains($formResponseUrl, '/formResponse')) {
                 $formResponseUrl = rtrim($formResponseUrl, '/') . '/formResponse';
             }
 
-            // Extract or fetch entry IDs dynamically from any Google Form
-            $entryMap = \Illuminate\Support\Facades\Cache::remember('gf_entries_' . md5($googleFormUrl), 3600, function () use ($googleFormUrl) {
+            // Extract the real entry IDs from the public Google Form. Never
+            // cache fabricated fallback IDs: Google accepts those requests
+            // with HTTP 200 but silently discards every submitted field.
+            $entryMapCacheKey = 'gf_entries_v2_' . md5($googleFormUrl);
+            $entryMap = \Illuminate\Support\Facades\Cache::get($entryMapCacheKey);
+
+            if (!is_array($entryMap)) {
                 $viewUrl = preg_replace('/(\/(formResponse|viewform|edit)).*$/', '/viewform', $googleFormUrl);
-                try {
-                    $resp = \Illuminate\Support\Facades\Http::timeout(5)->get($viewUrl);
-                    if ($resp->ok() && preg_match('/var FB_PUBLIC_LOAD_DATA_ = (\[.+?\]);<\/script>/s', $resp->body(), $matches)) {
-                        $data = json_decode($matches[1], true);
-                        $questions = $data[1][1] ?? [];
-                        $map = [];
-                        $allEntries = [];
+                $schemaResponse = \Illuminate\Support\Facades\Http::connectTimeout(5)->timeout(10)->get($viewUrl);
 
-                        foreach ($questions as $q) {
-                            $title = mb_strtolower(trim($q[1] ?? ''));
-                            $entryId = $q[4][0][0] ?? null;
-                            if ($entryId) {
-                                $allEntries[] = 'entry.' . $entryId;
-                                if (str_contains($title, 'họ') || str_contains($title, 'tên') || str_contains($title, 'người gửi') || str_contains($title, 'name')) {
-                                    $map['fullname'] = 'entry.' . $entryId;
-                                } elseif (str_contains($title, 'điện thoại') || str_contains($title, 'sđt') || str_contains($title, 'phone') || str_contains($title, 'liên hệ') || str_contains($title, 'số')) {
-                                    $map['phone'] = 'entry.' . $entryId;
-                                } elseif (str_contains($title, 'tiêu đề') || str_contains($title, 'chủ đề') || str_contains($title, 'title') || str_contains($title, 'vấn đề')) {
-                                    $map['title'] = 'entry.' . $entryId;
-                                } elseif (str_contains($title, 'nội dung') || str_contains($title, 'chi tiết') || str_contains($title, 'content') || str_contains($title, 'ý kiến') || str_contains($title, 'mô tả')) {
-                                    $map['content'] = 'entry.' . $entryId;
-                                }
-                            }
-                        }
+                if (!$schemaResponse->ok() || !preg_match('/var FB_PUBLIC_LOAD_DATA_ = (\[.+?\]);<\/script>/s', $schemaResponse->body(), $matches)) {
+                    throw new \RuntimeException('Không thể đọc cấu trúc trường của Google Form.');
+                }
 
-                        // Positional Fallback if any field was not matched by keyword
-                        if (empty($map['fullname']) && isset($allEntries[0])) $map['fullname'] = $allEntries[0];
-                        if (empty($map['phone']) && isset($allEntries[1])) $map['phone'] = $allEntries[1];
-                        if (empty($map['title']) && isset($allEntries[2])) $map['title'] = $allEntries[2];
-                        if (empty($map['content']) && isset($allEntries[3])) $map['content'] = $allEntries[3];
+                $data = json_decode($matches[1], true);
+                $questions = $data[1][1] ?? [];
+                $entryMap = [];
+                $allEntries = [];
 
-                        if (!empty($map['fullname']) || !empty($map['content'])) return $map;
+                foreach ($questions as $question) {
+                    $questionTitle = mb_strtolower(trim($question[1] ?? ''));
+                    $entryId = $question[4][0][0] ?? null;
+
+                    if (!$entryId) {
+                        continue;
                     }
-                } catch (\Throwable $e) {}
 
-                // Default fallback
-                return [
-                    'fullname' => 'entry.2116225144',
-                    'phone' => 'entry.138807521',
-                    'title' => 'entry.568776538',
-                    'content' => 'entry.68837689',
-                ];
-            });
+                    $entryName = 'entry.' . $entryId;
+                    $allEntries[] = $entryName;
+
+                    if (str_contains($questionTitle, 'họ') || str_contains($questionTitle, 'tên') || str_contains($questionTitle, 'người gửi') || str_contains($questionTitle, 'name')) {
+                        $entryMap['fullname'] = $entryName;
+                    } elseif (str_contains($questionTitle, 'điện thoại') || str_contains($questionTitle, 'sđt') || str_contains($questionTitle, 'phone') || str_contains($questionTitle, 'liên hệ') || str_contains($questionTitle, 'số')) {
+                        $entryMap['phone'] = $entryName;
+                    } elseif (str_contains($questionTitle, 'tiêu đề') || str_contains($questionTitle, 'chủ đề') || str_contains($questionTitle, 'title') || str_contains($questionTitle, 'vấn đề')) {
+                        $entryMap['title'] = $entryName;
+                    } elseif (str_contains($questionTitle, 'nội dung') || str_contains($questionTitle, 'chi tiết') || str_contains($questionTitle, 'content') || str_contains($questionTitle, 'ý kiến') || str_contains($questionTitle, 'mô tả')) {
+                        $entryMap['content'] = $entryName;
+                    }
+                }
+
+                // The first four public questions are the four required fields
+                // in the managed form. This fallback is allowed only when it
+                // comes from the form schema fetched successfully above.
+                foreach (['fullname', 'phone', 'title', 'content'] as $index => $field) {
+                    if (empty($entryMap[$field]) && isset($allEntries[$index])) {
+                        $entryMap[$field] = $allEntries[$index];
+                    }
+                }
+
+                if (count(array_filter($entryMap)) !== 4) {
+                    throw new \RuntimeException('Google Form không có đủ bốn trường bắt buộc để tiếp nhận phản ánh.');
+                }
+
+                \Illuminate\Support\Facades\Cache::put($entryMapCacheKey, $entryMap, now()->addHour());
+            }
 
             $postData = [];
             if (!empty($entryMap['fullname'])) $postData[$entryMap['fullname']] = $validated['fullname'];
@@ -499,21 +534,47 @@ Route::post('/submit-feedback', function (Request $request) {
             if (!empty($entryMap['content'])) $postData[$entryMap['content']] = $validated['content'];
 
             if (!empty($postData)) {
-                $gfRes = \Illuminate\Support\Facades\Http::asForm()->timeout(10)->post($formResponseUrl, $postData);
+                $gfRes = \Illuminate\Support\Facades\Http::asForm()
+                    ->connectTimeout(5)
+                    ->timeout(10)
+                    ->retry(2, 250, throw: false)
+                    ->post($formResponseUrl, $postData);
+
                 if ($gfRes->successful()) {
+                    $googleFormSync['synced'] = true;
                     $feedback->update(['synced_to_sheets' => true]);
+                } else {
+                    $googleFormSync['error'] = 'Google Form không xác nhận tiếp nhận dữ liệu.';
+                    \Illuminate\Support\Facades\Log::warning('Google Form sync failed', [
+                        'feedback_id' => $feedback->id,
+                        'status' => $gfRes->status(),
+                    ]);
                 }
+            } else {
+                $googleFormSync['error'] = 'Không tìm thấy các trường nhận dữ liệu của Google Form.';
             }
         } catch (\Throwable $e) {
-            \Illuminate\Support\Facades\Log::warning('Google Form sync error: ' . $e->getMessage());
+            $googleFormSync['error'] = 'Không thể kết nối tới Google Form. Dữ liệu đã được lưu an toàn trong hệ thống.';
+            \Illuminate\Support\Facades\Log::warning('Google Form sync error', [
+                'feedback_id' => $feedback->id,
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 
     // 3. Forward to Google Sheets Webhook if configured
+    $webhookSync = [
+        'configured' => false,
+        'synced' => false,
+        'error' => null,
+    ];
+
     $webhookUrl = \App\Models\Setting::where('key', 'feedback_google_sheet_webhook_url')->value('value');
     if (!empty($webhookUrl)) {
+        $webhookSync['configured'] = true;
+
         try {
-            \Illuminate\Support\Facades\Http::timeout(10)->post($webhookUrl, [
+            $webhookResponse = \Illuminate\Support\Facades\Http::connectTimeout(5)->timeout(10)->post($webhookUrl, [
                 'id' => $feedback->id,
                 'fullname' => $validated['fullname'],
                 'phone' => $validated['phone'],
@@ -521,15 +582,35 @@ Route::post('/submit-feedback', function (Request $request) {
                 'content' => $validated['content'],
                 'created_at' => now()->timezone('Asia/Ho_Chi_Minh')->format('d/m/Y H:i:s'),
             ]);
-            $feedback->update(['synced_to_sheets' => true]);
-        } catch (\Throwable $e) {}
+
+            if ($webhookResponse->successful()) {
+                $webhookSync['synced'] = true;
+                $feedback->update(['synced_to_sheets' => true]);
+            } else {
+                $webhookSync['error'] = 'Webhook Google Sheets không xác nhận tiếp nhận dữ liệu.';
+            }
+        } catch (\Throwable $e) {
+            $webhookSync['error'] = 'Không thể kết nối tới webhook Google Sheets.';
+            \Illuminate\Support\Facades\Log::warning('Google Sheets webhook sync error', [
+                'feedback_id' => $feedback->id,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
+    $externallySynced = $googleFormSync['synced'] || $webhookSync['synced'];
+
     return response()->json([
-        'status' => 'success',
-        'message' => 'Ý kiến phản ánh của bạn đã được tiếp nhận thành công!',
+        'status' => $externallySynced ? 'success' : 'accepted_with_warning',
+        'message' => $externallySynced
+            ? 'Ý kiến phản ánh của bạn đã được tiếp nhận thành công!'
+            : 'Ý kiến phản ánh đã được lưu trong hệ thống, nhưng chưa thể chuyển tiếp tới Google.',
         'id' => $feedback->id,
-    ]);
+        'sync' => [
+            'google_form' => $googleFormSync,
+            'google_sheets_webhook' => $webhookSync,
+        ],
+    ], $externallySynced ? 201 : 202);
 });
 
 Route::get('/citizen-reception', function () {
@@ -549,7 +630,7 @@ Route::get('/citizen-reception', function () {
 
     $imageUrl = null;
     if (!empty($rawImage)) {
-        $imageUrl = \Illuminate\Support\Str::startsWith($rawImage, 'http') ? $rawImage : url('/api/storage/' . $rawImage);
+        $imageUrl = \Illuminate\Support\Str::startsWith($rawImage, 'http') ? $rawImage : '/api/storage/' . ltrim($rawImage, '/');
     }
 
     return response()->json([
@@ -686,6 +767,236 @@ Route::get('/procedure-categories', function () {
     );
 });
 
+/**
+ * Single-request homepage payload.
+ *
+ * The homepage needs several read-only datasets. Combining those reads into
+ * one request reduces PHP-FPM process churn on small VPS instances while the
+ * individual endpoints above remain available for existing pages/integrations.
+ */
+Route::get('/homepage-data', function () {
+    $places = \App\Models\Place::where('status', 'active')
+        ->get()
+        ->map(function ($place) {
+            return [
+                'id' => $place->id,
+                'name' => $place->name,
+                'category' => $place->category,
+                'status' => $place->status,
+                'address' => $place->address,
+                'phone' => $place->phone,
+                'lat' => (float) $place->lat,
+                'lng' => (float) $place->lng,
+                'image' => $place->image ? (\Illuminate\Support\Str::startsWith($place->image, 'http') ? $place->image : '/api/storage/' . ltrim($place->image, '/')) : null,
+                'administrative_unit_id' => $place->administrative_unit_id,
+                'description' => $place->description,
+            ];
+        })
+        ->values();
+
+    $officials = \App\Models\Official::where('status', 'active')
+        ->orderBy('id')
+        ->get()
+        ->map(function ($official) {
+            return [
+                'id' => $official->id,
+                'name' => $official->name,
+                'role' => $official->role,
+                'phone' => $official->phone,
+                'neighborhood_name' => $official->neighborhood_name,
+                'avatar_color' => $official->avatar_color,
+                'avatar' => $official->avatar,
+                'department' => $official->department,
+            ];
+        })
+        ->values();
+
+    $departments = \App\Models\Department::where('status', 'active')
+        ->orderBy('sort_order', 'asc')
+        ->get()
+        ->map(function ($department) {
+            return [
+                'id' => $department->id,
+                'code' => $department->code,
+                'name' => $department->name,
+                'color' => $department->color,
+                'sort_order' => (int) $department->sort_order,
+                'status' => $department->status,
+                'description' => $department->description,
+            ];
+        })
+        ->values();
+
+    $neighborhoods = \App\Models\Neighborhood::all()
+        ->map(function ($neighborhood) {
+            return [
+                'id' => $neighborhood->id,
+                'name' => $neighborhood->name,
+                'type' => $neighborhood->type,
+                'group_code' => $neighborhood->group_code,
+                'leader_name' => $neighborhood->leader_name,
+                'leader_phone' => $neighborhood->leader_phone,
+                'households' => (int) $neighborhood->households,
+                'people' => (int) $neighborhood->people,
+                'area_ha' => (float) ($neighborhood->area_ha ?? 0),
+                'status' => $neighborhood->status ?? 'active',
+                'bi_thu_name' => $neighborhood->bi_thu_name,
+                'bi_thu_phone' => $neighborhood->bi_thu_phone,
+                'to_truong_name' => $neighborhood->to_truong_name,
+                'to_truong_phone' => $neighborhood->to_truong_phone,
+                'cskv_name' => $neighborhood->cskv_name,
+                'cskv_phone' => $neighborhood->cskv_phone,
+                'mat_tan_name' => $neighborhood->mat_tan_name,
+                'mat_tan_phone' => $neighborhood->mat_tan_phone,
+                'nguoi_cao_tuoi' => $neighborhood->nguoi_cao_tuoi,
+                'nguoi_cao_tuoi_phone' => $neighborhood->nguoi_cao_tuoi_phone,
+                'phu_nu' => $neighborhood->phu_nu,
+                'phu_nu_phone' => $neighborhood->phu_nu_phone,
+                'nong_dan' => $neighborhood->nong_dan,
+                'nong_dan_phone' => $neighborhood->nong_dan_phone,
+                'ccb' => $neighborhood->ccb,
+                'ccb_phone' => $neighborhood->ccb_phone,
+                'doan_thanh_nien' => $neighborhood->doan_thanh_nien,
+                'doan_thanh_nien_phone' => $neighborhood->doan_thanh_nien_phone,
+            ];
+        })
+        ->values();
+
+    $families = \App\Models\MeritoriousFamily::where('status', 'active')
+        ->orderBy('created_at', 'desc')
+        ->get()
+        ->map(function ($family) {
+            return [
+                'id' => $family->id,
+                'name' => $family->name,
+                'file_path' => $family->file_path,
+                'file_url' => $family->file_url,
+                'file_name' => $family->file_name ?: 'Danh-sach-chinh-sach.xlsx',
+                'file_size' => $family->file_size,
+                'description' => $family->description,
+                'status' => $family->status,
+                'created_at' => $family->created_at?->format('d/m/Y H:i'),
+                'period_date' => $family->period_date ?: ($family->created_at?->format('d/m/Y') ?? ''),
+            ];
+        })
+        ->values();
+
+    $tdpOfficials = \App\Models\Neighborhood::where('type', 'new')
+        ->get()
+        ->map(function ($item, $index) {
+            return [
+                'tt' => $index + 1,
+                'tdp' => preg_replace('/^(TDP|Tổ dân phố)\s+/ui', '', trim($item->name)),
+                'biThuName' => $item->bi_thu_name ?? '',
+                'biThuPhone' => $item->bi_thu_phone ?? '',
+                'toTruongName' => $item->to_truong_name ?? '',
+                'toTruongPhone' => $item->to_truong_phone ?? '',
+                'cskvName' => $item->cskv_name ?? '',
+                'cskvPhone' => $item->cskv_phone ?? '',
+                'matTanName' => $item->mat_tan_name ?? '',
+                'matTanPhone' => $item->mat_tan_phone ?? '',
+                'nguoiCaoTuoi' => $item->nguoi_cao_tuoi ?? '',
+                'nguoiCaoTuoiPhone' => $item->nguoi_cao_tuoi_phone ?? '',
+                'phuNu' => $item->phu_nu ?? '',
+                'phuNuPhone' => $item->phu_nu_phone ?? '',
+                'nongDan' => $item->nong_dan ?? '',
+                'nongDanPhone' => $item->nong_dan_phone ?? '',
+                'ccb' => $item->ccb ?? '',
+                'ccbPhone' => $item->ccb_phone ?? '',
+                'doanThanhNien' => $item->doan_thanh_nien ?? '',
+                'doanThanhNienPhone' => $item->doan_thanh_nien_phone ?? '',
+            ];
+        })
+        ->values();
+
+    $stats = \App\Models\Setting::where('group', 'stats')
+        ->orderBy('sort_order', 'asc')
+        ->get();
+    $statsByKey = $stats->keyBy('key');
+    $iconMap = [
+        'stat_1' => ['icon' => 'holiday_village', 'bg' => 'bg-blue-500/10', 'color' => 'text-blue-600 dark:text-blue-400'],
+        'stat_2' => ['icon' => 'group', 'bg' => 'bg-emerald-500/10', 'color' => 'text-emerald-600 dark:text-emerald-400'],
+        'stat_3' => ['icon' => 'diversity_3', 'bg' => 'bg-amber-500/10', 'color' => 'text-amber-600 dark:text-amber-400'],
+        'stat_4' => ['icon' => 'map', 'bg' => 'bg-purple-500/10', 'color' => 'text-purple-600 dark:text-purple-400'],
+    ];
+    $cards = $stats->map(function ($item) use ($iconMap) {
+        $style = $iconMap[$item->key] ?? ['icon' => 'analytics', 'bg' => 'bg-blue-500/10', 'color' => 'text-blue-600'];
+        return [
+            'key' => $item->key,
+            'name' => $item->name,
+            'value' => $item->value,
+            'label' => $item->label,
+            'sort_order' => (int) $item->sort_order,
+            'icon' => $style['icon'],
+            'bg' => $style['bg'],
+            'color' => $style['color'],
+        ];
+    })->values();
+
+    $defaultStats = [
+        'stat_1' => ['value' => '10', 'label' => 'Tổng số tổ dân phố'],
+        'stat_2' => ['value' => '6.767', 'label' => 'Tổng số hộ gia đình'],
+        'stat_3' => ['value' => '23.615', 'label' => 'Tổng số nhân khẩu'],
+        'stat_4' => ['value' => '15,46 km²', 'label' => 'Diện tích (1.546,30 ha)'],
+    ];
+    $settings = ['cards' => $cards];
+    foreach ($defaultStats as $key => $default) {
+        $setting = $statsByKey->get($key);
+        $settings[$key . '_val'] = $setting?->value ?? $default['value'];
+        $settings[$key . '_lbl'] = $setting?->label ?? $default['label'];
+    }
+
+    $managedCodes = [
+        'header_navbar',
+        'hero_banner',
+        'stats_cards',
+        'agencies_grid',
+        'quick_utilities',
+        'procedures_utilities',
+        'hdsd_procedure',
+        'footer_section',
+    ];
+    $sections = \App\Models\HomepageSection::where(function ($query) use ($managedCodes) {
+        $query
+            ->whereIn('section_code', $managedCodes)
+            ->orWhere('section_code', 'like', 'custom_%');
+    })
+        ->orderBy('sort_order', 'asc')
+        ->get()
+        ->map(function ($section) {
+            return [
+                'id' => $section->id,
+                'section_code' => $section->section_code,
+                'name' => $section->name,
+                'custom_title' => $section->custom_title,
+                'custom_subtitle' => $section->custom_subtitle,
+                'is_visible' => (bool) $section->is_visible,
+                'sort_order' => (int) $section->sort_order,
+                'settings' => $section->settings,
+            ];
+        })
+        ->values();
+
+    return response()->json([
+        'places' => $places,
+        'officials' => $officials,
+        'departments' => $departments,
+        'neighborhoods' => $neighborhoods,
+        'meritorious_families' => $families,
+        'tdp_officials' => $tdpOfficials,
+        'settings' => $settings,
+        'homepage_sections' => $sections,
+        'waste_schedules' => \App\Models\WasteSchedule::where('is_active', true)
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('id', 'asc')
+            ->get(),
+        'procedure_categories' => \App\Models\ProcedureCategory::where('is_active', true)
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('id', 'asc')
+            ->get(),
+    ]);
+});
+
 Route::get('/procedures', function () {
     $categoriesMap = \App\Models\ProcedureCategory::pluck('name', 'slug')->toArray();
     return response()->json(
@@ -803,5 +1114,3 @@ Route::get('/policies', function () {
             })
     );
 });
-
-

@@ -946,7 +946,6 @@ class DatabaseSeeder extends Seeder
     'gift_details' => NULL,
     'celebration_event_id' => NULL,
     'status' => 'active',
-    'file_url' => 'http://127.0.0.1:8005/storage/meritorious_files/01M05KG4J30SDY1KNWYA0HBX41.xlsx',
   ),
 );
             foreach ($families as $f) {

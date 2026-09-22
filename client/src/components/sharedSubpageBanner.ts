@@ -21,8 +21,12 @@ let activeSubpageBanners: SubpageBannersMap = (subpageBannersData as unknown) as
 function resolveBannerUrl(rawUrl: string | null | undefined): string {
   if (!rawUrl) return '/hero-bg.jpg';
   if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) return rawUrl;
-  if (rawUrl.startsWith('/storage/') || rawUrl.startsWith('/')) return rawUrl;
-  return '/storage/' + rawUrl;
+  // Storage files are served by Laravel. The API path also works when the
+  // frontend is hosted from a separate static Nginx root.
+  if (rawUrl.startsWith('/storage/')) return `/api${rawUrl}`;
+  if (rawUrl.startsWith('/api/storage/')) return rawUrl;
+  if (rawUrl.startsWith('/')) return rawUrl;
+  return '/api/storage/' + rawUrl.replace(/^\/+/, '');
 }
 
 /**

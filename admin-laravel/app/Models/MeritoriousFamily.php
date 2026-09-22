@@ -18,14 +18,25 @@ class MeritoriousFamily extends Model
         'description',
         'period_date',
         'type',
+        'year',
         'neighborhood_id',
         'address',
         'representative_name',
         'phone',
         'benefit_details',
+        'gift_amount',
+        'gift_details',
         'celebration_event_id',
         'status',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'year' => 'integer',
+            'gift_amount' => 'decimal:2',
+        ];
+    }
 
     protected $appends = ['file_url'];
 
@@ -39,7 +50,7 @@ class MeritoriousFamily extends Model
             return $this->file_path;
         }
 
-        return url('storage/' . ltrim($this->file_path, '/'));
+        return '/storage/' . ltrim($this->file_path, '/');
     }
 
     public function celebrationEvent(): BelongsTo

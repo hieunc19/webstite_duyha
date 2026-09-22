@@ -62,7 +62,7 @@ class ManageCitizenReception extends Page
             return $this->currentImage;
         }
 
-        return url('/api/storage/' . $this->currentImage);
+        return '/api/storage/' . ltrim($this->currentImage, '/');
     }
 
     public function deleteImage()

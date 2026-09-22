@@ -10,6 +10,7 @@
     "preview": "vite preview --port 5174"
   },
   "devDependencies": {
+    "@emnapi/runtime": "^1.11.3",
     "@types/node": "^26.2.0",
     "concurrently": "^9.2.1",
     "typescript": "~6.0.2",

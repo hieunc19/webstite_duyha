@@ -76,7 +76,15 @@
 </head>
 
 <body
-  class="portal-active bg-[#FFFDF5] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-['Inter'] font-sans antialiased selection:bg-[#3399fe] selection:text-white transition-colors duration-300">
+  class="subpage-loading portal-active bg-[#FFFDF5] dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-['Inter'] font-sans antialiased selection:bg-[#3399fe] selection:text-white transition-colors duration-300">
+
+  <div id="subpage-db-loader" role="status" aria-live="polite">
+    <div class="subpage-loader-card">
+      <div class="subpage-loader-spinner" aria-hidden="true"></div>
+      <div class="subpage-loader-title">Đang tải dữ liệu từ máy chủ...</div>
+      <div class="subpage-loader-detail">Vui lòng chờ trong giây lát.</div>
+    </div>
+  </div>
 
   <!-- ==================== HEADER ==================== -->
 

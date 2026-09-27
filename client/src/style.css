@@ -49,6 +49,74 @@ body {
   line-height: 1.6;
 }
 
+/* Shared database loader for every full subpage reload. */
+body.subpage-loading {
+  overflow: hidden;
+}
+
+body.subpage-loading #app-header,
+body.subpage-loading main,
+body.subpage-loading > footer {
+  visibility: hidden !important;
+}
+
+#subpage-db-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: #fffdf5;
+  color: #0f172a;
+  text-align: center;
+  opacity: 1;
+  transition: opacity 0.18s ease-out;
+}
+
+body.subpage-ready #subpage-db-loader {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.subpage-loader-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 28rem;
+}
+
+.subpage-loader-spinner {
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 3px solid rgba(29, 127, 224, 0.2);
+  border-top-color: #1d7fe0;
+  border-radius: 9999px;
+  animation: subpage-loader-spin 0.8s linear infinite;
+}
+
+.subpage-loader-title {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.subpage-loader-detail {
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+@keyframes subpage-loader-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .subpage-loader-spinner {
+    animation-duration: 1.6s;
+  }
+}
+
 /* Custom prominent horizontal scrollbar for tables & modals */
 .custom-scrollbar,
 .modal-table-scroll {

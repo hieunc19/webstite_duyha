@@ -49,9 +49,14 @@ import { CSKV_MAP } from './data/tdpOfficials';
 import { applySharedHeaderConfig, initSharedHeader, applyThemeState } from './components/sharedHeader';
 import { applySharedFooterConfig, initSharedFooter } from './components/sharedFooter';
 import { initSubpageBanners } from './components/sharedSubpageBanner';
+import { installSubpageLoader, markSubpageDataReady } from './services/subpageLoader';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import * as XLSX from 'xlsx';
+
+// The script is loaded at the end of each document, before DOMContentLoaded.
+// Install the opaque loader now so bundled/default markup is never exposed.
+installSubpageLoader();
 
 declare global {
   interface Window {
@@ -176,8 +181,7 @@ class PortalApp {
     // Reveal subpages after their synchronous fallback render. The homepage
     // is revealed only after all required live DB endpoints succeed.
     if (!isHomepage) {
-      document.body.classList.add('js-hydrated');
-      this.initPortalData();
+      this.initSubpageFromDatabase();
     } else {
       this.initHomepageFromDatabase();
     }
@@ -372,6 +376,16 @@ class PortalApp {
     if (title) title.textContent = 'Không thể tải dữ liệu từ máy chủ';
     if (detail) detail.textContent = 'Vui lòng kiểm tra kết nối API và thử tải lại trang.';
     document.body.classList.add('homepage-db-error');
+  }
+
+  private async initSubpageFromDatabase(): Promise<void> {
+    try {
+      await this.initPortalData();
+    } finally {
+      // The shared loader also waits for page-specific API requests that were
+      // started by the inline subpage scripts during DOMContentLoaded.
+      markSubpageDataReady();
+    }
   }
 
   private async initPortalData(): Promise<boolean> {

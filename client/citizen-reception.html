@@ -59,7 +59,15 @@
 </head>
 
 <body
-  class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-sky-500 selection:text-white transition-colors duration-300">
+  class="subpage-loading bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-sky-500 selection:text-white transition-colors duration-300">
+
+  <div id="subpage-db-loader" role="status" aria-live="polite">
+    <div class="subpage-loader-card">
+      <div class="subpage-loader-spinner" aria-hidden="true"></div>
+      <div class="subpage-loader-title">Đang tải dữ liệu từ máy chủ...</div>
+      <div class="subpage-loader-detail">Vui lòng chờ trong giây lát.</div>
+    </div>
+  </div>
 
   <!-- ==================== SHARED HEADER ==================== -->
   <header id="app-header"

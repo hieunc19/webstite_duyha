@@ -547,6 +547,19 @@ class PortalApp {
 
   private applyHomepageLayout(sections: any[]) {
     if (!Array.isArray(sections) || sections.length === 0) return;
+
+    const sorted = [...sections].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+
+    // Header and footer are shared by the homepage and every subpage. Apply
+    // their live database configuration before checking for homepage-only DOM.
+    sorted.forEach((sec: any) => {
+      if (sec.section_code === 'header_navbar') {
+        applySharedHeaderConfig(sec);
+      } else if (sec.section_code === 'footer_section') {
+        applySharedFooterConfig(sec);
+      }
+    });
+
     const parentContainer = document.getElementById('portal-main-view');
     if (!parentContainer) return;
 
@@ -580,17 +593,12 @@ class PortalApp {
       }
     });
 
-
-    const sorted = [...sections].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
-
     sorted.forEach((sec: any) => {
       if (sec.section_code === 'header_navbar') {
-        applySharedHeaderConfig(sec);
         return;
       }
 
       if (sec.section_code === 'footer_section') {
-        applySharedFooterConfig(sec);
         return;
       }
 

@@ -1,5 +1,8 @@
 <x-filament-panels::page>
     <style>
+        [x-cloak] {
+            display: none !important;
+        }
         .cr-wrap {
             color: #1e293b;
             display: flex;
@@ -226,10 +229,65 @@
                         <span style="font-size: 0.75rem; font-weight: 700; color: #64748b;" class="dark:text-slate-400">
                             Tệp đang hiển thị trên website:
                         </span>
-                        <div>
-                            <button type="button" wire:click="deleteImage" wire:confirm="Bạn có chắc muốn gỡ tệp này không?" class="cr-btn-danger">
+                        <div x-data="{ showConfirm: false }">
+                            <button type="button" @click="showConfirm = true" class="cr-btn-danger">
                                 🗑️ Gỡ file
                             </button>
+
+                            <!-- Modern Confirmation Modal Teleported to Body -->
+                            <template x-teleport="body">
+                                <div x-show="showConfirm" 
+                                     x-cloak 
+                                     style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100vh; z-index: 999999; display: flex; align-items: center; justify-content: center; background-color: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); padding: 1rem; overflow-y: auto;"
+                                     x-transition:enter="transition ease-out duration-200"
+                                     x-transition:enter-start="opacity-0"
+                                     x-transition:enter-end="opacity-100"
+                                     x-transition:leave="transition ease-in duration-150"
+                                     x-transition:leave-start="opacity-100"
+                                     x-transition:leave-end="opacity-0"
+                                     @keydown.escape.window="showConfirm = false">
+                                    
+                                    <div @click.away="showConfirm = false"
+                                         style="margin: auto; background: #ffffff; border-radius: 1.25rem; width: 100%; max-width: 440px; padding: 1.75rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); border: 1px solid #e2e8f0; text-align: center; position: relative;"
+                                         class="dark:bg-slate-900 dark:border-slate-800 dark:text-white"
+                                         x-transition:enter="transition ease-out duration-200"
+                                         x-transition:enter-start="opacity-0 scale-95"
+                                         x-transition:enter-end="opacity-100 scale-100"
+                                         x-transition:leave="transition ease-in duration-150"
+                                         x-transition:leave-start="opacity-100 scale-100"
+                                         x-transition:leave-end="opacity-0 scale-95">
+                                         
+                                        <div style="width: 3.75rem; height: 3.75rem; margin: 0 auto 1.25rem auto; border-radius: 9999px; background-color: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center;" class="dark:bg-red-950/50 dark:text-red-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" style="width: 2rem; height: 2rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </div>
+
+                                        <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0 0 0.5rem 0;" class="dark:text-white">
+                                            Xác nhận gỡ tệp tin
+                                        </h3>
+
+                                        <p style="font-size: 0.875rem; color: #64748b; margin: 0 0 1.5rem 0; line-height: 1.5;" class="dark:text-slate-400">
+                                            Bạn có chắc chắn muốn gỡ tệp Lịch tiếp công dân này không? Tệp đang hiển thị sẽ bị xóa khỏi hệ thống và website.
+                                        </p>
+
+                                        <div style="display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+                                            <button type="button" 
+                                                    @click="showConfirm = false"
+                                                    style="flex: 1; padding: 0.65rem 1rem; border-radius: 0.75rem; font-size: 0.875rem; font-weight: 700; color: #475569; background: #f1f5f9; border: 1px solid #cbd5e1; cursor: pointer; transition: all 0.15s ease;"
+                                                    class="dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700">
+                                                Hủy bỏ
+                                            </button>
+                                            <button type="button" 
+                                                    @click="showConfirm = false; $wire.deleteImage()"
+                                                    style="flex: 1; padding: 0.65rem 1rem; border-radius: 0.75rem; font-size: 0.875rem; font-weight: 700; color: #ffffff; background: #dc2626; border: 1px solid #b91c1c; cursor: pointer; transition: all 0.15s ease; box-shadow: 0 2px 6px rgba(220, 38, 38, 0.25);"
+                                                    class="hover:bg-red-700 active:scale-95">
+                                                Đồng ý gỡ
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
                         </div>
                     </div>
 

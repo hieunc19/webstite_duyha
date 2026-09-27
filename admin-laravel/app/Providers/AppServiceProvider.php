@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        app()->setLocale('vi');
+        \Illuminate\Support\Facades\App::setLocale('vi');
     }
 }

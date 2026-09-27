@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 export default defineConfig({
-  cacheDir: './node_modules/.vite_app',
+  cacheDir: './node_modules/.vite_cache',
   plugins: [
     {
       name: 'redirect-admin',

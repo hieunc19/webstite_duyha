@@ -380,11 +380,47 @@ class PortalApp {
 
   private async initSubpageFromDatabase(): Promise<void> {
     try {
-      await this.initPortalData();
+      // Load shared chrome independently from the large homepage payload.
+      // This guarantees that header/menu/footer on subpages always use the
+      // same live Page Builder configuration as the homepage, even if an
+      // unrelated homepage data collection is incomplete.
+      await Promise.all([
+        this.initPortalData(),
+        this.syncSharedLayoutFromDatabase(),
+      ]);
     } finally {
       // The shared loader also waits for page-specific API requests that were
       // started by the inline subpage scripts during DOMContentLoaded.
       markSubpageDataReady();
+    }
+  }
+
+  private async syncSharedLayoutFromDatabase(): Promise<void> {
+    try {
+      const cacheBust = `?v=${Date.now()}`;
+      const response = await fetch('/api/homepage-sections' + cacheBust, { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error(`Shared layout request failed with status ${response.status}`);
+      }
+
+      const sections = await response.json();
+      if (!Array.isArray(sections)) {
+        throw new Error('Shared layout payload is invalid');
+      }
+
+      const headerSection = sections.find((section: any) => section?.section_code === 'header_navbar');
+      const footerSection = sections.find((section: any) => section?.section_code === 'footer_section');
+
+      if (!headerSection || !footerSection) {
+        throw new Error('Shared header/footer configuration is missing');
+      }
+
+      applySharedHeaderConfig(headerSection);
+      applySharedFooterConfig(footerSection);
+    } catch (error) {
+      // Keep the bundled configuration as an offline fallback, but do not let
+      // this prevent page-specific data from loading.
+      console.warn('Shared subpage layout load failed', error);
     }
   }
 

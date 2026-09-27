@@ -2346,6 +2346,8 @@ class PortalApp {
     const currentBatch = batches.find(b => b.id === this.selectedMeritoriousId) || batches[0];
     const fileUrl = getLocalFileUrl(currentBatch.file_path || currentBatch.file_url);
     const fileName = currentBatch.file_name || currentBatch.name || 'Danh_sach_chinh_sach.xlsx';
+    const isExcel = /\.(xlsx|xls|csv)$/i.test(fileName) || /\.(xlsx|xls|csv)$/i.test(currentBatch.file_path || '');
+    const isPdf = /\.pdf$/i.test(fileName) || /\.pdf$/i.test(currentBatch.file_path || '');
 
     let html = `
       <!-- BATCH SELECTOR (IF MULTIPLE BATCHES) -->
@@ -2368,6 +2370,20 @@ class PortalApp {
       <!-- CURRENT BATCH HEADER & CONTROLS -->
       <div class="bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-transparent dark:from-amber-950/30 dark:via-slate-900 dark:to-slate-900 p-5 sm:p-6 rounded-2xl border border-amber-500/20 dark:border-amber-900/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div class="space-y-1.5 min-w-0 flex-1">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="inline-flex items-center gap-1 text-[11px] font-extrabold ${isExcel ? 'text-emerald-700 dark:text-emerald-400 bg-emerald-100/70 dark:bg-emerald-950/80 border-emerald-300 dark:border-emerald-800' : (isPdf ? 'text-rose-700 dark:text-rose-400 bg-rose-100/70 dark:bg-rose-950/80 border-rose-300 dark:border-rose-800' : 'text-blue-700 dark:text-blue-400 bg-blue-100/70 dark:bg-blue-950/80 border-blue-300 dark:border-blue-800')} px-2.5 py-0.5 rounded-full border">
+              <span class="material-symbols-outlined text-xs">${isExcel ? 'table_chart' : (isPdf ? 'picture_as_pdf' : 'draft')}</span>
+              <span>${isExcel ? 'TỆP EXCEL (.XLSX)' : (isPdf ? 'TỆP PDF' : 'TÀI LIỆU')}</span>
+            </span>
+            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1">
+              <span class="material-symbols-outlined text-xs">calendar_today</span>
+              <span>${currentBatch.created_at || currentBatch.period_date || 'Mới cập nhật'}</span>
+            </span>
+            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 hidden sm:inline-flex items-center gap-1 truncate max-w-xs" title="${fileName}">
+              <span class="material-symbols-outlined text-xs">attach_file</span>
+              <span class="truncate">${fileName}</span>
+            </span>
+          </div>
           <h4 class="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">
             ${currentBatch.name}
           </h4>
@@ -2385,6 +2401,12 @@ class PortalApp {
               title="Tải về máy tính">
               <span class="material-symbols-outlined text-base">download</span>
               <span>Tải về</span>
+            </a>
+            <a href="${fileUrl}" target="_blank"
+              class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-extrabold text-xs rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer"
+              title="Mở trong tab mới">
+              <span class="material-symbols-outlined text-base">open_in_new</span>
+              <span class="hidden sm:inline">Mở tab mới</span>
             </a>
           ` : ''}
         </div>

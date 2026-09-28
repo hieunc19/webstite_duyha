@@ -2,13 +2,11 @@
 
 namespace App\Filament\Resources;
 
-use App\Models\Neighborhood;
 use App\Models\WasteSchedule;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
@@ -46,42 +44,14 @@ class WasteScheduleResource extends Resource
                     ->columnSpanFull()
                     ->columns(2)
                     ->components([
-                        Select::make('tdp_name')
+                        TextInput::make('tdp_name')
                             ->label('Tên Tổ dân phố')
-                            ->placeholder('-- Chọn Tổ dân phố --')
+                            ->placeholder('Ví dụ: TDP Ngọc Tú')
+                            ->helperText('Nhập trực tiếp tên địa bàn thực tế, không phụ thuộc danh sách Tổ dân phố trong hệ thống.')
                             ->required()
-                            ->searchable()
-                            ->options(function ($record) {
-                                $existingQuery = WasteSchedule::query();
-                                if ($record) {
-                                    $existingQuery->where('id', '!=', $record->id);
-                                }
-                                $takenNames = $existingQuery->pluck('tdp_name')->toArray();
-
-                                $allTdps = Neighborhood::where('type', 'new')
-                                    ->orderBy('id', 'asc')
-                                    ->pluck('name', 'name')
-                                    ->toArray();
-
-                                if (empty($allTdps)) {
-                                    $allTdps = [
-                                        'TDP Duy Minh' => 'TDP Duy Minh',
-                                        'TDP Ngọc Tú' => 'TDP Ngọc Tú',
-                                        'TDP Động Linh Trang' => 'TDP Động Linh Trang',
-                                        'TDP Chuông' => 'TDP Chuông',
-                                        'TDP Bạch Xá' => 'TDP Bạch Xá',
-                                        'TDP Hoàng Đông' => 'TDP Hoàng Đông',
-                                        'TDP Hương Cát' => 'TDP Hương Cát',
-                                        'TDP Duy Hải' => 'TDP Duy Hải',
-                                        'TDP Ngọc Động' => 'TDP Ngọc Động',
-                                        'TDP Đông Hải' => 'TDP Đông Hải',
-                                    ];
-                                }
-
-                                return array_filter($allTdps, function ($name) use ($takenNames) {
-                                    return !in_array($name, $takenNames);
-                                });
-                            })
+                            ->maxLength(255)
+                            ->unique(ignoreRecord: true)
+                            ->dehydrateStateUsing(fn (?string $state): string => trim((string) $state))
                             ->columnSpanFull(),
 
                         TextInput::make('morning_shift')

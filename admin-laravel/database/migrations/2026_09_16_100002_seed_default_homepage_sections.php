@@ -96,7 +96,7 @@ return new class extends Migration
                 'section_code' => 'procedures_utilities',
                 'name' => 'Lịch thu gom rác sinh hoạt',
                 'custom_title' => 'LỊCH THU GOM RÁC THẢI SINH HOẠT',
-                'custom_subtitle' => 'Thời khóa biểu thu gom rác theo tuần tại các tổ dân phố',
+                'custom_subtitle' => 'Thời gian thu gom rác tại các địa bàn phường Duy Hà',
                 'is_visible' => true,
                 'sort_order' => 5,
                 'settings' => json_encode([

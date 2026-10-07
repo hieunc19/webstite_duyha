@@ -20,6 +20,7 @@ class Procedure extends Model
         'docs',
         'attachment',
         'download_url',
+        'public_service_url',
         'sort_order',
         'is_active',
         'created_at',

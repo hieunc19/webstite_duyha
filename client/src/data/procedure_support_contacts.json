@@ -1,0 +1,62 @@
+[
+    {
+        "id": 5,
+        "contact_type": "hotline",
+        "field_name": "Đường dây nóng phản ánh, kiến nghị",
+        "name": "Nguyễn Như Uy",
+        "role": "Chủ tịch UBND phường",
+        "phone": "0912220182",
+        "avatar": null,
+        "sort_order": 1
+    },
+    {
+        "id": 6,
+        "contact_type": "hotline",
+        "field_name": "Đường dây nóng phản ánh, kiến nghị",
+        "name": "Nguyễn Tiến Đạt",
+        "role": "Giám đốc Trung tâm Phục vụ hành chính công phường Duy Hà",
+        "phone": "0915802179",
+        "avatar": null,
+        "sort_order": 2
+    },
+    {
+        "id": 1,
+        "contact_type": "support",
+        "field_name": "Văn hóa - Xã hội",
+        "name": "Nguyễn Thị Hồng Hạnh",
+        "role": "Cán bộ phụ trách lĩnh vực Văn hóa - Xã hội",
+        "phone": "0913022016",
+        "avatar": null,
+        "sort_order": 1
+    },
+    {
+        "id": 2,
+        "contact_type": "support",
+        "field_name": "Tư pháp",
+        "name": "Dương Văn Đáng",
+        "role": "Cán bộ phụ trách lĩnh vực Tư pháp",
+        "phone": "0983198762",
+        "avatar": null,
+        "sort_order": 2
+    },
+    {
+        "id": 3,
+        "contact_type": "support",
+        "field_name": "Hộ tịch",
+        "name": "Lê Hồng Tuân",
+        "role": "Cán bộ phụ trách lĩnh vực Hộ tịch",
+        "phone": "0969698832",
+        "avatar": null,
+        "sort_order": 3
+    },
+    {
+        "id": 4,
+        "contact_type": "support",
+        "field_name": "Nông nghiệp, Môi trường, Kinh tế hạ tầng & Đô thị",
+        "name": "Hoàng Mạnh Tuấn",
+        "role": "Cán bộ phụ trách lĩnh vực Nông nghiệp, Môi trường, Kinh tế hạ tầng & Đô thị",
+        "phone": "0963868736",
+        "avatar": null,
+        "sort_order": 4
+    }
+]

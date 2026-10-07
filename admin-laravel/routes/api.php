@@ -730,29 +730,20 @@ Route::get('/form-documents', function () {
             ->orderBy('id', 'asc')
             ->get()
             ->map(function ($f) {
-                $downloadUrl = '#';
-                if (!empty($f->download_url)) {
-                    $downloadUrl = $f->download_url;
-                } elseif (!empty($f->file_path)) {
-                    $downloadUrl = '/storage/' . ltrim($f->file_path, '/');
+                $defaultPortalUrl = 'https://dichvucong.gov.vn/';
+                $portalUrl = trim((string) $f->public_service_url);
+                if (!preg_match('#^https://([a-z0-9-]+\.)?dichvucong\.gov\.vn(?:/|$)#i', $portalUrl)) {
+                    $portalUrl = $defaultPortalUrl;
                 }
                 return [
                     'id' => $f->id,
                     'code' => $f->code ?? '',
                     'title' => $f->title,
                     'name' => $f->title,
-                    'description' => $f->description ?? '',
-                    'purpose' => $f->description ?? '',
                     'category' => $f->category,
                     'category_name' => $f->category_text ?? 'Thủ tục hành chính',
                     'agency' => $f->agency ?? 'Bộ phận Một cửa',
-                    'fee' => $f->fee ?? 'Miễn phí',
-                    'file_path' => $f->file_path,
-                    'download_url' => $downloadUrl,
-                    'downloadUrl' => $downloadUrl,
-                    'steps' => $f->steps ?? [],
-                    'docs' => $f->docs ?? [],
-                    'notes' => $f->notes ?? '',
+                    'public_service_url' => $portalUrl,
                 ];
             })
     );
@@ -1005,39 +996,10 @@ Route::get('/procedures', function () {
             ->orderBy('id', 'desc')
             ->get()
             ->map(function ($p) use ($categoriesMap) {
-                $docsList = collect($p->docs ?? [])->map(function ($doc) {
-                    if (is_array($doc)) {
-                        $file = $doc['file'] ?? null;
-                        $fileUrl = null;
-                        if (!empty($file)) {
-                            $fileUrl = \Illuminate\Support\Str::startsWith($file, 'http') ? $file : ('/storage/' . ltrim($file, '/'));
-                        }
-                        return [
-                            'name' => $doc['name'] ?? '',
-                            'quantity' => $doc['quantity'] ?? '01 bản chính',
-                            'file' => $file,
-                            'file_url' => $fileUrl,
-                        ];
-                    }
-                    return [
-                        'name' => (string) $doc,
-                        'quantity' => '01 bản chính',
-                        'file' => null,
-                        'file_url' => null,
-                    ];
-                })->values()->all();
-
-                $attachmentUrl = null;
-                $firstDocWithFile = collect($docsList)->first(function ($d) {
-                    return !empty($d['file_url']);
-                });
-
-                if ($firstDocWithFile) {
-                    $attachmentUrl = $firstDocWithFile['file_url'];
-                } elseif (!empty($p->attachment)) {
-                    $attachmentUrl = \Illuminate\Support\Str::startsWith($p->attachment, 'http') ? $p->attachment : ('/storage/' . ltrim($p->attachment, '/'));
-                } elseif (!empty($p->download_url) && !str_contains($p->download_url, 'dichvucong.gov.vn')) {
-                    $attachmentUrl = $p->download_url;
+                $defaultPortalUrl = 'https://dichvucong.gov.vn/';
+                $portalUrl = trim((string) $p->public_service_url);
+                if (!preg_match('#^https://([a-z0-9-]+\.)?dichvucong\.gov\.vn(?:/|$)#i', $portalUrl)) {
+                    $portalUrl = $defaultPortalUrl;
                 }
 
                 return [
@@ -1047,12 +1009,36 @@ Route::get('/procedures', function () {
                     'name' => $p->title,
                     'category' => $p->category,
                     'categoryText' => $p->category_text ?? ($categoriesMap[$p->category] ?? 'Thủ tục hành chính'),
-                    'desc' => $p->desc ?? '',
-                    'fee' => $p->fee ?? 'Miễn phí',
                     'agency' => $p->agency ?? 'UBND Phường',
-                    'docs' => $docsList,
-                    'attachment_url' => $attachmentUrl,
+                    'public_service_url' => $portalUrl,
                     'created_at' => $p->created_at ? $p->created_at->format('d/m/Y') : '',
+                ];
+            })
+    );
+});
+
+Route::get('/procedure-support-contacts', function () {
+    return response()->json(
+        \App\Models\ProcedureSupportContact::where('is_active', true)
+            ->orderBy('contact_type')
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get()
+            ->map(function ($contact) {
+                $avatar = trim((string) $contact->avatar);
+                if ($avatar !== '' && !\Illuminate\Support\Str::startsWith($avatar, ['http://', 'https://', '/'])) {
+                    $avatar = '/api/storage/' . ltrim($avatar, '/');
+                }
+
+                return [
+                    'id' => $contact->id,
+                    'contact_type' => $contact->contact_type,
+                    'field_name' => $contact->field_name,
+                    'name' => $contact->name,
+                    'role' => $contact->role,
+                    'phone' => $contact->phone,
+                    'avatar' => $avatar ?: null,
+                    'sort_order' => (int) $contact->sort_order,
                 ];
             })
     );

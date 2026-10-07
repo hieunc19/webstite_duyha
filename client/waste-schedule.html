@@ -124,8 +124,7 @@
         </h2>
         <p class="text-xs sm:text-sm md:text-base text-white leading-relaxed font-semibold"
           style="text-shadow: 0 1.5px 6px rgba(0, 0, 0, 0.95);">
-          Bảng thời khóa biểu chi tiết khung thời gian xe gom rác, điểm tập kết và phân loại rác tại 10 Tổ dân phố
-          Phường Duy Hà, tỉnh Ninh Bình.
+          Tra cứu chi tiết lịch thu gom rác tại Phường Duy Hà, tỉnh Ninh Bình.
         </p>
       </div>
     </div>
@@ -141,39 +140,31 @@
           <h3
             class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
             <span class="material-symbols-outlined text-red-600 dark:text-red-400 text-3xl">calendar_month</span>
-            <span>Bảng thời khóa biểu thu gom rác theo tuần</span>
+            <span>Lịch thu gom rác theo ngày</span>
           </h3>
           <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">
-            Áp dụng cho toàn bộ các ngõ xóm và trục đường chính thuộc 10 Tổ dân phố Phường Duy Hà
+            Tra cứu các ngày xe thu gom sắp tới theo từng Tổ dân phố Phường Duy Hà
           </p>
         </div>
 
-        <div class="hidden sm:flex items-center gap-3 text-xs font-bold">
+        <div class="flex items-center gap-3 text-xs font-bold">
           <span
             class="inline-flex items-center gap-1.5 text-emerald-700 bg-emerald-50 dark:bg-emerald-950/60 dark:text-emerald-300 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-800 shadow-xs">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Khung giờ thu gom rác
-          </span>
-          <span
-            class="inline-flex items-center gap-1.5 text-slate-500 bg-slate-100 dark:bg-slate-800 dark:text-slate-400 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-xs">
-            <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span> — : Không thu gom
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Ngày thu gom
           </span>
         </div>
       </div>
 
       <!-- Responsive Overflow Table Container -->
       <div class="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
-        <table class="w-full text-left border-collapse min-w-[1100px]">
+        <table class="w-full text-left border-collapse min-w-[720px]">
           <thead>
             <tr
               class="bg-gradient-to-r from-[#3399fe] via-[#268df5] to-[#1d7fe0] text-white text-xs sm:text-sm font-extrabold uppercase tracking-wider shadow-xs">
-              <th class="py-4 px-4 border-r border-white/20 w-56">TỔ DÂN PHỐ (TDP)</th>
-              <th class="py-4 px-3 border-r border-white/20 text-center">THỨ 2</th>
-              <th class="py-4 px-3 border-r border-white/20 text-center">THỨ 3</th>
-              <th class="py-4 px-3 border-r border-white/20 text-center">THỨ 4</th>
-              <th class="py-4 px-3 border-r border-white/20 text-center">THỨ 5</th>
-              <th class="py-4 px-3 border-r border-white/20 text-center">THỨ 6</th>
-              <th class="py-4 px-3 border-r border-white/20 text-center">THỨ 7</th>
-              <th class="py-4 px-3 text-center">CHỦ NHẬT</th>
+              <th class="py-4 px-4 border-r border-white/20 w-[28%]">TỔ DÂN PHỐ (TDP)</th>
+              <th class="py-4 px-3 border-r border-white/20 w-[34%]">NGÀY THU GOM SẮP TỚI</th>
+              <th class="py-4 px-3 border-r border-white/20 w-[22%]">KHUNG GIỜ XE GOM</th>
+              <th class="py-4 px-3 w-[16%] text-center">LỊCH THÁNG</th>
             </tr>
           </thead>
           <tbody id="timetable-matrix-body"
@@ -219,8 +210,10 @@
               </div>
               <h4 class="text-sm sm:text-base font-black uppercase tracking-tight">1. Rác hữu cơ (Dễ phân hủy)</h4>
             </div>
-            <div class="w-full h-44 sm:h-48 rounded-2xl overflow-hidden bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/60 shadow-xs mt-1">
-              <img src="/storage/waste/waste_cat_0_1787671590.png" alt="1. Rác hữu cơ" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" />
+            <div
+              class="w-full h-44 sm:h-48 rounded-2xl overflow-hidden bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/60 shadow-xs mt-1">
+              <img src="/storage/waste/waste_cat_0_1787671590.png" alt="1. Rác hữu cơ"
+                class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" loading="lazy" />
             </div>
             <p class="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 leading-relaxed">
               Thức ăn thừa, rau củ quả thải loại, vỏ trái cây, bã chè, lá cây nhỏ...
@@ -271,7 +264,8 @@
           class="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-700 dark:text-amber-400 flex items-center justify-center shrink-0 border border-amber-400/30 shadow-sm">
           <span class="material-symbols-outlined text-2xl">gavel</span>
         </div>
-        <p id="waste-guide-regulation-text" class="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 leading-relaxed">
+        <p id="waste-guide-regulation-text"
+          class="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 leading-relaxed">
           <strong class="font-extrabold text-amber-900 dark:text-amber-300 uppercase">Quy định:</strong> Bỏ rác đúng giờ
           trước khi xe đến 15-30 phút. Hành vi vứt rác bừa bãi ra vỉa hè, lòng đường bị phạt tiền từ <strong
             class="text-red-600 dark:text-red-400 font-extrabold">500.000đ — 2.000.000đ</strong> theo Nghị định
@@ -483,6 +477,8 @@
 
     let WASTE_SCHEDULE_DATA = [...DB_NEW_TDPS];
     let filteredData = [...DB_NEW_TDPS];
+    let selectedWasteScheduleId = null;
+    let wasteCalendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 
     async function safeFetchJson(urls) {
       for (const url of urls) {
@@ -493,7 +489,7 @@
             if (Array.isArray(json) && json.length > 0) return json;
             if (json && typeof json === 'object') return json;
           }
-        } catch (_) {}
+        } catch (_) { }
       }
       return null;
     }
@@ -512,6 +508,7 @@
             id: item.id,
             tdp_name: item.tdp_name,
             morning_shift: (item.morning_shift || '').trim(),
+            collection_dates: normalizeWasteCollectionDates(item.collection_dates),
             collection_days: Array.isArray(item.collection_days) ? item.collection_days : [],
             is_active: item.is_active !== false,
             sort_order: item.sort_order || 0
@@ -526,7 +523,7 @@
       }
     }
 
-    function renderTimetableMatrix() {
+    function renderLegacyWeeklyTimetableMatrix() {
       const tbody = document.getElementById('timetable-matrix-body');
       if (!tbody) return;
 
@@ -581,6 +578,137 @@
             ${renderDayCell(item, 'chu_nhat', true)}
           </tr>
         `;
+      }).join('');
+    }
+
+    // The weekly matrix above is kept temporarily for reference. The active renderer
+    // below presents real calendar dates and links each locality to its monthly view.
+    function escapeWasteHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function getWasteDayKeyForDate(date) {
+      return ['chu_nhat', 'thu_2', 'thu_3', 'thu_4', 'thu_5', 'thu_6', 'thu_7'][date.getDay()];
+    }
+
+    function normalizeWasteCollectionDates(value) {
+      let rawDates = [];
+      if (Array.isArray(value)) {
+        rawDates = value;
+      } else if (typeof value === 'string') {
+        try {
+          const parsed = JSON.parse(value);
+          rawDates = Array.isArray(parsed) ? parsed : [];
+        } catch (_) { }
+      }
+
+      return Array.from(new Set(rawDates
+        .map(function (item) { return typeof item === 'string' ? item : (item && item.date); })
+        .map(function (item) {
+          const matched = String(item || '').match(/^\d{4}-\d{2}-\d{2}/);
+          return matched ? matched[0] : '';
+        })
+        .filter(function (date) { return !Number.isNaN(new Date(date + 'T00:00:00').getTime()); })
+      )).sort();
+    }
+
+    function isSameWasteScheduleDate(first, second) {
+      return first.getFullYear() === second.getFullYear()
+        && first.getMonth() === second.getMonth()
+        && first.getDate() === second.getDate();
+    }
+
+    function getUpcomingWasteScheduleDates(days, count, collectionDates) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const selectedDates = normalizeWasteCollectionDates(collectionDates);
+      if (selectedDates.length > 0) {
+        return selectedDates
+          .map(function (date) { return new Date(date + 'T00:00:00'); })
+          .filter(function (date) { return !Number.isNaN(date.getTime()) && date >= today; })
+          .slice(0, count || 2);
+      }
+
+      if (!Array.isArray(days) || days.length === 0) return [];
+      const targetCount = count || (days.length >= 3 ? 3 : 2);
+      const dates = [];
+      for (let offset = 0; offset < 42 && dates.length < targetCount; offset += 1) {
+        const candidate = new Date(today);
+        candidate.setDate(today.getDate() + offset);
+        if (days.includes(getWasteDayKeyForDate(candidate))) dates.push(candidate);
+      }
+      return dates;
+    }
+
+    function renderUpcomingWasteScheduleDates(dates, totalScheduleDays, isRecurringWeekly) {
+      if (!dates || dates.length === 0) {
+        return '<span class="text-slate-400 dark:text-slate-500 text-xs italic">Chưa có lịch cố định</span>';
+      }
+
+      const today = new Date();
+      const weekdayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+
+      const badgesHtml = dates.map(function (date) {
+        const isToday = isSameWasteScheduleDate(date, today);
+        const dayName = weekdayNames[date.getDay()];
+        const label = String(date.getDate()).padStart(2, '0') + '/' + String(date.getMonth() + 1).padStart(2, '0');
+        const classes = isToday
+          ? 'bg-emerald-600 dark:bg-emerald-500 text-white border-emerald-600 dark:border-emerald-500 shadow-xs'
+          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-200/80 dark:hover:bg-slate-750';
+        const iconColor = isToday ? 'text-white' : 'text-slate-500 dark:text-slate-400';
+        const tooltip = isToday ? 'Hôm nay (' + dayName + ' - ' + label + ') có lịch xe gom rác' : 'Lịch thu gom: ' + dayName + ', ' + label;
+
+        return '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border font-black text-xs tracking-tight transition-all shrink-0 ' + classes + '" title="' + tooltip + '">'
+          + '<span class="material-symbols-outlined text-[13px] ' + iconColor + '">calendar_today</span>'
+          + '<span>' + label + '</span>'
+          + '</span>';
+      }).join('');
+
+      const totalDays = Number(totalScheduleDays) || 0;
+      const isDaily = Boolean(isRecurringWeekly) && totalDays >= 7;
+      const dailyBadge = isDaily
+        ? '<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border border-sky-200/80 dark:border-sky-800/80 text-[11px] font-bold shrink-0" title="Tổ dân phố thu gom tất cả các ngày trong tuần">'
+        + '<span class="material-symbols-outlined text-xs">all_inclusive</span>Hàng ngày</span>'
+        : '';
+
+      const extraCount = totalDays > 3 && !isDaily ? totalDays - dates.length : 0;
+      const extraBadge = extraCount > 0
+        ? '<span class="inline-flex items-center px-1.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700/80 text-[11px] font-bold shrink-0" title="Còn ' + extraCount + ' ngày thu gom ' + (isRecurringWeekly ? 'khác trong tuần' : 'đã thiết lập') + '">+' + extraCount + '</span>'
+        : '';
+
+      return '<div class="flex flex-wrap items-center gap-1.5">' + badgesHtml + dailyBadge + extraBadge + '</div>';
+    }
+
+    function renderTimetableMatrix() {
+      const tbody = document.getElementById('timetable-matrix-body');
+      if (!tbody) return;
+
+      if (filteredData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-slate-500 font-bold">Không tìm thấy Tổ dân phố nào.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filteredData.map(function (item, index) {
+        const bgClass = index % 2 === 0 ? 'bg-white dark:bg-slate-900' : 'bg-slate-50/70 dark:bg-slate-850';
+        const days = Array.isArray(item.collection_days) ? item.collection_days : [];
+        const selectedDates = normalizeWasteCollectionDates(item.collection_dates);
+        const dates = getUpcomingWasteScheduleDates(days, undefined, selectedDates);
+        const isCollectingToday = dates.some(function (date) { return isSameWasteScheduleDate(date, new Date()); });
+        const numberClass = isCollectingToday ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400';
+        const shiftTime = item.morning_shift || 'Có thu gom';
+
+        return '<tr class="' + bgClass + ' hover:bg-sky-50/80 dark:hover:bg-slate-800/80 transition-colors">'
+          + '<td class="py-3 px-4 border-r border-slate-200 dark:border-slate-800 align-middle"><div class="flex items-center gap-2.5"><span class="w-6 h-6 rounded-md ' + numberClass + ' flex items-center justify-center font-bold text-[11px] shrink-0">' + (index + 1) + '</span><b class="text-slate-900 dark:text-white block font-extrabold text-sm sm:text-base">' + escapeWasteHtml(item.tdp_name) + '</b></div></td>'
+          + '<td class="py-3 px-3 border-r border-slate-200 dark:border-slate-800 align-middle">' + renderUpcomingWasteScheduleDates(dates, selectedDates.length || days.length, selectedDates.length === 0) + '</td>'
+          + '<td class="py-3 px-3 border-r border-slate-200 dark:border-slate-800 align-middle"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 font-extrabold text-xs whitespace-nowrap"><span class="material-symbols-outlined text-sm">schedule</span>' + escapeWasteHtml(shiftTime) + '</span></td>'
+          + '<td class="py-3 px-3 align-middle text-center"><button type="button" onclick="window.openWasteMonthlySchedule(' + Number(item.id) + ')" class="inline-flex items-center justify-center px-3 py-1.5 rounded-xl text-sky-700 dark:text-sky-300 hover:bg-sky-600 hover:text-white border border-sky-200 dark:border-sky-800 font-extrabold text-xs transition-colors shadow-2xs whitespace-nowrap">Chi tiết</button></td>'
+          + '</tr>';
       }).join('');
     }
 

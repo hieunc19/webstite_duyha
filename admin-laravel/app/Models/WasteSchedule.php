@@ -14,6 +14,7 @@ class WasteSchedule extends Model
         'morning_shift',
         'evening_shift',
         'collection_days',
+        'collection_dates',
         'saturday_recycle',
         'main_routes',
         'collection_point',
@@ -25,6 +26,7 @@ class WasteSchedule extends Model
 
     protected $casts = [
         'collection_days' => 'array',
+        'collection_dates' => 'array',
         'is_active' => 'boolean',
         'sort_order' => 'integer',
     ];

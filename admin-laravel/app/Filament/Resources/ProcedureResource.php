@@ -50,7 +50,7 @@ class ProcedureResource extends Resource
         return $schema
             ->components([
                 Section::make('Thông tin Thủ tục Hành chính')
-                    ->description('Quản lý chi tiết quy trình, thành phần hồ sơ và biểu mẫu đính kèm cho công dân')
+                    ->description('Thiết lập đường dẫn thủ tục chính thức trên Cổng Dịch vụ công Quốc gia. Nội dung và tệp cũ chỉ được giữ để lưu trữ nội bộ.')
                     ->columnSpanFull()
                     ->columns(2)
                     ->components([
@@ -77,10 +77,27 @@ class ProcedureResource extends Resource
                             ->required()
                             ->maxLength(255),
 
+                        TextInput::make('public_service_url')
+                            ->label('Đường dẫn thủ tục chính thức trên Cổng DVC Quốc gia')
+                            ->helperText('Dán đường dẫn chi tiết của thủ tục trên dichvucong.gov.vn. Nếu chưa có, giữ đường dẫn trang chủ để công dân tra cứu.')
+                            ->default('https://dichvucong.gov.vn/')
+                            ->required()
+                            ->url()
+                            ->rule('regex:/^https:\/\/([a-z0-9-]+\.)?dichvucong\.gov\.vn(?:\/|$)/i')
+                            ->validationMessages([
+                                'regex' => 'Đường dẫn phải thuộc tên miền dichvucong.gov.vn.',
+                            ])
+                            ->columnSpanFull(),
+
                         Toggle::make('is_active')
                             ->label('Hiển thị trên website')
                             ->default(true),
 
+                        /*
+                         * Tạm thời không cho nhập/sửa trình tự và hồ sơ cục bộ.
+                         * Dữ liệu desc/docs trong CSDL được giữ nguyên để có thể
+                         * khôi phục lại giao diện quản trị khi cần.
+                         *
                         Textarea::make('desc')
                             ->label('Trình tự thực hiện')
                             ->placeholder('Ghi rõ trình tự các bước thực hiện thủ tục hành chính cho công dân...')
@@ -117,6 +134,7 @@ class ProcedureResource extends Resource
                                         ->columnSpan(4),
                                 ]),
                             ]),
+                        */
                     ]),
             ]);
     }
@@ -144,6 +162,11 @@ class ProcedureResource extends Resource
 
                 TextColumn::make('agency')
                     ->label('Cơ quan giải quyết'),
+
+                TextColumn::make('public_service_url')
+                    ->label('Link DVCQG')
+                    ->limit(35)
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('created_at')
                     ->label('Ngày tạo')

@@ -393,39 +393,10 @@ $procedures = \App\Models\Procedure::where('is_active', true)
     ->orderBy('id', 'desc')
     ->get()
     ->map(function($p) use ($procCategoriesMap) {
-        $docsList = collect($p->docs ?? [])->map(function($doc) {
-            if (is_array($doc)) {
-                $file = $doc['file'] ?? null;
-                $fileUrl = null;
-                if (!empty($file)) {
-                    $fileUrl = \Illuminate\Support\Str::startsWith($file, 'http') ? $file : ('/storage/' . ltrim($file, '/'));
-                }
-                return [
-                    'name' => $doc['name'] ?? '',
-                    'quantity' => $doc['quantity'] ?? '01 bản chính',
-                    'file' => $file,
-                    'file_url' => $fileUrl,
-                ];
-            }
-            return [
-                'name' => (string) $doc,
-                'quantity' => '01 bản chính',
-                'file' => null,
-                'file_url' => null,
-            ];
-        })->values();
-
-        $attachmentUrl = null;
-        $firstDocWithFile = collect($docsList)->first(function ($d) {
-            return !empty($d['file_url']);
-        });
-
-        if ($firstDocWithFile) {
-            $attachmentUrl = $firstDocWithFile['file_url'];
-        } elseif (!empty($p->attachment)) {
-            $attachmentUrl = \Illuminate\Support\Str::startsWith($p->attachment, 'http') ? $p->attachment : ('/storage/' . ltrim($p->attachment, '/'));
-        } elseif (!empty($p->download_url) && !str_contains($p->download_url, 'dichvucong.gov.vn')) {
-            $attachmentUrl = $p->download_url;
+        $defaultPortalUrl = 'https://dichvucong.gov.vn/';
+        $portalUrl = trim((string) $p->public_service_url);
+        if (!preg_match('#^https://([a-z0-9-]+\.)?dichvucong\.gov\.vn(?:/|$)#i', $portalUrl)) {
+            $portalUrl = $defaultPortalUrl;
         }
 
         return [
@@ -435,17 +406,35 @@ $procedures = \App\Models\Procedure::where('is_active', true)
             'name' => $p->title,
             'category' => $p->category,
             'categoryText' => $p->category_text ?? ($procCategoriesMap[$p->category] ?? 'Thủ tục hành chính'),
-            'desc' => $p->desc,
-            'fee' => $p->fee ?? 'Miễn phí',
             'agency' => $p->agency ?? 'UBND Phường',
-            'docs' => $docsList,
-            'attachment_url' => $attachmentUrl,
+            'public_service_url' => $portalUrl,
             'created_at' => $p->created_at ? $p->created_at->format('d/m/Y') : null,
         ];
     });
 saveJsonBoth('procedures.json', $procedures, $mainTargetDir);
 
-// 14. Procedure Videos (Video hướng dẫn thủ tục)
+// 14. Procedure support contacts & hotlines
+echo "Dumping procedure support contacts...\n";
+$procedureSupportContacts = \App\Models\ProcedureSupportContact::where('is_active', true)
+    ->orderBy('contact_type', 'asc')
+    ->orderBy('sort_order', 'asc')
+    ->orderBy('id', 'asc')
+    ->get()
+    ->map(function($contact) use ($formatStorage) {
+        return [
+            'id' => $contact->id,
+            'contact_type' => $contact->contact_type,
+            'field_name' => $contact->field_name,
+            'name' => $contact->name,
+            'role' => $contact->role,
+            'phone' => $contact->phone,
+            'avatar' => $contact->avatar ? $formatStorage($contact->avatar) : null,
+            'sort_order' => (int) $contact->sort_order,
+        ];
+    });
+saveJsonBoth('procedure_support_contacts.json', $procedureSupportContacts, $mainTargetDir);
+
+// 15. Procedure Videos (Video hướng dẫn thủ tục)
 echo "Dumping procedure videos...\n";
 $procedureVideos = \App\Models\ProcedureVideo::where('is_active', true)
     ->orderBy('sort_order', 'asc')
@@ -481,7 +470,7 @@ $procedureVideos = \App\Models\ProcedureVideo::where('is_active', true)
     });
 saveJsonBoth('procedure_videos.json', $procedureVideos, $mainTargetDir);
 
-// 15. Policies & Regulations (Chính sách & Quy định)
+// 16. Policies & Regulations (Chính sách & Quy định)
 echo "Dumping policies...\n";
 $sharedCategoryMap = \App\Models\ProcedureCategory::pluck('name', 'slug')->toArray();
 $policies = \App\Models\Policy::where('is_active', true)
@@ -557,33 +546,24 @@ saveJsonBoth('waste_classification_guide.json', $wasteGuideData, $mainTargetDir)
 echo "Dumping form documents...\n";
 if (\Illuminate\Support\Facades\Schema::hasTable('form_documents')) {
     $formDocs = \App\Models\FormDocument::where('is_active', true)
-        ->orderBy('sort_order', 'asc')
-        ->orderBy('id', 'asc')
-        ->get()
-        ->map(function ($f) {
-            $downloadUrl = '#';
-            if (!empty($f->download_url)) {
-                $downloadUrl = $f->download_url;
-            } elseif (!empty($f->file_path)) {
-                $downloadUrl = '/storage/' . ltrim($f->file_path, '/');
+    ->orderBy('sort_order', 'asc')
+    ->orderBy('id', 'asc')
+    ->get()
+    ->map(function ($f) {
+            $defaultPortalUrl = 'https://dichvucong.gov.vn/';
+            $portalUrl = trim((string) $f->public_service_url);
+            if (!preg_match('#^https://([a-z0-9-]+\.)?dichvucong\.gov\.vn(?:/|$)#i', $portalUrl)) {
+                $portalUrl = $defaultPortalUrl;
             }
             return [
                 'id' => $f->id,
                 'code' => $f->code ?? '',
                 'title' => $f->title,
                 'name' => $f->title,
-                'description' => $f->description ?? '',
-                'purpose' => $f->description ?? '',
                 'category' => $f->category,
                 'category_name' => $f->category_text ?? 'Thủ tục hành chính',
                 'agency' => $f->agency ?? 'Bộ phận Một cửa',
-                'fee' => $f->fee ?? 'Miễn phí',
-                'file_path' => $f->file_path,
-                'download_url' => $downloadUrl,
-                'downloadUrl' => $downloadUrl,
-                'steps' => $f->steps ?? [],
-                'docs' => $f->docs ?? [],
-                'notes' => $f->notes ?? '',
+                'public_service_url' => $portalUrl,
             ];
         });
     saveJsonBoth('form_documents.json', $formDocs, $mainTargetDir);

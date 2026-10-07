@@ -19,6 +19,7 @@ class FormDocument extends Model
         'fee',
         'file_path',
         'download_url',
+        'public_service_url',
         'steps',
         'docs',
         'notes',

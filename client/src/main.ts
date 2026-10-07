@@ -86,6 +86,11 @@ declare global {
     focusMapPlace: (id: number) => void;
     toggleMobileStatsPanel: () => void;
     switchTdpMobileTab: (tab: 'old' | 'new', prefix?: string) => void;
+    openWasteMonthlySchedule: (scheduleId?: number) => void;
+    closeWasteMonthlySchedule: () => void;
+    changeWasteMonthlyScheduleMonth: (direction: number) => void;
+    toggleWasteTdpDropdown: (forceClose?: boolean) => void;
+    selectWasteMonthlySchedule: (scheduleId: number | string) => void;
     pannellum: any;
   }
 }
@@ -108,6 +113,15 @@ function getLocalFileUrl(urlOrPath: string | null | undefined): string {
     return urlOrPath;
   }
   return formatStorageUrl(urlOrPath);
+}
+
+function escapeHtml(value: any): string {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 // Chuẩn hóa dữ liệu ban đầu từ database JSON xuất xưởng (0ms delay, không có dữ liệu mock)
@@ -133,6 +147,8 @@ class PortalApp {
   private procedureVideos: any[] = procedureVideosData as any[];
   private policiesList: any[] = policiesData as any[];
   private wasteSchedulesList: any[] = (wasteSchedulesData as any[]) || [];
+  private selectedWasteScheduleId: number | null = null;
+  private wasteCalendarMonth: Date = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   private procedureCategoriesList: any[] = (procedureCategoriesData as any[]) || HOMEPAGE_FALLBACK_PROC_CATEGORIES;
   private activeCategory: string = 'all';
   private currentPlace: Place | null = null;
@@ -211,6 +227,18 @@ class PortalApp {
     window.filterPortalCategory = this.filterPortalCategory.bind(this);
     window.filterOfficialsByNeighborhood = this.filterOfficialsByNeighborhood.bind(this);
     window.renderOfficialsGrid = () => this.renderOfficialsGrid();
+    window.openWasteMonthlySchedule = this.openWasteMonthlySchedule.bind(this);
+    window.closeWasteMonthlySchedule = this.closeWasteMonthlySchedule.bind(this);
+    window.changeWasteMonthlyScheduleMonth = this.changeWasteMonthlyScheduleMonth.bind(this);
+    window.toggleWasteTdpDropdown = this.toggleWasteTdpDropdown.bind(this);
+    window.selectWasteMonthlySchedule = this.selectWasteMonthlySchedule.bind(this);
+
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement | null;
+      if (!target?.closest('#waste-tdp-dropdown-container')) {
+        this.toggleWasteTdpDropdown(true);
+      }
+    });
     window.addEventListener('spa:navigated', () => {
       this.renderPortalGrid();
       this.renderOfficialsGrid();
@@ -790,11 +818,13 @@ class PortalApp {
       if (sec.section_code === 'procedures_utilities' || sec.section_code === 'hdsd_procedure') {
         const schedBtn = document.getElementById('btn-procedures_utilities') as HTMLAnchorElement;
         const schedBtnText = document.getElementById('btn-text-procedures_utilities');
-        if (schedBtn && sec.settings?.schedule_btn_url) {
-          schedBtn.href = sec.settings.schedule_btn_url;
+        if (schedBtn) {
+          schedBtn.href = sec.settings?.schedule_btn_url || '/waste-schedule.html';
         }
-        if (schedBtnText && sec.settings?.schedule_btn_text) {
-          schedBtnText.textContent = sec.settings.schedule_btn_text;
+        // Nút này luôn mở modal lịch tháng; không dùng lại nhãn/liên kết cũ
+        // trong cấu hình để tránh hiển thị sai chức năng.
+        if (schedBtnText) {
+          schedBtnText.textContent = sec.settings?.schedule_btn_text || 'Xem lịch';
         }
       }
 
@@ -811,6 +841,35 @@ class PortalApp {
       }
     });
 
+    this.positionQuickUtilitiesForViewport();
+  }
+
+  private positionQuickUtilitiesForViewport() {
+    const quickUtilities = document.getElementById('section-quick-utilities');
+    const mobileSlot = document.getElementById('mobile-quick-utilities-slot');
+    const statsSection = document.getElementById('section-stats-cards');
+    const desktopOrigin = document.getElementById('quick-utilities-origin');
+
+    if (!quickUtilities || !mobileSlot || !statsSection || !desktopOrigin) return;
+
+    const placeQuickUtilities = () => {
+      if (window.matchMedia('(max-width: 639px)').matches) {
+        // Homepage sections are reordered from the database at runtime. Place the
+        // mobile slot after statistics only after that work has completed.
+        statsSection.after(mobileSlot);
+        mobileSlot.appendChild(quickUtilities);
+      } else {
+        desktopOrigin.after(quickUtilities);
+      }
+    };
+
+    placeQuickUtilities();
+
+    if (!(window as any).__quickUtilitiesViewportListenerInstalled) {
+      const mediaQuery = window.matchMedia('(max-width: 639px)');
+      mediaQuery.addEventListener('change', placeQuickUtilities);
+      (window as any).__quickUtilitiesViewportListenerInstalled = true;
+    }
   }
 
   private renderStatCardsList(cards: any[]) {
@@ -819,12 +878,12 @@ class PortalApp {
     if (container) {
       container.innerHTML = cards.map((c: any) => `
         <div class="stat-card">
-          <div class="w-11 h-11 sm:w-13 sm:h-13 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl ${c.bg} ${c.color} flex items-center justify-center text-2xl sm:text-3xl lg:text-4xl font-bold shrink-0">
-            <span class="material-symbols-outlined text-2xl sm:text-3xl lg:text-4xl">${c.icon}</span>
+          <div class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 xl:w-15 xl:h-15 rounded-xl sm:rounded-2xl ${c.bg} ${c.color} flex items-center justify-center text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold shrink-0">
+            <span class="material-symbols-outlined text-[1.35rem] sm:text-2xl lg:text-3xl xl:text-[2rem]">${c.icon}</span>
           </div>
           <div class="min-w-0 flex-1">
-            <b class="text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[2.6rem] font-black text-slate-900 dark:text-white leading-none block truncate">${c.value}</b>
-            <span class="text-[11px] sm:text-xs lg:text-sm xl:text-base font-semibold text-slate-500 dark:text-slate-400 stat-label mt-0.5 lg:mt-1">${c.label}</span>
+            <b class="text-[17px] xs:text-lg sm:text-2xl lg:text-[1.75rem] xl:text-[2.05rem] font-black text-slate-900 dark:text-white leading-none block truncate tracking-tight">${c.value}</b>
+            <span class="text-[11px] sm:text-xs lg:text-xs xl:text-sm font-semibold text-slate-500 dark:text-slate-400 stat-label mt-0.5 lg:mt-1">${c.label}</span>
           </div>
         </div>
       `).join('');
@@ -2181,124 +2240,51 @@ class PortalApp {
     const container = document.getElementById('homepage-waste-schedule-container');
     if (!container) return;
 
-    const rawList = (this.wasteSchedulesList && this.wasteSchedulesList.length > 0)
-      ? this.wasteSchedulesList
-      : HOMEPAGE_FALLBACK_TDPS;
-
-    // Filter active items and normalize
-    const data = rawList
-      .filter((item: any) => item.is_active !== false)
-      .map((item: any) => ({
-        ...item,
-        tdp_name: item.tdp_name || '',
-        morning_shift: (item.morning_shift || item.shift || 'Có gom').trim(),
-        collection_days: Array.isArray(item.collection_days)
-          ? item.collection_days
-          : (typeof item.collection_days === 'string' ? (() => { try { return JSON.parse(item.collection_days); } catch (_) { return []; } })() : [])
-      }))
-      .slice(0, 10);
-
-    const now = new Date();
-    const dayOfWeek = now.getDay(); // 0: CN, 1: T2, 2: T3, 3: T4, 4: T5, 5: T6, 6: T7
-    const dayMapToKey: Record<number, string> = {
-      0: 'chu_nhat',
-      1: 'thu_2',
-      2: 'thu_3',
-      3: 'thu_4',
-      4: 'thu_5',
-      5: 'thu_6',
-      6: 'thu_7'
-    };
-    const todayKey = dayMapToKey[dayOfWeek];
-
-    const dayLabels: Record<string, string> = {
-      'thu_2': 'Thứ 2',
-      'thu_3': 'Thứ 3',
-      'thu_4': 'Thứ 4',
-      'thu_5': 'Thứ 5',
-      'thu_6': 'Thứ 6',
-      'thu_7': 'Thứ 7',
-      'chu_nhat': 'Chủ Nhật'
-    };
-
-    const formatDays = (daysList: string[]) => {
-      if (!Array.isArray(daysList) || daysList.length === 0) {
-        return `<span class="text-slate-400 dark:text-slate-500 text-xs italic">Chưa có lịch cố định</span>`;
-      }
-
-      const weekdayKeys = ['thu_2', 'thu_3', 'thu_4', 'thu_5', 'thu_6'];
-      const isEveryWeekday = weekdayKeys.every(k => daysList.includes(k)) && !daysList.includes('thu_7') && !daysList.includes('chu_nhat');
-
-      if (isEveryWeekday) {
-        const isTodayWeekday = weekdayKeys.includes(todayKey);
-        return `
-          <div class="inline-flex items-center gap-1.5 flex-wrap">
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg ${isTodayWeekday ? 'bg-emerald-600 text-white font-black shadow-xs' : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-200/80 dark:border-emerald-800'} text-xs">
-              <span class="w-1.5 h-1.5 rounded-full ${isTodayWeekday ? 'bg-white animate-pulse' : 'bg-emerald-500'}"></span>
-              Thứ 2 – Thứ 6 (Hàng ngày)
-            </span>
-          </div>
-        `;
-      }
-
-      return `
-        <div class="inline-flex flex-wrap items-center gap-1 sm:gap-1.5">
-          ${daysList.map(dKey => {
-        const label = dayLabels[dKey] || dKey;
-        const isToday = dKey === todayKey;
-        if (isToday) {
-          return `
-                <span class="inline-flex items-center gap-1 px-2 sm:px-2.5 py-0.5 rounded-md bg-emerald-600 text-white font-black text-[11px] sm:text-xs shadow-xs" title="Hôm nay có xe gom rác">
-                  <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
-                  ${label} <span class="hidden xs:inline">(Hôm nay)</span>
-                </span>
-              `;
-        }
-        return `
-              <span class="inline-block px-2 sm:px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-[11px] sm:text-xs border border-slate-200/80 dark:border-slate-700/80">
-                ${label}
-              </span>
-            `;
-      }).join('')}
-        </div>
-      `;
-    };
+    const data = this.getNormalizedWasteSchedules().slice(0, 10);
 
     container.innerHTML = `
       <!-- 1. TABLE VIEW: DÀNH CHO MÀN HÌNH TABLET & DESKTOP (MD TRỞ LÊN) -->
       <div class="hidden md:block rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs bg-white dark:bg-slate-900 overflow-hidden">
         <div class="overflow-x-auto scrollbar-thin">
-          <table class="w-full text-left border-collapse min-w-[560px]">
+          <table class="w-full text-left border-collapse min-w-[680px]">
             <thead>
               <tr class="bg-gradient-to-r from-[#1d7fe0] via-[#268df5] to-[#1464b8] text-white text-[11px] sm:text-xs font-black uppercase tracking-wider">
-                <th class="py-3 px-3.5 sm:px-4 w-[32%]">TỔ DÂN PHỐ (TDP)</th>
-                <th class="py-3 px-3 sm:px-4 w-[44%]">NGÀY THU GOM TRONG TUẦN</th>
-                <th class="py-3 px-3 sm:px-4 w-[24%] text-right sm:text-left">KHUNG GIỜ XE GOM</th>
+                <th class="py-3.5 px-3.5 sm:px-4 w-[28%]">TỔ DÂN PHỐ (TDP)</th>
+                <th class="py-3.5 px-3 sm:px-4 w-[34%]">NGÀY THU GOM SẮP TỚI</th>
+                <th class="py-3.5 px-3 sm:px-4 w-[22%]">KHUNG GIỜ XE GOM</th>
+                <th class="py-3.5 px-3 sm:px-4 w-[16%] text-center">LỊCH THÁNG</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-xs font-medium">
               ${data.map((item: any, index: number) => {
       const bgClass = index % 2 === 0 ? 'bg-white dark:bg-slate-900' : 'bg-slate-50/60 dark:bg-slate-850/40';
       const shift = item.morning_shift || 'Có gom';
+      const scheduleCount = item.collection_dates.length || item.collection_days.length;
+      const upcomingDates = this.getUpcomingWasteDates(item.collection_days, undefined, item.collection_dates);
 
       return `
                   <tr class="${bgClass} hover:bg-sky-50/60 dark:hover:bg-slate-800/60 transition-colors">
-                    <td class="py-2.5 px-3.5 sm:px-4 align-middle">
+                    <td class="py-3 px-3.5 sm:px-4 align-middle">
                       <div class="flex items-center gap-2 sm:gap-2.5">
                         <span class="w-5 h-5 sm:w-6 sm:h-6 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center font-bold text-[10px] sm:text-[11px] shrink-0 border border-slate-200/80 dark:border-slate-700/80">
                           ${index + 1}
                         </span>
-                        <b class="text-slate-900 dark:text-white font-extrabold text-xs sm:text-sm tracking-tight">${item.tdp_name}</b>
+                        <b class="text-slate-900 dark:text-white font-extrabold text-xs sm:text-sm tracking-tight">${escapeHtml(item.tdp_name)}</b>
                       </div>
                     </td>
-                    <td class="py-2.5 px-3 sm:px-4 align-middle">
-                      ${formatDays(item.collection_days)}
+                    <td class="py-3 px-3 sm:px-4 align-middle">
+                      ${this.renderUpcomingWasteDates(upcomingDates, scheduleCount, item.collection_dates.length === 0)}
                     </td>
-                    <td class="py-2.5 px-3 sm:px-4 align-middle text-right sm:text-left">
+                    <td class="py-3 px-3 sm:px-4 align-middle">
                       <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 font-black text-xs tracking-tight whitespace-nowrap shadow-2xs">
                         <span class="material-symbols-outlined text-sm text-emerald-600 dark:text-emerald-400">schedule</span>
-                        <span>${shift}</span>
+                        <span>${escapeHtml(shift)}</span>
                       </div>
+                    </td>
+                    <td class="py-3 px-3 sm:px-4 align-middle text-center">
+                      <button type="button" onclick="window.openWasteMonthlySchedule(${Number(item.id)})" class="inline-flex items-center justify-center px-3 py-1.5 rounded-xl text-sky-700 dark:text-sky-300 hover:text-white hover:bg-sky-600 border border-sky-200 dark:border-sky-800 font-extrabold text-xs transition-colors shadow-2xs whitespace-nowrap">
+                        Chi tiết
+                      </button>
                     </td>
                   </tr>
                 `;
@@ -2312,43 +2298,474 @@ class PortalApp {
       <div class="md:hidden space-y-2.5">
         ${data.map((item: any, index: number) => {
       const shift = item.morning_shift || 'Có gom';
-      const hasToday = Array.isArray(item.collection_days) && item.collection_days.includes(todayKey);
+      const upcomingDates = this.getUpcomingWasteDates(item.collection_days, undefined, item.collection_dates);
+      const isCollectingToday = upcomingDates.some((date) => this.isSameWasteDate(date, new Date()));
 
       return `
-            <div class="p-3 sm:p-3.5 rounded-2xl bg-white dark:bg-slate-900 border ${hasToday ? 'border-emerald-300 dark:border-emerald-800 shadow-sm ring-1 ring-emerald-400/20' : 'border-slate-200/90 dark:border-slate-800'} space-y-2.5 transition-all">
+            <div class="p-3 sm:p-3.5 rounded-2xl bg-white dark:bg-slate-900 border ${isCollectingToday ? 'border-emerald-300 dark:border-emerald-800 shadow-sm ring-1 ring-emerald-400/20' : 'border-slate-200/90 dark:border-slate-800'} space-y-2.5 transition-all">
               <!-- Top Header: Tên TDP & Khung giờ gom -->
-              <div class="flex items-center justify-between gap-2">
-                <div class="flex items-center gap-2 min-w-0">
-                  <span class="w-5 h-5 rounded-md ${hasToday ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'} flex items-center justify-center font-black text-[10px] shrink-0">
+              <div class="flex items-center justify-between gap-2.5">
+                <div class="flex items-center gap-2 min-w-0 flex-1">
+                  <span class="w-5 h-5 rounded-md ${isCollectingToday ? 'bg-emerald-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'} flex items-center justify-center font-black text-[10px] shrink-0">
                     ${index + 1}
                   </span>
-                  <h4 class="text-xs font-black text-slate-900 dark:text-white truncate">
-                    ${item.tdp_name}
-                  </h4>
-                  ${hasToday ? `
-                    <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-extrabold text-[10px] shrink-0">
-                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
-                      Hôm nay
-                    </span>
-                  ` : ''}
+                  <div class="tdp-marquee-container min-w-0 flex-1 overflow-hidden relative" title="${escapeHtml(item.tdp_name)}"><span class="tdp-marquee-text text-xs sm:text-sm font-black text-slate-900 dark:text-white whitespace-nowrap inline-block">
+                    ${escapeHtml(item.tdp_name)}
+                  </span></div>
                 </div>
 
                 <div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 font-black text-[11px] shrink-0 whitespace-nowrap">
                   <span class="material-symbols-outlined text-[13px] text-emerald-600 dark:text-emerald-400">schedule</span>
-                  <span>${shift}</span>
+                  <span>${escapeHtml(shift)}</span>
                 </div>
               </div>
 
-              <!-- Bottom: Danh sách ngày gom -->
-              <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
-                <span class="text-[11px] font-semibold text-slate-400 dark:text-slate-500 shrink-0">Ngày gom:</span>
-                <div class="flex-1 flex justify-end">
-                  ${formatDays(item.collection_days)}
+              <!-- Bottom: Các ngày gom thực tế sắp tới -->
+              <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2.5">
+                <div class="min-w-0 flex-1">
+
+                  ${this.renderUpcomingWasteDates(upcomingDates, item.collection_dates.length || item.collection_days.length, item.collection_dates.length === 0)}
                 </div>
+                <button type="button" onclick="window.openWasteMonthlySchedule(${Number(item.id)})" class="shrink-0 inline-flex items-center justify-center px-3 py-1.5 rounded-xl bg-sky-50 text-sky-700 hover:bg-sky-600 hover:text-white border border-sky-200 dark:bg-sky-950/50 dark:border-sky-800 dark:text-sky-300 text-xs font-extrabold transition-colors cursor-pointer shadow-2xs whitespace-nowrap">Chi tiết</button>
               </div>
             </div>
           `;
     }).join('')}
+      </div>
+    `;
+    this.initTdpMarquees();
+  }
+
+  private initTdpMarquees() {
+    const updateMarquees = () => {
+      const marquees = document.querySelectorAll<HTMLElement>('.tdp-marquee-container');
+      marquees.forEach((container) => {
+        const text = container.querySelector<HTMLElement>('.tdp-marquee-text');
+        if (!text) return;
+        const overflow = text.scrollWidth - container.clientWidth;
+        if (overflow > 2) {
+          container.classList.add('is-overflowing');
+          text.style.setProperty('--marquee-dist', `-${overflow + 6}px`);
+          const duration = Math.max(4, Math.round((overflow / 22) * 10) / 10 + 2.5);
+          text.style.setProperty('--marquee-duration', `${duration}s`);
+        } else {
+          container.classList.remove('is-overflowing');
+          text.style.removeProperty('--marquee-dist');
+          text.style.removeProperty('--marquee-duration');
+        }
+      });
+    };
+
+    requestAnimationFrame(updateMarquees);
+
+    if (!(window as any).__tdpMarqueeResizeAttached) {
+      window.addEventListener('resize', () => {
+        requestAnimationFrame(updateMarquees);
+      }, { passive: true });
+      (window as any).__tdpMarqueeResizeAttached = true;
+    }
+  }
+
+  private getNormalizedWasteSchedules(): any[] {
+    const rawList = (this.wasteSchedulesList && this.wasteSchedulesList.length > 0)
+      ? this.wasteSchedulesList
+      : HOMEPAGE_FALLBACK_TDPS;
+
+    return rawList
+      .filter((item: any) => item.is_active !== false)
+      .map((item: any) => ({
+        ...item,
+        id: Number(item.id),
+        tdp_name: item.tdp_name || '',
+        morning_shift: String(item.morning_shift || item.shift || 'Có gom').trim(),
+        collection_dates: this.normalizeWasteCollectionDates(item.collection_dates),
+        collection_days: Array.isArray(item.collection_days)
+          ? item.collection_days
+          : (typeof item.collection_days === 'string' ? (() => { try { return JSON.parse(item.collection_days); } catch (_) { return []; } })() : [])
+      }));
+  }
+
+  private normalizeWasteCollectionDates(value: unknown): string[] {
+    let rawDates: unknown[] = [];
+
+    if (Array.isArray(value)) {
+      rawDates = value;
+    } else if (typeof value === 'string') {
+      try {
+        const parsed = JSON.parse(value);
+        rawDates = Array.isArray(parsed) ? parsed : [];
+      } catch (_) {
+        rawDates = [];
+      }
+    }
+
+    return [...new Set(rawDates
+      .map((item: any) => typeof item === 'string' ? item : item?.date)
+      .map((item) => String(item || '').match(/^\d{4}-\d{2}-\d{2}/)?.[0] || '')
+      .filter((item) => !Number.isNaN(new Date(`${item}T00:00:00`).getTime())))]
+      .sort();
+  }
+
+  private getWasteDayKey(date: Date): string {
+    return ['chu_nhat', 'thu_2', 'thu_3', 'thu_4', 'thu_5', 'thu_6', 'thu_7'][date.getDay()];
+  }
+
+  private getUpcomingWasteDates(collectionDays: string[], count?: number, collectionDates: string[] = []): Date[] {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (collectionDates.length > 0) {
+      return collectionDates
+        .map((date) => new Date(`${date}T00:00:00`))
+        .filter((date) => !Number.isNaN(date.getTime()) && date >= today)
+        .slice(0, count || 2);
+    }
+
+    if (!Array.isArray(collectionDays) || collectionDays.length === 0) return [];
+
+    const dates: Date[] = [];
+    const targetCount = count || (collectionDays.length >= 3 ? 3 : 2);
+
+    for (let offset = 0; offset < 42 && dates.length < targetCount; offset += 1) {
+      const candidate = new Date(today);
+      candidate.setDate(today.getDate() + offset);
+      const dayKey = this.getWasteDayKey(candidate);
+      if (collectionDays.includes(dayKey)) {
+        dates.push(candidate);
+      }
+    }
+
+    return dates;
+  }
+
+  private isSameWasteDate(first: Date, second: Date): boolean {
+    return first.getFullYear() === second.getFullYear()
+      && first.getMonth() === second.getMonth()
+      && first.getDate() === second.getDate();
+  }
+
+  private renderUpcomingWasteDates(dates: Date[], totalScheduleDays: number, isRecurringWeekly = false): string {
+    if (!dates || dates.length === 0) {
+      return '<span class="text-slate-400 dark:text-slate-500 text-xs italic">Chưa có lịch cố định</span>';
+    }
+
+    const today = new Date();
+    const weekdayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+
+    const badgesHtml = dates.map((date) => {
+      const isToday = this.isSameWasteDate(date, today);
+      const dayName = weekdayNames[date.getDay()];
+      const label = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}`;
+      const badgeClasses = isToday
+        ? 'bg-emerald-600 dark:bg-emerald-500 text-white border-emerald-600 dark:border-emerald-500 shadow-xs'
+        : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-200/80 dark:hover:bg-slate-750';
+      const iconClasses = isToday ? 'text-white' : 'text-slate-500 dark:text-slate-400';
+      const tooltip = isToday ? `Hôm nay (${dayName} - ${label}) có lịch xe gom rác` : `Lịch thu gom: ${dayName}, ${label}`;
+
+      return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border font-black text-xs tracking-tight transition-all shrink-0 ${badgeClasses}" title="${tooltip}">
+        <span class="material-symbols-outlined text-[13px] ${iconClasses}">calendar_today</span>
+        <span>${label}</span>
+      </span>`;
+    }).join('');
+
+    const isDaily = isRecurringWeekly && totalScheduleDays >= 7;
+    const dailyBadge = isDaily
+      ? `<span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border border-sky-200/80 dark:border-sky-800/80 text-[11px] font-bold shrink-0" title="Tổ dân phố thu gom tất cả các ngày trong tuần">
+          <span class="material-symbols-outlined text-xs">all_inclusive</span>Hàng ngày
+        </span>`
+      : '';
+
+    const extraCount = totalScheduleDays > 3 && !isDaily ? totalScheduleDays - dates.length : 0;
+    const extraBadge = extraCount > 0
+      ? `<span class="inline-flex items-center px-1.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700/80 text-[11px] font-bold shrink-0" title="Còn ${extraCount} ngày thu gom ${isRecurringWeekly ? 'khác trong tuần' : 'đã thiết lập'}">+${extraCount}</span>`
+      : '';
+
+    return `<div class="flex flex-wrap items-center gap-1.5">${badgesHtml}${dailyBadge}${extraBadge}</div>`;
+  }
+
+  private ensureWasteMonthlyScheduleModal() {
+    if (document.getElementById('waste-monthly-schedule-modal')) return;
+
+    document.body.insertAdjacentHTML('beforeend', `
+      <div id="waste-monthly-schedule-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-2 sm:p-4" role="dialog" aria-modal="true" aria-labelledby="waste-monthly-schedule-title">
+        <button type="button" class="absolute inset-0 bg-slate-950/60 backdrop-blur-[2px]" onclick="window.closeWasteMonthlySchedule()" aria-label="Đóng lịch thu gom"></button>
+        <section class="relative w-full max-w-xl max-h-[calc(100vh-1rem)] sm:max-h-[calc(100vh-2rem)] overflow-y-auto scrollbar-thin rounded-2xl sm:rounded-3xl bg-white dark:bg-slate-900 shadow-2xl border border-white/20">
+          <div id="waste-monthly-schedule-content"></div>
+        </section>
+      </div>
+    `);
+  }
+
+  private openWasteMonthlySchedule(scheduleId?: number) {
+    const schedules = this.getNormalizedWasteSchedules();
+    if (schedules.length === 0) return;
+
+    const requestedId = Number(scheduleId);
+    if (Number.isFinite(requestedId) && schedules.some((item) => item.id === requestedId)) {
+      this.selectedWasteScheduleId = requestedId;
+    } else if (!this.selectedWasteScheduleId || !schedules.some((item) => item.id === this.selectedWasteScheduleId)) {
+      this.selectedWasteScheduleId = schedules[0].id;
+    }
+
+    this.wasteCalendarMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    this.ensureWasteMonthlyScheduleModal();
+    this.renderWasteMonthlyScheduleModal();
+    document.getElementById('waste-monthly-schedule-modal')?.classList.replace('hidden', 'flex');
+    document.body.classList.add('overflow-hidden');
+  }
+
+  private closeWasteMonthlySchedule() {
+    this.toggleWasteTdpDropdown(true);
+    document.getElementById('waste-monthly-schedule-modal')?.classList.replace('flex', 'hidden');
+    document.body.classList.remove('overflow-hidden');
+  }
+
+  private changeWasteMonthlyScheduleMonth(direction: number) {
+    this.wasteCalendarMonth = new Date(this.wasteCalendarMonth.getFullYear(), this.wasteCalendarMonth.getMonth() + direction, 1);
+    this.renderWasteMonthlyScheduleModal();
+  }
+
+  private toggleWasteTdpDropdown(forceClose = false) {
+    const menu = document.getElementById('waste-tdp-dropdown-menu');
+    const chevron = document.getElementById('waste-tdp-chevron');
+    const trigger = document.getElementById('waste-tdp-dropdown-trigger');
+    if (!menu) return;
+
+    const shouldOpen = forceClose ? false : menu.classList.contains('hidden');
+    if (shouldOpen) {
+      menu.classList.remove('hidden');
+      chevron?.classList.add('rotate-180');
+      trigger?.setAttribute('aria-expanded', 'true');
+    } else {
+      menu.classList.add('hidden');
+      chevron?.classList.remove('rotate-180');
+      trigger?.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  private selectWasteMonthlySchedule(scheduleId: number | string) {
+    const id = Number(scheduleId);
+    if (Number.isFinite(id)) this.selectedWasteScheduleId = id;
+    this.renderWasteMonthlyScheduleModal();
+  }
+
+  private renderWasteMonthlyScheduleModal() {
+    const content = document.getElementById('waste-monthly-schedule-content');
+    if (!content) return;
+
+    const schedules = this.getNormalizedWasteSchedules();
+    const selected = schedules.find((item) => item.id === this.selectedWasteScheduleId) || schedules[0];
+    if (!selected) return;
+
+    this.selectedWasteScheduleId = selected.id;
+    const year = this.wasteCalendarMonth.getFullYear();
+    const month = this.wasteCalendarMonth.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    // Monday as first day of week: (firstDay.getDay() + 6) % 7
+    const leadingBlankDays = (firstDay.getDay() + 6) % 7;
+    const monthTitle = new Intl.DateTimeFormat('vi-VN', { month: 'long', year: 'numeric' }).format(firstDay);
+
+    const realToday = new Date();
+
+    // Weekday names mapping
+    const dayKeyNames: Record<string, string> = {
+      'thu_2': 'Thứ 2',
+      'thu_3': 'Thứ 3',
+      'thu_4': 'Thứ 4',
+      'thu_5': 'Thứ 5',
+      'thu_6': 'Thứ 6',
+      'thu_7': 'Thứ 7',
+      'chu_nhat': 'Chủ Nhật'
+    };
+
+    const collectionDaysArray = Array.isArray(selected.collection_days) ? selected.collection_days : [];
+    const explicitCollectionDates = this.normalizeWasteCollectionDates(selected.collection_dates);
+    const collectionDaysText = explicitCollectionDates.length > 0
+      ? `${explicitCollectionDates.length} ngày đã chọn`
+      : (collectionDaysArray.length === 7
+        ? 'Hàng ngày (7 ngày/tuần)'
+        : (collectionDaysArray.map((k: string) => dayKeyNames[k] || k).join(', ') || 'Chưa thiết lập'));
+
+    const weekdays = [
+      { name: 'Thứ 2', short: 'T2', isWeekend: false },
+      { name: 'Thứ 3', short: 'T3', isWeekend: false },
+      { name: 'Thứ 4', short: 'T4', isWeekend: false },
+      { name: 'Thứ 5', short: 'T5', isWeekend: false },
+      { name: 'Thứ 6', short: 'T6', isWeekend: false },
+      { name: 'Thứ 7', short: 'T7', isWeekend: false },
+      { name: 'Chủ Nhật', short: 'CN', isWeekend: true }
+    ];
+
+    const dayCells: string[] = [];
+
+    // Leading blank days: Hiển thị ngày mờ của tháng trước để căn đúng thứ
+    const prevMonthDays = new Date(year, month, 0).getDate();
+    for (let index = 0; index < leadingBlankDays; index++) {
+      const prevDayNum = prevMonthDays - leadingBlankDays + index + 1;
+      dayCells.push(`
+        <div class="h-10 sm:h-11 p-1 bg-slate-50/50 dark:bg-slate-850/30 border-b border-r border-slate-100 dark:border-slate-800/80 flex items-center justify-center opacity-30 select-none">
+          <span class="inline-flex w-7 h-7 sm:w-8 sm:h-8 items-center justify-center text-xs sm:text-sm font-bold text-slate-400 dark:text-slate-600">${prevDayNum}</span>
+        </div>
+      `);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const isCollectionDay = explicitCollectionDates.length > 0
+        ? explicitCollectionDates.includes(dateKey)
+        : collectionDaysArray.includes(this.getWasteDayKey(date));
+      const isToday = this.isSameWasteDate(date, realToday);
+      const isWeekend = date.getDay() === 0;
+
+      // Cell classes: Ngày có thu gom chỉ thay đổi màu nền
+      let cellBg = 'bg-white dark:bg-slate-900 hover:bg-slate-50/80 dark:hover:bg-slate-850/60';
+      if (isCollectionDay) {
+        cellBg = 'bg-emerald-100/75 dark:bg-emerald-950/50 hover:bg-emerald-200/70 dark:hover:bg-emerald-900/60';
+      }
+
+      // Date number badge: ngày hôm nay chỉ cần thay đổi màu nền quanh số
+      let dateBadge = `<span class="inline-flex w-7 h-7 sm:w-8 sm:h-8 items-center justify-center rounded-full text-xs sm:text-sm font-bold ${isWeekend ? 'text-rose-600 dark:text-rose-400' : (isCollectionDay ? 'text-emerald-950 dark:text-emerald-100 font-black' : 'text-slate-700 dark:text-slate-300')}">${day}</span>`;
+      if (isToday) {
+        dateBadge = `<span class="inline-flex w-7 h-7 sm:w-8 sm:h-8 items-center justify-center rounded-full text-xs sm:text-sm font-black bg-[#1d7fe0] text-white shadow-sm ring-2 ring-blue-300 dark:ring-blue-800">${day}</span>`;
+      }
+
+      dayCells.push(`
+        <div class="h-10 sm:h-11 p-1 border-b border-r border-slate-100 dark:border-slate-800/80 flex items-center justify-center transition-colors ${cellBg}" title="${isCollectionDay ? `Ngày ${day}/${month + 1}: Có xe thu gom rác (${selected.morning_shift})` : `Ngày ${day}/${month + 1}`}">
+          ${dateBadge}
+        </div>
+      `);
+    }
+
+    // Trailing blank days: Hiển thị ngày mờ của tháng sau để hoàn tất tuần cuối (không ép cố định 6 hàng)
+    const totalRendered = leadingBlankDays + daysInMonth;
+    const trailingBlankDays = (7 - (totalRendered % 7)) % 7;
+    for (let index = 1; index <= trailingBlankDays; index++) {
+      dayCells.push(`
+        <div class="h-10 sm:h-11 p-1 bg-slate-50/50 dark:bg-slate-850/30 border-b border-r border-slate-100 dark:border-slate-800/80 flex items-center justify-center opacity-30 select-none">
+          <span class="inline-flex w-7 h-7 sm:w-8 sm:h-8 items-center justify-center text-xs sm:text-sm font-bold text-slate-400 dark:text-slate-600">${index}</span>
+        </div>
+      `);
+    }
+
+    content.innerHTML = `
+      <header class="sticky top-0 z-20 flex items-center justify-between gap-3 px-4 sm:px-6 py-2.5 sm:py-3 border-b border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
+        <div class="flex items-center gap-2.5 sm:gap-3">
+          <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-md shadow-emerald-500/20 shrink-0">
+            <span class="material-symbols-outlined text-lg sm:text-xl">calendar_month</span>
+          </div>
+          <div>
+            <h2 id="waste-monthly-schedule-title" class="text-sm sm:text-base font-black text-slate-900 dark:text-white tracking-tight">Lịch thu gom rác theo tháng</h2>
+            <p class="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">Thời gian thu gom rác tại địa bàn</p>
+          </div>
+        </div>
+        <button type="button" onclick="window.closeWasteMonthlySchedule()" class="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition-colors active:scale-95 cursor-pointer shadow-2xs" aria-label="Đóng">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </header>
+
+      <div class="p-3.5 sm:p-5 space-y-2.5 sm:space-y-3">
+        <!-- Filter Card: TDP Selector & Quick Info -->
+        <div class="p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
+          <div class="space-y-2.5">
+            <!-- Select TDP: Custom Dropdown (Full width) -->
+            <div class="w-full min-w-0" id="waste-tdp-dropdown-container">
+              <label class="block text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1 flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-xs sm:text-sm text-[#1d7fe0]">location_on</span>
+                <span>Địa bàn / Tổ dân phố</span>
+              </label>
+              <div class="relative">
+                <!-- Dropdown Trigger Button -->
+                <button
+                  type="button"
+                  id="waste-tdp-dropdown-trigger"
+                  onclick="window.toggleWasteTdpDropdown()"
+                  class="w-full h-9 sm:h-10 px-3 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-black text-xs sm:text-sm flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-600 focus:outline-none focus:ring-2 focus:ring-[#1d7fe0]/30 focus:border-[#1d7fe0] shadow-2xs transition-all cursor-pointer select-none"
+                  aria-haspopup="listbox"
+                  aria-expanded="false"
+                >
+                  <span class="truncate">${escapeHtml(selected.tdp_name)}</span>
+                  <span id="waste-tdp-chevron" class="material-symbols-outlined text-slate-400 text-lg sm:text-xl transition-transform duration-200 shrink-0 ml-1.5">expand_more</span>
+                </button>
+
+                <!-- Custom Options Popup Menu -->
+                <div
+                  id="waste-tdp-dropdown-menu"
+                  class="hidden absolute left-0 right-0 top-full mt-1.5 max-h-56 overflow-y-auto rounded-xl sm:rounded-2xl border border-slate-200/90 dark:border-slate-700/90 bg-white dark:bg-slate-850 shadow-xl py-1 z-50 divide-y divide-slate-100 dark:divide-slate-800/60 scrollbar-thin"
+                  role="listbox"
+                >
+                  ${schedules.map((item) => {
+      const isSelected = item.id === selected.id;
+      return `
+                      <button
+                        type="button"
+                        onclick="window.selectWasteMonthlySchedule(${item.id})"
+                        class="w-full flex items-center justify-between px-3 py-2 text-left text-xs sm:text-sm transition-colors cursor-pointer ${isSelected
+          ? 'bg-sky-50 dark:bg-sky-950/60 text-[#1d7fe0] dark:text-blue-400 font-black'
+          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold'
+        }"
+                        role="option"
+                        aria-selected="${isSelected ? 'true' : 'false'}"
+                      >
+                        <span class="break-words leading-tight mr-1">${escapeHtml(item.tdp_name)}</span>
+                        ${isSelected ? '<span class="material-symbols-outlined text-[#1d7fe0] dark:text-blue-400 text-base sm:text-lg shrink-0 ml-1.5">check</span>' : ''}
+                      </button>
+                    `;
+    }).join('')}
+                </div>
+              </div>
+            </div>
+
+            <!-- Khung giờ & Lịch gom: 2 cột cân đối -->
+            <div class="grid grid-cols-2 gap-2 sm:gap-2.5">
+              <!-- Khung giờ xe gom -->
+              <div class="min-w-0">
+                <label class="block text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1 flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-xs sm:text-sm text-emerald-600 dark:text-emerald-400">schedule</span>
+                  <span>Khung giờ</span>
+                </label>
+                <div class="h-9 sm:h-10 px-2.5 sm:px-3 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center font-black text-xs sm:text-sm text-slate-900 dark:text-white truncate shadow-2xs">
+                  ${escapeHtml(selected.morning_shift)}
+                </div>
+              </div>
+
+              <!-- Lịch gom đã thiết lập -->
+              <div class="min-w-0">
+                <label class="block text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1 flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-xs sm:text-sm text-[#1d7fe0]">event_repeat</span>
+                  <span>Ngày thu gom</span>
+                </label>
+                <div class="h-9 sm:h-10 px-2.5 sm:px-3 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex items-center font-black text-xs sm:text-sm text-emerald-700 dark:text-emerald-400 truncate shadow-2xs">
+                  ${escapeHtml(collectionDaysText)}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Month Title (Chỉ xem tháng hiện tại) -->
+        <div class="flex items-center justify-between gap-3 px-1">
+          <h3 class="text-sm sm:text-base font-black text-slate-900 dark:text-white tracking-tight capitalize">${escapeHtml(monthTitle)}</h3>
+        </div>
+
+        <!-- The Calendar Grid -->
+        <div class="overflow-hidden rounded-xl sm:rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs bg-white dark:bg-slate-900">
+          <!-- Weekday Headers -->
+          <div class="grid grid-cols-7 bg-slate-100/90 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-750 text-center text-[10px] sm:text-xs font-black uppercase tracking-wider text-slate-600 dark:text-slate-300">
+            ${weekdays.map((w) => `<div class="py-1.5 sm:py-2 ${w.isWeekend ? 'text-rose-600 dark:text-rose-400' : ''}"><span class="hidden sm:inline">${w.name}</span><span class="sm:hidden">${w.short}</span></div>`).join('')}
+          </div>
+          <!-- Days Grid -->
+          <div class="grid grid-cols-7">${dayCells.join('')}</div>
+        </div>
+
+        <!-- Legend Footer -->
+        <div class="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
+          <div class="flex items-center gap-2 font-bold">
+            <span class="w-3.5 h-3.5 rounded bg-emerald-100/90 dark:bg-emerald-950/80 border border-emerald-300/80 dark:border-emerald-700/80"></span>
+            <span>Ngày thu gom rác</span>
+          </div>
+        </div>
       </div>
     `;
   }

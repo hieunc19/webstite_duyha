@@ -54,6 +54,55 @@
     .material-symbols-outlined {
       font-family: 'Material Symbols Outlined' !important;
     }
+
+    /* ================= PROCEDURE SUPPORT CONTACT CARDS ================= */
+    .procedure-contact-card {
+      display: flex;
+      flex-direction: column;
+      flex: 0 0 320px;
+      min-width: 290px;
+      max-width: 340px;
+      scroll-snap-align: start;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 1.25rem;
+      padding: 1.15rem 1.15rem 1rem;
+      box-sizing: border-box;
+      box-shadow: 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .dark .procedure-contact-card {
+      background: #0f172a;
+      border-color: #1e293b;
+      box-shadow: none;
+    }
+    .procedure-contact-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 28px -6px rgba(29, 127, 224, 0.14), 0 4px 8px -2px rgba(0, 0, 0, 0.04);
+      border-color: #93c5fd;
+    }
+    .dark .procedure-contact-card:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 14px 28px -6px rgba(0, 0, 0, 0.4);
+    }
+    .procedure-contact-track {
+      align-items: stretch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .procedure-contact-track::-webkit-scrollbar {
+      display: none;
+    }
+    @media (max-width: 640px) {
+      .procedure-contact-card {
+        flex: 0 0 82%;
+        max-width: 84%;
+        padding: 0.95rem 0.95rem 0.85rem;
+        border-radius: 1.15rem;
+        min-width: 82%;
+      }
+    }
     /* FOUC Prevention */
     main { opacity: 0; transition: opacity 0.15s ease-out; }
     body.js-hydrated main { opacity: 1; }
@@ -299,6 +348,46 @@
 
       </section>
 
+      <!-- PROCEDURE SUPPORT CONTACTS -->
+      <section id="procedure-support-section" class="hidden bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-7 border border-slate-200 dark:border-slate-800 shadow-xl space-y-4 sm:space-y-5">
+        <div class="border-b border-slate-100 dark:border-slate-800 pb-3.5 sm:pb-5">
+          <div class="flex items-start gap-2.5 sm:gap-3 min-w-0">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-sky-50 dark:bg-sky-950/60 border border-sky-200/80 dark:border-sky-800/80 text-[#1d7fe0] dark:text-sky-400 flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
+              <span class="material-symbols-outlined text-xl sm:text-2xl">support_agent</span>
+            </div>
+            <div class="min-w-0 flex-1">
+              <h2 class="text-base sm:text-xl lg:text-2xl font-black text-slate-900 dark:text-white tracking-tight leading-snug">
+                Hỗ trợ &amp; Đường dây nóng - Giải quyết Thủ tục Hành chính
+              </h2>
+              <p class="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                Liên hệ trực tiếp cán bộ phụ trách lĩnh vực hoặc lãnh đạo tiếp nhận phản ánh, kiến nghị khi làm thủ tục tại Phường Duy Hà.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Horizontal Cards Slider Flanked by Left & Right Arrow Buttons (Tablet & Desktop) -->
+        <div class="hidden sm:flex items-center gap-2 sm:gap-3.5">
+          <!-- Left Navigation Arrow (Flanking left side outside track) -->
+          <button id="procedure-support-prev" type="button" aria-label="Xem liên hệ trước" title="Cuộn sang trái"
+            class="shrink-0 w-9 h-9 sm:w-11 sm:h-11 rounded-full border border-slate-200/90 dark:border-slate-700/80 bg-slate-50 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 hover:bg-[#1d7fe0] hover:text-white dark:hover:bg-[#1d7fe0] dark:hover:text-white hover:border-[#1d7fe0] disabled:opacity-20 disabled:cursor-not-allowed transition-all flex items-center justify-center cursor-pointer shadow-xs hover:shadow-md active:scale-95">
+            <span class="material-symbols-outlined text-xl sm:text-2xl">chevron_left</span>
+          </button>
+
+          <!-- Cards Horizontal Track -->
+          <div id="procedure-support-track" class="procedure-contact-track flex-1 min-w-0 flex gap-4 overflow-x-auto pb-3 pt-1 snap-x snap-mandatory scroll-smooth"></div>
+
+          <!-- Right Navigation Arrow (Flanking right side outside track) -->
+          <button id="procedure-support-next" type="button" aria-label="Xem liên hệ tiếp theo" title="Cuộn sang phải"
+            class="shrink-0 w-9 h-9 sm:w-11 sm:h-11 rounded-full border border-slate-200/90 dark:border-slate-700/80 bg-slate-50 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 hover:bg-[#1d7fe0] hover:text-white dark:hover:bg-[#1d7fe0] dark:hover:text-white hover:border-[#1d7fe0] disabled:opacity-20 disabled:cursor-not-allowed transition-all flex items-center justify-center cursor-pointer shadow-xs hover:shadow-md active:scale-95">
+            <span class="material-symbols-outlined text-xl sm:text-2xl">chevron_right</span>
+          </button>
+        </div>
+
+        <!-- Phonebook List View for Mobile (< 640px) -->
+        <div id="procedure-support-mobile-list" class="block sm:hidden space-y-3"></div>
+      </section>
+
     </div>
 
     <!-- ==================== TAB 2: VIDEO HƯỚNG DẪN ==================== -->
@@ -539,32 +628,26 @@
           </div>
         </div>
 
-        <!-- Section 1: Step-by-step process / Trình tự thực hiện -->
-        <div class="space-y-2">
-          <h4 class="text-xs font-black uppercase text-slate-500 tracking-wider">
-            Trình tự thực hiện
-          </h4>
-          <p id="modal-proc-desc"
-            class="text-sm font-semibold text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
-            Áp dụng cho mọi công dân cư trú trên địa bàn Phường Duy Hà.
-          </p>
-        </div>
-
-        <!-- Section 2: Required Documents -->
-        <div class="space-y-3">
-          <h4 class="text-xs font-black uppercase text-slate-500 tracking-wider">
-            Hồ sơ giấy tờ cần chuẩn bị &amp; Biểu mẫu đính kèm
-          </h4>
-          <ul id="modal-proc-docs"
-            class="space-y-2 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">
-          </ul>
+        <div class="rounded-2xl border border-sky-200 bg-sky-50 p-5 text-slate-700 dark:border-sky-900 dark:bg-slate-800 dark:text-slate-200">
+          <div class="flex gap-3">
+            <span class="material-symbols-outlined text-2xl text-[#1d7fe0]">verified</span>
+            <div class="space-y-2">
+              <h4 class="font-black text-slate-900 dark:text-white">Nguồn thông tin chính thức</h4>
+              <p class="text-sm font-semibold leading-relaxed">Thông tin, thành phần hồ sơ và việc nộp trực tuyến của thủ tục được tra cứu trên Cổng Dịch vụ công Quốc gia để luôn bảo đảm tính chính xác và cập nhật.</p>
+            </div>
+          </div>
         </div>
 
       </div>
 
       <!-- Modal Footer -->
       <div
-        class="p-4 sm:p-5 bg-slate-100 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end">
+        class="p-4 sm:p-5 bg-slate-100 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end gap-3 flex-wrap">
+        <a id="modal-proc-dvc-link" href="https://dichvucong.gov.vn/" target="_blank" rel="noopener noreferrer"
+          class="px-5 py-2.5 rounded-xl bg-[#1d7fe0] hover:bg-[#1868b8] text-white text-xs sm:text-sm font-bold transition-colors inline-flex items-center gap-2">
+          <span class="material-symbols-outlined text-lg">open_in_new</span>
+          Tra cứu trên DVCQG
+        </a>
         <button onclick="closeProcedureModal()"
           class="px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-bold transition-colors">
           Đóng lại
@@ -950,6 +1033,28 @@
       }
     };
 
+    const DVC_PORTAL_URL = 'https://dichvucong.gov.vn/';
+
+    function getProcedurePortalUrl(item) {
+      const rawUrl = typeof item?.public_service_url === 'string' ? item.public_service_url.trim() : '';
+      try {
+        const url = new URL(rawUrl);
+        const host = url.hostname.toLowerCase();
+        if (url.protocol === 'https:' && (host === 'dichvucong.gov.vn' || host.endsWith('.dichvucong.gov.vn'))) {
+          return url.href;
+        }
+      } catch (_) {
+        // Use the official portal homepage as a safe fallback.
+      }
+      return DVC_PORTAL_URL;
+    }
+
+    function openProcedurePortal(procId) {
+      const item = PROCEDURES_DATA.find(p => p.id === procId);
+      window.open(getProcedurePortalUrl(item), '_blank', 'noopener,noreferrer');
+    }
+    window.openProcedurePortal = openProcedurePortal;
+
     function renderProcedures() {
       const tableBody = document.getElementById('procedures-table-body');
       const searchInput = document.getElementById('procedure-search-input');
@@ -966,7 +1071,6 @@
       if (query) {
         items = items.filter(p =>
           (p.title || '').toLowerCase().includes(query) ||
-          (p.desc || '').toLowerCase().includes(query) ||
           (p.code || '').toLowerCase().includes(query) ||
           (p.categoryText || '').toLowerCase().includes(query) ||
           (p.agency || '').toLowerCase().includes(query)
@@ -1013,23 +1117,6 @@
           categoryPillClass = "bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-800";
         }
 
-        // Check if procedure has attachment_url or any file in docs
-        let attachedFileUrl = p.attachment_url || null;
-        if (!attachedFileUrl && Array.isArray(p.docs) && p.docs.length > 0) {
-          const firstWithFile = p.docs.find(d => typeof d === 'object' && (d.file_url || d.file));
-          if (firstWithFile) {
-            attachedFileUrl = firstWithFile.file_url || (firstWithFile.file ? ('/storage/' + String(firstWithFile.file).replace(/^\/?storage\//, '')) : null);
-          }
-        }
-
-        const downloadBtnHtml = attachedFileUrl
-          ? `<button onclick="downloadProcedureFile('${attachedFileUrl}')"
-              class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-sm active:scale-95 whitespace-nowrap flex items-center gap-1">
-              <span class="material-symbols-outlined text-sm">download</span>
-              <span>Tải file đính kèm</span>
-            </button>`
-          : '';
-
         return `
           <tr class="hover:bg-sky-50/60 dark:hover:bg-slate-800/60 transition-colors">
             <td class="py-4 px-4 text-center font-bold text-slate-500 border-r border-slate-200 dark:border-slate-800">${stt}</td>
@@ -1046,11 +1133,11 @@
             </td>
             <td class="py-4 px-4 text-center">
               <div class="flex items-center justify-center gap-2">
-                <button onclick="openProcedureModal(${p.id})"
-                  class="px-3.5 py-2 rounded-xl border border-sky-300 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 hover:bg-[#1d7fe0] hover:text-white text-[#1d7fe0] dark:text-sky-300 text-xs font-bold transition-all shadow-sm active:scale-95 whitespace-nowrap">
-                  Hướng dẫn
+                <button onclick="openProcedurePortal(${p.id})"
+                  class="px-3.5 py-2 rounded-xl bg-[#1d7fe0] hover:bg-[#1868b8] text-white text-xs font-bold transition-all shadow-sm active:scale-95 whitespace-nowrap flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-sm">open_in_new</span>
+                  Tra cứu / Nộp hồ sơ
                 </button>
-                ${downloadBtnHtml}
               </div>
             </td>
           </tr>
@@ -1094,40 +1181,8 @@
       const codeElem = document.getElementById('modal-proc-code');
       if (codeElem) codeElem.textContent = item.code || ('TTHC-' + String(item.id).padStart(3, '0'));
       document.getElementById('modal-proc-agency').textContent = item.agency || 'UBND Phường Duy Hà';
-      document.getElementById('modal-proc-desc').textContent = item.desc || 'Chưa có thông tin trình tự thực hiện.';
-
-      const docsUl = document.getElementById('modal-proc-docs');
-      if (docsUl) {
-        docsUl.innerHTML = (item.docs || []).map(doc => {
-          const docName = typeof doc === 'object' ? (doc.name || '') : doc;
-          const docQty = (typeof doc === 'object' && doc.quantity) ? doc.quantity : '01 bản';
-          let docFileUrl = null;
-          if (typeof doc === 'object') {
-            if (doc.file_url) {
-              docFileUrl = doc.file_url;
-            } else if (doc.file) {
-              docFileUrl = doc.file.startsWith('http') ? doc.file : ('/storage/' + String(doc.file).replace(/^\/?storage\//, ''));
-            }
-          }
-
-          const downloadBtn = docFileUrl ? `
-            <button onclick="downloadProcedureFile('${docFileUrl}')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 shadow-sm active:scale-95">
-              <span class="material-symbols-outlined text-sm">download</span>
-              <span>Tải biểu mẫu</span>
-            </button>
-          ` : '';
-
-          return `
-            <li class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/60 font-semibold flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
-              <div class="space-y-0.5 flex-1 min-w-0">
-                <span class="text-sm font-extrabold text-slate-900 dark:text-white block whitespace-pre-line">${docName}</span>
-                <span class="text-xs font-bold text-sky-700 dark:text-sky-400 block">📄 Số lượng: ${docQty}</span>
-              </div>
-              ${downloadBtn}
-            </li>
-          `;
-        }).join('');
-      }
+      const dvcLink = document.getElementById('modal-proc-dvc-link');
+      if (dvcLink) dvcLink.href = getProcedurePortalUrl(item);
 
       const modal = document.getElementById('procedure-detail-modal');
       if (modal) {
@@ -1486,6 +1541,234 @@
       }
     }
 
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#039;', '"': '&quot;' }[char]));
+    }
+
+    function phoneDigits(phone) {
+      return String(phone ?? '').replace(/\D/g, '');
+    }
+
+    function displayPhone(phone) {
+      const digits = phoneDigits(phone);
+      return digits.length === 10 ? digits.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3') : escapeHtml(phone);
+    }
+
+    let ALL_SUPPORT_CONTACTS = [];
+
+    function getFirstNameInitial(fullName) {
+      const parts = String(fullName || '').trim().split(/\s+/);
+      const firstName = parts[parts.length - 1] || '';
+      return firstName.charAt(0).toUpperCase() || 'C';
+    }
+
+    function getFieldTheme(fieldName, contactType) {
+      if (contactType === 'hotline') {
+        return {
+          badgeClass: 'bg-rose-50 text-rose-700 border-rose-200/90 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800/60',
+          avatarGradient: 'from-rose-500 to-red-600 text-white shadow-rose-200/60 dark:shadow-none',
+          icon: 'local_fire_department',
+          label: 'ĐƯỜNG DÂY NÓNG',
+          btnGradient: 'from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 text-white'
+        };
+      }
+      
+      const fn = String(fieldName || '').toLowerCase();
+      if (fn.includes('tư pháp')) {
+        return {
+          badgeClass: 'bg-indigo-50 text-indigo-700 border-indigo-200/90 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-800/60',
+          avatarGradient: 'from-indigo-500 to-blue-600 text-white shadow-indigo-200/60 dark:shadow-none',
+          icon: 'gavel',
+          label: 'LĨNH VỰC TƯ PHÁP',
+          btnGradient: 'from-[#1d7fe0] to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white'
+        };
+      }
+      if (fn.includes('hộ tịch')) {
+        return {
+          badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200/90 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800/60',
+          avatarGradient: 'from-emerald-500 to-teal-600 text-white shadow-emerald-200/60 dark:shadow-none',
+          icon: 'badge',
+          label: 'LĨNH VỰC HỘ TỊCH',
+          btnGradient: 'from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white'
+        };
+      }
+      if (fn.includes('văn hóa') || fn.includes('xã hội')) {
+        return {
+          badgeClass: 'bg-purple-50 text-purple-700 border-purple-200/90 dark:bg-purple-950/60 dark:text-purple-300 dark:border-purple-800/60',
+          avatarGradient: 'from-purple-500 to-violet-600 text-white shadow-purple-200/60 dark:shadow-none',
+          icon: 'diversity_3',
+          label: 'VĂN HÓA - XÃ HỘI',
+          btnGradient: 'from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white'
+        };
+      }
+      if (fn.includes('đô thị') || fn.includes('môi trường') || fn.includes('nông nghiệp') || fn.includes('hạ tầng')) {
+        return {
+          badgeClass: 'bg-amber-50 text-amber-700 border-amber-200/90 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800/60',
+          avatarGradient: 'from-amber-500 to-orange-600 text-white shadow-amber-200/60 dark:shadow-none',
+          icon: 'location_city',
+          label: 'ĐÔ THỊ - MÔI TRƯỜNG',
+          btnGradient: 'from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white'
+        };
+      }
+
+      return {
+        badgeClass: 'bg-sky-50 text-sky-700 border-sky-200/90 dark:bg-sky-950/60 dark:text-sky-300 dark:border-sky-800/60',
+        avatarGradient: 'from-sky-500 to-blue-600 text-white shadow-sky-200/60 dark:shadow-none',
+        icon: 'support_agent',
+        label: fieldName ? fieldName.toUpperCase() : 'CÁN BỘ CHUYÊN TRÁCH',
+        btnGradient: 'from-[#1d7fe0] to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white'
+      };
+    }
+
+    function renderProcedureSupportCards() {
+      const track = document.getElementById('procedure-support-track');
+      const mobileList = document.getElementById('procedure-support-mobile-list');
+      if (!track && !mobileList) return;
+
+      if (!ALL_SUPPORT_CONTACTS.length) {
+        const emptyHtml = `
+          <div class="py-8 text-center text-slate-400 font-semibold text-xs sm:text-sm w-full bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">
+            Không tìm thấy thông tin liên hệ.
+          </div>
+        `;
+        if (track) track.innerHTML = emptyHtml;
+        if (mobileList) mobileList.innerHTML = emptyHtml;
+        return;
+      }
+
+      // 1. Render Tablet/Desktop Horizontal Carousel Cards
+      if (track) {
+        track.innerHTML = ALL_SUPPORT_CONTACTS.map(contact => {
+          const phone = phoneDigits(contact.phone);
+          const theme = getFieldTheme(contact.field_name, contact.contact_type);
+          const initial = getFirstNameInitial(contact.name);
+
+          return `
+            <article class="procedure-contact-card group">
+              <!-- Avatar & Profile Info -->
+              <div class="flex items-start gap-3 sm:gap-3.5 mb-3 sm:mb-3.5">
+                ${contact.avatar ? `
+                  <img src="${escapeHtml(contact.avatar)}" alt="${escapeHtml(contact.name)}" class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl object-cover shrink-0 ring-2 ring-white dark:ring-slate-800 shadow-xs">
+                ` : `
+                  <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br ${theme.avatarGradient} flex items-center justify-center font-black text-base sm:text-lg shadow-xs shrink-0 ring-2 ring-white dark:ring-slate-800 select-none">
+                    ${initial}
+                  </div>
+                `}
+                <div class="min-w-0 flex-1">
+                  <h4 class="font-black text-sm sm:text-base text-slate-900 dark:text-white leading-tight group-hover:text-[#1d7fe0] transition-colors break-words" title="${escapeHtml(contact.name)}">
+                    ${escapeHtml(contact.name)}
+                  </h4>
+                  <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1 line-clamp-3 leading-snug min-h-[2.5rem]" title="${escapeHtml(contact.role || '')}">
+                    ${escapeHtml(contact.role || 'Cán bộ phụ trách chuyên môn')}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Bottom: Action Button (Call Now) -->
+              <div class="mt-auto pt-2.5 sm:pt-3 border-t border-slate-100 dark:border-slate-800/80">
+                <a href="tel:${phone}" 
+                   class="w-full inline-flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-gradient-to-r ${theme.btnGradient} text-xs sm:text-sm font-black shadow-xs hover:shadow-md active:scale-[0.98] transition-all text-center no-underline cursor-pointer"
+                   title="Bấm để gọi ngay: ${displayPhone(contact.phone)}">
+                  <span class="material-symbols-outlined text-base">call</span>
+                  <span>Gọi ngay: ${displayPhone(contact.phone)}</span>
+                </a>
+              </div>
+            </article>
+          `;
+        }).join('');
+      }
+
+      // 2. Render Mobile Phonebook List View (Compact 2-tier cards: Avatar+Name top, Full-width Call bottom)
+      if (mobileList) {
+        mobileList.innerHTML = ALL_SUPPORT_CONTACTS.map(contact => {
+          const phone = phoneDigits(contact.phone);
+          const theme = getFieldTheme(contact.field_name, contact.contact_type);
+          const initial = getFirstNameInitial(contact.name);
+
+          return `
+            <article class="p-3.5 sm:p-4 rounded-2xl bg-slate-50/80 dark:bg-slate-850/80 border border-slate-200/90 dark:border-slate-800 shadow-2xs space-y-3 transition-all hover:border-[#1d7fe0]">
+              <!-- Avatar alongside Name & Role (Harmonious horizontal pair) -->
+              <div class="flex items-center gap-3">
+                ${contact.avatar ? `
+                  <img src="${escapeHtml(contact.avatar)}" alt="${escapeHtml(contact.name)}" class="w-12 h-12 rounded-xl object-cover shrink-0 ring-2 ring-white dark:ring-slate-800 shadow-xs">
+                ` : `
+                  <div class="w-12 h-12 rounded-xl bg-gradient-to-br ${theme.avatarGradient} flex items-center justify-center font-black text-lg text-white shadow-xs shrink-0 ring-2 ring-white dark:ring-slate-800 select-none">
+                    ${initial}
+                  </div>
+                `}
+                <div class="min-w-0 flex-1">
+                  <h4 class="font-black text-[15px] text-slate-900 dark:text-white leading-tight break-words">
+                    ${escapeHtml(contact.name)}
+                  </h4>
+                  <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1 leading-snug">
+                    ${escapeHtml(contact.role || 'Cán bộ phụ trách chuyên môn')}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Full-width Call Action Button with Phone Number -->
+              <a href="tel:${phone}" 
+                 class="w-full inline-flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-gradient-to-r ${theme.btnGradient} text-white font-black text-xs shadow-xs hover:shadow-md active:scale-[0.98] transition-all text-center no-underline cursor-pointer"
+                 title="Bấm để gọi cho ${escapeHtml(contact.name)}: ${displayPhone(contact.phone)}">
+                <span class="material-symbols-outlined text-base">call</span>
+                <span>Gọi ngay: ${displayPhone(contact.phone)}</span>
+              </a>
+            </article>
+          `;
+        }).join('');
+      }
+
+      setupProcedureSupportSlider();
+    }
+
+    function renderProcedureSupportContacts(contacts) {
+      const section = document.getElementById('procedure-support-section');
+      if (!section) return;
+
+      // Sắp xếp: Hotline lên đầu tiên để người dân thấy ngay lãnh đạo phản ánh, sau đó đến cán bộ theo sort_order
+      ALL_SUPPORT_CONTACTS = contacts
+        .filter(contact => contact?.contact_type === 'support' || contact?.contact_type === 'hotline')
+        .sort((a, b) => {
+          const typeOrder = type => type === 'hotline' ? 0 : 1;
+          return typeOrder(a.contact_type) - typeOrder(b.contact_type) || Number(a.sort_order || 0) - Number(b.sort_order || 0);
+        });
+
+      if (!ALL_SUPPORT_CONTACTS.length) return;
+
+      section.classList.remove('hidden');
+      renderProcedureSupportCards();
+    }
+
+    function setupProcedureSupportSlider() {
+      const track = document.getElementById('procedure-support-track');
+      const prev = document.getElementById('procedure-support-prev');
+      const next = document.getElementById('procedure-support-next');
+      if (!track || !prev || !next) return;
+
+      const update = () => {
+        if (track.clientWidth === 0) return;
+        const overflows = track.scrollWidth > track.clientWidth + 4;
+        prev.classList.toggle('hidden', !overflows);
+        next.classList.toggle('hidden', !overflows);
+        prev.disabled = track.scrollLeft <= 4;
+        next.disabled = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+      };
+      prev.onclick = () => track.scrollBy({ left: -Math.max(280, track.clientWidth * .82), behavior: 'smooth' });
+      next.onclick = () => track.scrollBy({ left: Math.max(280, track.clientWidth * .82), behavior: 'smooth' });
+      track.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update, { passive: true });
+      requestAnimationFrame(update);
+    }
+
+    async function loadProcedureSupportContacts() {
+      const data = await safeFetchJson([
+        '/api/procedure-support-contacts',
+        '/data/procedure_support_contacts.json',
+        '/src/data/procedure_support_contacts.json'
+      ]);
+      if (Array.isArray(data)) renderProcedureSupportContacts(data);
+    }
+
     // Dynamic load procedure videos from API
     async function loadVideosData() {
       try {
@@ -1545,6 +1828,7 @@
 
       loadProcedureCategories();
       loadProceduresData();
+      loadProcedureSupportContacts();
       loadVideosData();
       loadPoliciesData();
     });

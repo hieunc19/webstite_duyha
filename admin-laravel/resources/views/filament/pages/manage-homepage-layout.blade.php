@@ -395,8 +395,8 @@
                                         🚛
                                     </div>
                                     <div>
-                                        <div style="font-size: 1.05rem; font-weight: 900; color: #0f172a; text-transform: uppercase;" class="dark:text-white">{{ $sec['custom_title'] ?: 'LỊCH THU GOM RÁC THẢI & TIỆN ÍCH TRỰC TUYẾN' }}</div>
-                                        <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; margin-top: 0.15rem;">{{ $sec['custom_subtitle'] ?: 'Thời khóa biểu thu gom rác theo tuần tại 10 Tổ dân phố Phường Duy Hà' }}</div>
+                                        <div style="font-size: 1.05rem; font-weight: 900; color: #0f172a; text-transform: uppercase;" class="dark:text-white">{{ $sec['custom_title'] ?: 'LỊCH THU GOM RÁC THẢI SINH HOẠT' }}</div>
+                                        <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; margin-top: 0.15rem;">{{ $sec['custom_subtitle'] ?: 'Thời gian thu gom rác tại các địa bàn phường Duy Hà' }}</div>
                                     </div>
                                 </div>
                                 <span style="background: #ecfdf5; color: #047857; font-size: 0.8rem; font-weight: 800; padding: 0.35rem 0.85rem; border-radius: 0.5rem; border: 1px solid #a7f3d0; display: inline-flex; align-items: center; gap: 0.35rem;">
@@ -999,7 +999,7 @@
                                 <div style="font-size: 1.5rem; line-height: 1;">🚛</div>
                                 <div style="font-size: 0.82rem; color: #14532d; line-height: 1.5;">
                                     <div style="font-weight: 800; margin-bottom: 0.2rem; color: #166534;">Cấu hình Khối Lịch thu gom rác thải sinh hoạt</div>
-                                    <div>Khối này trên trang chủ hiển thị <strong>Bảng thời khóa biểu xe thu gom rác theo tuần</strong> tại 10 Tổ dân phố Phường Duy Hà.</div>
+                                    <div>Khối này hiển thị <strong>các ngày thu gom thực tế sắp tới</strong> theo từng địa bàn; nút chi tiết mở lịch tháng đầy đủ.</div>
                                     <div style="margin-top: 0.4rem;">
                                         👉 Để cấu hình hoặc cập nhật khung giờ xe gom rác từng Tổ dân phố, vui lòng vào menu: 
                                         <a href="/admin/waste-schedules" target="_blank" style="color: #047857; font-weight: 800; text-decoration: underline;">
@@ -1016,7 +1016,7 @@
 
                             <div>
                                 <label class="modal-field-label">Mô tả / Tiêu đề phụ</label>
-                                <textarea wire:model="customSubtitle" class="modal-input" rows="2" placeholder="Thời khóa biểu thu gom rác theo tuần tại 10 Tổ dân phố Phường Duy Hà"></textarea>
+                                <textarea wire:model="customSubtitle" class="modal-input" rows="2" placeholder="Thời gian thu gom rác tại các địa bàn phường Duy Hà"></textarea>
                             </div>
                         @else
                             <div>

@@ -16,7 +16,8 @@
         "collection_days": [
             "thu_2",
             "thu_5"
-        ]
+        ],
+        "collection_dates": null
     },
     {
         "id": 10,
@@ -35,11 +36,32 @@
         "collection_days": [
             "thu_2",
             "thu_5"
-        ]
+        ],
+        "collection_dates": null
+    },
+    {
+        "id": 11,
+        "tdp_name": "aa",
+        "morning_shift": "06h00 - 07h30",
+        "evening_shift": "17h00 - 18h30",
+        "saturday_recycle": "08h00 - 11h00",
+        "main_routes": null,
+        "collection_point": null,
+        "responsible_unit": "Đội vệ sinh môi trường Phường Duy Hà",
+        "contact_phone": null,
+        "is_active": true,
+        "sort_order": 0,
+        "created_at": "2026-09-28T02:51:20.000000Z",
+        "updated_at": "2026-09-28T02:51:20.000000Z",
+        "collection_days": [
+            "thu_2",
+            "thu_5"
+        ],
+        "collection_dates": null
     },
     {
         "id": 1,
-        "tdp_name": "TDP Ngọc Tú",
+        "tdp_name": "TDP Ngọc Tú 123",
         "morning_shift": "06h00 - 07h30",
         "evening_shift": "17h30 - 19h00",
         "saturday_recycle": "08h00 - 11h00",
@@ -50,15 +72,62 @@
         "is_active": true,
         "sort_order": 2,
         "created_at": "2026-09-16T03:22:10.000000Z",
-        "updated_at": "2026-09-16T03:22:10.000000Z",
+        "updated_at": "2026-10-06T07:48:33.000000Z",
         "collection_days": [
             "thu_3",
             "thu_6"
+        ],
+        "collection_dates": [
+            {
+                "date": "2026-10-01"
+            },
+            {
+                "date": "2026-10-02"
+            },
+            {
+                "date": "2026-10-08"
+            },
+            {
+                "date": "2026-10-09"
+            },
+            {
+                "date": "2026-10-11"
+            },
+            {
+                "date": "2026-10-14"
+            },
+            {
+                "date": "2026-10-15"
+            },
+            {
+                "date": "2026-10-16"
+            },
+            {
+                "date": "2026-10-19"
+            },
+            {
+                "date": "2026-10-20"
+            },
+            {
+                "date": "2026-10-21"
+            },
+            {
+                "date": "2026-10-22"
+            },
+            {
+                "date": "2026-10-23"
+            },
+            {
+                "date": "2026-10-30"
+            },
+            {
+                "date": "2026-10-31"
+            }
         ]
     },
     {
         "id": 2,
-        "tdp_name": "TDP Chuông",
+        "tdp_name": "TDP Chuông Chuông 123123123",
         "morning_shift": "06h00 - 07h30",
         "evening_shift": "17h00 - 18h30",
         "saturday_recycle": "08h00 - 11h00",
@@ -69,10 +138,15 @@
         "is_active": true,
         "sort_order": 4,
         "created_at": "2026-09-16T03:22:10.000000Z",
-        "updated_at": "2026-09-16T03:22:10.000000Z",
+        "updated_at": "2026-10-06T08:55:19.000000Z",
         "collection_days": [
             "thu_4",
             "thu_7"
+        ],
+        "collection_dates": [
+            {
+                "date": "2026-10-09"
+            }
         ]
     },
     {
@@ -92,7 +166,8 @@
         "collection_days": [
             "thu_3",
             "thu_6"
-        ]
+        ],
+        "collection_dates": null
     },
     {
         "id": 4,
@@ -111,7 +186,8 @@
         "collection_days": [
             "thu_2",
             "thu_6"
-        ]
+        ],
+        "collection_dates": null
     },
     {
         "id": 5,
@@ -130,7 +206,8 @@
         "collection_days": [
             "thu_3",
             "thu_7"
-        ]
+        ],
+        "collection_dates": null
     },
     {
         "id": 6,
@@ -149,7 +226,8 @@
         "collection_days": [
             "thu_4",
             "chu_nhat"
-        ]
+        ],
+        "collection_dates": null
     },
     {
         "id": 7,
@@ -168,7 +246,8 @@
         "collection_days": [
             "thu_2",
             "thu_5"
-        ]
+        ],
+        "collection_dates": null
     },
     {
         "id": 8,
@@ -187,6 +266,7 @@
         "collection_days": [
             "thu_3",
             "thu_6"
-        ]
+        ],
+        "collection_dates": null
     }
 ]

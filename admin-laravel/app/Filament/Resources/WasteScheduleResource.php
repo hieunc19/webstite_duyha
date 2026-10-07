@@ -6,9 +6,9 @@ use App\Models\WasteSchedule;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ViewField;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -39,15 +39,13 @@ class WasteScheduleResource extends Resource
     {
         return $schema
             ->components([
-                Section::make('Thông tin Lịch thu gom rác theo Tổ dân phố')
-                    ->description('Cấu hình khung giờ xe gom rác và các ngày thu gom trong tuần cho từng Tổ dân phố')
+                Section::make('Lịch thu gom rác theo địa bàn')
                     ->columnSpanFull()
                     ->columns(2)
                     ->components([
                         TextInput::make('tdp_name')
                             ->label('Tên Tổ dân phố')
                             ->placeholder('Ví dụ: TDP Ngọc Tú')
-                            ->helperText('Nhập trực tiếp tên địa bàn thực tế, không phụ thuộc danh sách Tổ dân phố trong hệ thống.')
                             ->required()
                             ->maxLength(255)
                             ->unique(ignoreRecord: true)
@@ -57,24 +55,16 @@ class WasteScheduleResource extends Resource
                         TextInput::make('morning_shift')
                             ->label('Khung giờ thu gom rác')
                             ->placeholder('Ví dụ: 05h30 - 07h00 hoặc 17h00 - 18h30')
-                            ->helperText('1 khung giờ duy nhất áp dụng cho các ngày thu gom trong tuần của TDP này.')
-                            ->columnSpanFull()
+                            ->suffixIcon('heroicon-m-clock')
+                            ->live(onBlur: true)
                             ->required(),
 
-                        CheckboxList::make('collection_days')
-                            ->label('Các ngày thu gom rác trong tuần')
-                            ->options([
-                                'thu_2'    => 'Thứ 2',
-                                'thu_3'    => 'Thứ 3',
-                                'thu_4'    => 'Thứ 4',
-                                'thu_5'    => 'Thứ 5',
-                                'thu_6'    => 'Thứ 6',
-                                'thu_7'    => 'Thứ 7',
-                                'chu_nhat' => 'Chủ nhật',
-                            ])
-                            ->columns(4)
-                            ->default(['thu_2', 'thu_5'])
+                        ViewField::make('collection_dates')
+                            ->label('Ngày thu gom rác')
+                            ->view('filament.forms.components.waste-schedule-calendar')
+                            ->default([])
                             ->required()
+                            ->live()
                             ->columnSpanFull(),
 
                         Toggle::make('is_active')
@@ -103,26 +93,6 @@ class WasteScheduleResource extends Resource
                     ->placeholder('—')
                     ->badge()
                     ->color('success'),
-
-                TextColumn::make('collection_days')
-                    ->label('Các ngày thu gom')
-                    ->badge()
-                    ->color('info')
-                    ->formatStateUsing(function ($state) {
-                        $dayMap = [
-                            'thu_2' => 'Thứ 2',
-                            'thu_3' => 'Thứ 3',
-                            'thu_4' => 'Thứ 4',
-                            'thu_5' => 'Thứ 5',
-                            'thu_6' => 'Thứ 6',
-                            'thu_7' => 'Thứ 7',
-                            'chu_nhat' => 'Chủ nhật',
-                        ];
-                        if (is_array($state)) {
-                            return array_map(fn($d) => $dayMap[$d] ?? $d, $state);
-                        }
-                        return $dayMap[$state] ?? $state ?? 'Chưa chọn';
-                    }),
 
                 IconColumn::make('is_active')
                     ->label('Hiển thị')

@@ -45,7 +45,7 @@ class FormDocumentResource extends Resource
         return $schema
             ->components([
                 Section::make('Thông tin Biểu mẫu thủ tục hành chính')
-                    ->description('Cấu hình tên biểu mẫu, cơ quan tiếp nhận và tệp tin đính kèm (Word, PDF, Excel) cho người dân tải về')
+                    ->description('Cấu hình đường dẫn chính thức trên Cổng DVC Quốc gia. Tệp cũ chỉ dùng để lưu trữ nội bộ, không hiển thị công khai.')
                     ->columnSpanFull()
                     ->columns(2)
                     ->components([
@@ -71,8 +71,20 @@ class FormDocumentResource extends Resource
                             ->default('Bộ phận Tư pháp - Hộ tịch')
                             ->required(),
 
+                        TextInput::make('public_service_url')
+                            ->label('Đường dẫn chính thức trên Cổng DVC Quốc gia')
+                            ->helperText('Dán đường dẫn chi tiết tại dichvucong.gov.vn. Nếu chưa có, giữ đường dẫn trang chủ để công dân tra cứu.')
+                            ->default('https://dichvucong.gov.vn/')
+                            ->required()
+                            ->url()
+                            ->rule('regex:/^https:\/\/([a-z0-9-]+\.)?dichvucong\.gov\.vn(?:\/|$)/i')
+                            ->validationMessages([
+                                'regex' => 'Đường dẫn phải thuộc tên miền dichvucong.gov.vn.',
+                            ])
+                            ->columnSpanFull(),
+
                         FileUpload::make('file_path')
-                            ->label('Tệp đính kèm biểu mẫu (PDF, DOCX, DOC, XLSX)')
+                            ->label('Tệp lưu trữ nội bộ (không hiển thị công khai)')
                             ->directory('form-documents')
                             ->disk('public')
                             ->preserveFilenames()
@@ -110,10 +122,15 @@ class FormDocumentResource extends Resource
                     ->searchable(),
 
                 TextColumn::make('file_path')
-                    ->label('Tệp đính kèm')
+                    ->label('Tệp nội bộ')
                     ->formatStateUsing(fn ($state) => $state ? '📄 ' . basename($state) : '—')
                     ->badge()
                     ->color(fn ($state) => $state ? 'success' : 'gray'),
+
+                TextColumn::make('public_service_url')
+                    ->label('Link DVCQG')
+                    ->limit(35)
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 IconColumn::make('is_active')
                     ->label('Hiển thị')

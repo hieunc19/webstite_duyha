@@ -729,9 +729,9 @@
 
             <!-- Tên Biểu Mẫu -->
             <td class="py-4 px-5 border-r border-slate-200 dark:border-slate-800">
-              <a href="javascript:void(0)" onclick="openFormGuideModal(${item.id})" class="text-slate-900 dark:text-white font-extrabold hover:text-[#3399fe] transition-colors leading-snug block text-xs sm:text-sm">
+              <button type="button" onclick="openFormPortal(${item.id})" class="text-left text-slate-900 dark:text-white font-extrabold hover:text-[#3399fe] transition-colors leading-snug block text-xs sm:text-sm">
                 ${item.name}
-              </a>
+              </button>
             </td>
 
             <!-- Lĩnh Vực -->
@@ -746,20 +746,14 @@
               ${item.agency}
             </td>
 
-            <!-- Thao Tác: Xem hướng dẫn & Tải về -->
+            <!-- Thao tác: tra cứu nguồn chính thức -->
             <td class="py-4 px-4 text-center">
               <div class="flex items-center justify-center gap-2.5">
-                <button onclick="openFormGuideModal(${item.id})"
-                  class="px-4 py-2 bg-sky-50/80 dark:bg-sky-950/40 hover:bg-sky-100 text-[#1d7fe0] dark:text-sky-400 text-xs sm:text-sm font-bold rounded-full border border-sky-300 dark:border-sky-700 transition-all flex items-center justify-center active:scale-95 whitespace-nowrap shadow-xs"
-                  title="Xem trước file đính kèm">
-                  <span>Hướng dẫn</span>
-                </button>
-
-                <button onclick="triggerDirectDownload(${item.id}, 'docx')"
-                  class="px-4 py-2 bg-[#059669] hover:bg-[#047857] text-white text-xs sm:text-sm font-bold rounded-full shadow-sm transition-all flex items-center justify-center gap-1.5 active:scale-95 whitespace-nowrap"
-                  title="Tải biểu mẫu đính kèm">
-                  <span class="material-symbols-outlined text-base">download</span>
-                  <span>Tải file đính kèm</span>
+                <button onclick="openFormPortal(${item.id})"
+                  class="px-4 py-2 bg-[#1d7fe0] hover:bg-[#1868b8] text-white text-xs sm:text-sm font-bold rounded-full shadow-sm transition-all flex items-center justify-center gap-1.5 active:scale-95 whitespace-nowrap"
+                  title="Tra cứu trên Cổng DVC Quốc gia">
+                  <span class="material-symbols-outlined text-base">open_in_new</span>
+                  <span>Tra cứu / Nộp hồ sơ</span>
                 </button>
               </div>
             </td>
@@ -803,6 +797,26 @@
       return `/storage/${url.replace(/^\/+/, '')}`;
     }
 
+    function getFormPortalUrl(item) {
+      const rawUrl = typeof item?.public_service_url === 'string' ? item.public_service_url.trim() : '';
+      try {
+        const url = new URL(rawUrl);
+        const host = url.hostname.toLowerCase();
+        if (url.protocol === 'https:' && (host === 'dichvucong.gov.vn' || host.endsWith('.dichvucong.gov.vn'))) {
+          return url.href;
+        }
+      } catch (_) {
+        // Use the official portal homepage as a safe fallback.
+      }
+      return 'https://dichvucong.gov.vn/';
+    }
+
+    function openFormPortal(id) {
+      const item = MASTER_FORMS_DATA.find(f => f.id === id);
+      if (!item) return;
+      window.open(getFormPortalUrl(item), '_blank', 'noopener,noreferrer');
+    }
+
     function showFormToast(message, type = 'success') {
       const toast = document.createElement('div');
       const bgClass = type === 'success' ? 'bg-emerald-600' : 'bg-amber-600';
@@ -818,16 +832,7 @@
 
     // Open Guide / Preview File
     function openFormGuideModal(id) {
-      const item = MASTER_FORMS_DATA.find(f => f.id === id);
-      if (!item) return;
-
-      const fileUrl = getFormFileUrl(item);
-      if (!fileUrl) {
-        showFormToast('Biểu mẫu này chưa được Quản trị viên đính kèm file hướng dẫn.', 'warning');
-        return;
-      }
-
-      window.open(fileUrl, '_blank');
+      openFormPortal(id);
     }
 
     // Close Guide Modal
@@ -841,24 +846,7 @@
 
     // Direct Download Real Admin File
     function triggerDirectDownload(id, format) {
-      const item = MASTER_FORMS_DATA.find(f => f.id === id);
-      if (!item) return;
-
-      const fileUrl = getFormFileUrl(item);
-      if (!fileUrl) {
-        showFormToast('Biểu mẫu này chưa được Quản trị viên đính kèm file để tải về.', 'warning');
-        return;
-      }
-
-      const link = document.createElement('a');
-      link.href = fileUrl;
-      link.setAttribute('download', '');
-      link.target = '_blank';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      showFormToast(`Đang tải về: ${item.name || item.title}`, 'success');
+      openFormPortal(id);
     }
 
     function showDownloadToast(name, format) {

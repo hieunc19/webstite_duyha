@@ -89,7 +89,7 @@ class ManageHomepageLayout extends Page
 
     // Waste schedule & utilities modal properties
     public $isWasteScheduleModal = false;
-    public $scheduleBtnText = 'Xem chi tiết lịch';
+    public $scheduleBtnText = 'Xem lịch tháng';
     public $scheduleBtnUrl = '/waste-schedule.html';
 
     // Quick Utilities modal properties (7 danh mục tiện ích nhanh)
@@ -328,7 +328,7 @@ class ManageHomepageLayout extends Page
                 $this->footerCopyright = $settings['copyright_text'] ?? 'Copyright © Đoàn TNCS Hồ Chí Minh phường Duy Hà. All Rights Reserved';
                 $this->footerSourceNote = $settings['source_note'] ?? 'Ghi rõ nguồn "Đoàn TNCS Hồ Chí Minh phường Duy Hà" khi phát hành lại thông tin từ Đoàn TNCS Hồ Chí Minh phường Duy Hà.';
             } elseif ($this->isWasteScheduleModal) {
-                $this->scheduleBtnText = $settings['schedule_btn_text'] ?? 'Xem chi tiết lịch';
+                $this->scheduleBtnText = $settings['schedule_btn_text'] ?? 'Xem lịch tháng';
                 $this->scheduleBtnUrl = $settings['schedule_btn_url'] ?? '/waste-schedule.html';
             } elseif ($this->isQuickUtilitiesModal) {
                 if (!empty($settings['items']) && is_array($settings['items'])) {
@@ -632,7 +632,7 @@ class ManageHomepageLayout extends Page
                 } elseif (in_array($sec->section_code, ['procedures_utilities', 'hdsd_procedure'])) {
                     $sec->name = 'Lịch thu gom rác sinh hoạt';
                     $sec->settings = array_merge($sec->settings ?? [], [
-                        'schedule_btn_text' => $this->scheduleBtnText ?: 'Xem chi tiết lịch',
+                        'schedule_btn_text' => $this->scheduleBtnText ?: 'Xem lịch tháng',
                         'schedule_btn_url' => $this->scheduleBtnUrl ?: '/waste-schedule.html',
                     ]);
                 } elseif (str_starts_with($sec->section_code, 'custom_')) {

@@ -54,6 +54,20 @@ import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import * as XLSX from 'xlsx';
 
+const MATERIAL_SYMBOLS_FONT = '24px "Material Symbols Outlined"';
+
+const markMaterialSymbolsReady = () => {
+  document.documentElement.classList.add('material-symbols-ready');
+};
+
+if ('fonts' in document) {
+  document.fonts.load(MATERIAL_SYMBOLS_FONT).then(markMaterialSymbolsReady).catch(() => {
+    // Keep ligature text hidden if the icon font cannot be loaded.
+  });
+} else {
+  markMaterialSymbolsReady();
+}
+
 // The script is loaded at the end of each document, before DOMContentLoaded.
 // Install the opaque loader now so bundled/default markup is never exposed.
 installSubpageLoader();
@@ -2459,11 +2473,9 @@ class PortalApp {
       const badgeClasses = isToday
         ? 'bg-emerald-600 dark:bg-emerald-500 text-white border-emerald-600 dark:border-emerald-500 shadow-xs'
         : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200/90 dark:border-slate-700/80 hover:bg-slate-200/80 dark:hover:bg-slate-750';
-      const iconClasses = isToday ? 'text-white' : 'text-slate-500 dark:text-slate-400';
       const tooltip = isToday ? `Hôm nay (${dayName} - ${label}) có lịch xe gom rác` : `Lịch thu gom: ${dayName}, ${label}`;
 
-      return `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border font-black text-xs tracking-tight transition-all shrink-0 ${badgeClasses}" title="${tooltip}">
-        <span class="material-symbols-outlined text-[13px] ${iconClasses}">calendar_today</span>
+      return `<span class="inline-flex items-center px-2 sm:px-2.5 py-1 rounded-lg border font-black text-xs tracking-tight transition-all shrink-0 ${badgeClasses}" title="${tooltip}">
         <span>${label}</span>
       </span>`;
     }).join('');

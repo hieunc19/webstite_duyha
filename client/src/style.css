@@ -36,6 +36,19 @@
   -webkit-font-smoothing: antialiased;
 }
 
+/*
+ * Material Symbols uses text ligatures (for example "menu" and
+ * "arrow_forward"). Keep the icon boxes in the layout but hide the raw
+ * ligature text until the self-hosted font has actually finished loading.
+ */
+html:not(.material-symbols-ready) .material-symbols-outlined {
+  visibility: hidden !important;
+}
+
+html.material-symbols-ready .material-symbols-outlined {
+  visibility: visible;
+}
+
 html,
 body {
   overflow-x: hidden;
@@ -1029,4 +1042,3 @@ body.portal-active {
     transform: translateX(var(--marquee-dist, -40px));
   }
 }
-

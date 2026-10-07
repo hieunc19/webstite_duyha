@@ -1420,6 +1420,10 @@
         alert('Văn bản này hiện chưa có tệp file PDF đính kèm.');
         return;
       }
+      if (window.matchMedia('(max-width: 767px)').matches) {
+        window.location.assign(currentPolicyFileUrl);
+        return;
+      }
       window.open(currentPolicyFileUrl, '_blank', 'noopener,noreferrer');
     }
     window.openCurrentPolicyFile = openCurrentPolicyFile;
@@ -1473,6 +1477,12 @@
       const hasValidPdf = fileUrl && fileUrl !== '#' && fileUrl !== '/';
 
       if (hasValidPdf) {
+        // Trình xem PDF nhúng bằng iframe không ổn định trên trình duyệt điện thoại.
+        // Điều hướng trực tiếp từ thao tác bấm của người dùng để trình duyệt mở PDF gốc.
+        if (window.matchMedia('(max-width: 767px)').matches) {
+          window.location.assign(fileUrl);
+          return;
+        }
         const embedUrl = fileUrl.includes('#') ? fileUrl : (fileUrl + '#toolbar=1&navpanes=0&view=FitH');
         if (pdfIframe) pdfIframe.src = embedUrl;
         if (pdfContainer) pdfContainer.style.display = 'block';

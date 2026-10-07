@@ -129,6 +129,10 @@ function getLocalFileUrl(urlOrPath: string | null | undefined): string {
   return formatStorageUrl(urlOrPath);
 }
 
+function isPdfFile(...values: Array<string | null | undefined>): boolean {
+  return values.some(value => /\.pdf(?:$|[?#])/i.test(String(value || '').trim()));
+}
+
 function escapeHtml(value: any): string {
   return String(value ?? '')
     .replace(/&/g, '&amp;')
@@ -1737,6 +1741,7 @@ class PortalApp {
 
     const downloadUrl = getLocalFileUrl(batch.file_url || batch.file_path) || '#';
     const fileName = batch.file_name || 'Danh-sach-chinh-sach.xlsx';
+    const isPdf = isPdfFile(fileName, batch.file_path, batch.file_url, downloadUrl);
 
     if (badgeEl) badgeEl.textContent = 'ĐỢT DANH SÁCH CHÍNH SÁCH';
     if (titleEl) titleEl.textContent = batch.name;
@@ -1751,17 +1756,17 @@ class PortalApp {
           <div class="p-4 bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl border border-emerald-200 dark:border-emerald-900/40 flex items-center justify-between gap-4">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0 shadow-sm">
-                <span class="material-symbols-outlined text-xl">table_chart</span>
+                <span class="material-symbols-outlined text-xl">${isPdf ? 'picture_as_pdf' : 'table_chart'}</span>
               </div>
               <div class="text-left">
                 <span class="text-xs sm:text-sm font-black text-slate-900 dark:text-white block truncate max-w-[220px] sm:max-w-xs">${fileName}</span>
-                <span class="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block">${batch.file_size || 'Định dạng Excel (.xlsx)'}</span>
+                <span class="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold block">${batch.file_size || (isPdf ? 'Định dạng PDF' : 'Định dạng Excel (.xlsx)')}</span>
               </div>
             </div>
-            <a href="${downloadUrl}" download="${fileName}" target="_blank"
+            <a href="${downloadUrl}" ${isPdf ? 'target="_blank" rel="noopener noreferrer"' : `download="${fileName}"`}
               class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-sm shrink-0 active:scale-95">
-              <span class="material-symbols-outlined text-sm">download</span>
-              <span>Tải file Excel</span>
+              <span class="material-symbols-outlined text-sm">${isPdf ? 'open_in_new' : 'download'}</span>
+              <span>${isPdf ? 'Mở PDF' : 'Tải file Excel'}</span>
             </a>
           </div>
         </div>
@@ -2263,10 +2268,10 @@ class PortalApp {
           <table class="w-full text-left border-collapse min-w-[680px]">
             <thead>
               <tr class="bg-gradient-to-r from-[#1d7fe0] via-[#268df5] to-[#1464b8] text-white text-[11px] sm:text-xs font-black uppercase tracking-wider">
-                <th class="py-3.5 px-3.5 sm:px-4 w-[28%]">TỔ DÂN PHỐ (TDP)</th>
-                <th class="py-3.5 px-3 sm:px-4 w-[34%]">NGÀY THU GOM SẮP TỚI</th>
-                <th class="py-3.5 px-3 sm:px-4 w-[22%]">KHUNG GIỜ XE GOM</th>
-                <th class="py-3.5 px-3 sm:px-4 w-[16%] text-center">LỊCH THÁNG</th>
+                <th class="py-3.5 px-3.5 sm:px-4 w-[30%]">TỔ DÂN PHỐ (TDP)</th>
+                <th class="py-3.5 px-3 sm:px-4 w-[37%]">NGÀY THU GOM SẮP TỚI</th>
+                <th class="py-3.5 px-3 sm:px-4 w-[19%]">KHUNG GIỜ XE GOM</th>
+                <th class="py-3.5 px-3 sm:px-4 w-[14%] text-center">LỊCH THÁNG</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-xs font-medium">
@@ -2290,8 +2295,8 @@ class PortalApp {
                       ${this.renderUpcomingWasteDates(upcomingDates, scheduleCount, item.collection_dates.length === 0)}
                     </td>
                     <td class="py-3 px-3 sm:px-4 align-middle">
-                      <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 font-black text-xs tracking-tight whitespace-nowrap shadow-2xs">
-                        <span class="material-symbols-outlined text-sm text-emerald-600 dark:text-emerald-400">schedule</span>
+                      <div class="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 font-black text-xs tracking-tight whitespace-nowrap shadow-2xs">
+
                         <span>${escapeHtml(shift)}</span>
                       </div>
                     </td>
@@ -2328,8 +2333,8 @@ class PortalApp {
                   </span></div>
                 </div>
 
-                <div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 font-black text-[11px] shrink-0 whitespace-nowrap">
-                  <span class="material-symbols-outlined text-[13px] text-emerald-600 dark:text-emerald-400">schedule</span>
+                <div class="inline-flex items-center px-2 py-0.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 font-black text-[11px] shrink-0 whitespace-nowrap">
+
                   <span>${escapeHtml(shift)}</span>
                 </div>
               </div>
@@ -2432,13 +2437,13 @@ class PortalApp {
       return collectionDates
         .map((date) => new Date(`${date}T00:00:00`))
         .filter((date) => !Number.isNaN(date.getTime()) && date >= today)
-        .slice(0, count || 2);
+        .slice(0, count || 3);
     }
 
     if (!Array.isArray(collectionDays) || collectionDays.length === 0) return [];
 
     const dates: Date[] = [];
-    const targetCount = count || (collectionDays.length >= 3 ? 3 : 2);
+    const targetCount = count || 3;
 
     for (let offset = 0; offset < 42 && dates.length < targetCount; offset += 1) {
       const candidate = new Date(today);
@@ -2487,12 +2492,12 @@ class PortalApp {
         </span>`
       : '';
 
-    const extraCount = totalScheduleDays > 3 && !isDaily ? totalScheduleDays - dates.length : 0;
-    const extraBadge = extraCount > 0
-      ? `<span class="inline-flex items-center px-1.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700/80 text-[11px] font-bold shrink-0" title="Còn ${extraCount} ngày thu gom ${isRecurringWeekly ? 'khác trong tuần' : 'đã thiết lập'}">+${extraCount}</span>`
-      : '';
 
-    return `<div class="flex flex-wrap items-center gap-1.5">${badgesHtml}${dailyBadge}${extraBadge}</div>`;
+
+
+
+
+    return `<div class="flex items-center gap-1.5 flex-wrap sm:flex-nowrap">${badgesHtml}${dailyBadge}</div>`;
   }
 
   private ensureWasteMonthlyScheduleModal() {
@@ -2833,6 +2838,7 @@ class PortalApp {
     const currentBatch = batches.find(b => b.id === this.selectedMeritoriousId) || batches[0];
     const fileUrl = getLocalFileUrl(currentBatch.file_path || currentBatch.file_url);
     const fileName = currentBatch.file_name || currentBatch.name || 'Danh_sach_chinh_sach.xlsx';
+    const isPdf = isPdfFile(fileName, currentBatch.file_path, currentBatch.file_url, fileUrl);
 
     let html = `
       <!-- BATCH SELECTOR (IF MULTIPLE BATCHES) -->
@@ -2867,11 +2873,11 @@ class PortalApp {
 
         <div class="flex items-center gap-2 shrink-0 self-end md:self-center">
           ${fileUrl ? `
-            <a href="${fileUrl}" download="${fileName}" target="_blank"
+            <a href="${fileUrl}" ${isPdf ? 'target="_blank" rel="noopener noreferrer"' : `download="${fileName}"`}
               class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer"
-              title="Tải về máy tính">
-              <span class="material-symbols-outlined text-base">download</span>
-              <span>Tải về</span>
+              title="${isPdf ? 'Mở PDF trong trình duyệt' : 'Tải về máy tính'}">
+              <span class="material-symbols-outlined text-base">${isPdf ? 'open_in_new' : 'download'}</span>
+              <span>${isPdf ? 'Mở PDF' : 'Tải về'}</span>
             </a>
           ` : ''}
         </div>
@@ -2894,7 +2900,7 @@ class PortalApp {
     const fileUrl = getLocalFileUrl(batch.file_path || batch.file_url);
     const fileName = batch.file_name || batch.name || '';
     const isExcel = /\.(xlsx|xls|csv)$/i.test(fileName) || /\.(xlsx|xls|csv)$/i.test(batch.file_path || '');
-    const isPdf = /\.pdf$/i.test(fileName) || /\.pdf$/i.test(batch.file_path || '');
+    const isPdf = isPdfFile(fileName, batch.file_path, batch.file_url, fileUrl);
 
     if (!fileUrl || fileUrl === '#' || fileUrl === '/') {
       viewerBox.innerHTML = `
@@ -2908,7 +2914,21 @@ class PortalApp {
 
     if (isPdf) {
       viewerBox.innerHTML = `
-        <div class="w-full h-[750px] bg-slate-100 dark:bg-slate-950 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-md">
+        <div class="md:hidden w-full p-6 bg-red-50/70 dark:bg-slate-900 rounded-2xl border border-red-200 dark:border-slate-700 text-center space-y-4">
+          <div class="w-14 h-14 mx-auto rounded-2xl bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-400 flex items-center justify-center">
+            <span class="material-symbols-outlined text-3xl">picture_as_pdf</span>
+          </div>
+          <div class="space-y-1">
+            <p class="text-sm font-extrabold text-slate-900 dark:text-white">Tài liệu PDF</p>
+            <p class="text-xs text-slate-600 dark:text-slate-400">Mở tài liệu bằng trình xem PDF của trình duyệt điện thoại.</p>
+          </div>
+          <a href="${fileUrl}" target="_blank" rel="noopener noreferrer"
+            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#1d7fe0] hover:bg-blue-700 text-white rounded-xl text-sm font-extrabold shadow-sm active:scale-95">
+            <span class="material-symbols-outlined text-lg">open_in_new</span>
+            <span>Mở PDF</span>
+          </a>
+        </div>
+        <div class="hidden md:block w-full h-[750px] bg-slate-100 dark:bg-slate-950 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-md">
           <iframe src="${fileUrl}#view=FitH" class="w-full h-full border-0 bg-white" title="Xem danh sách PDF"></iframe>
         </div>
       `;

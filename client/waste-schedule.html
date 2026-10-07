@@ -162,10 +162,10 @@
           <thead>
             <tr
               class="bg-gradient-to-r from-[#3399fe] via-[#268df5] to-[#1d7fe0] text-white text-xs sm:text-sm font-extrabold uppercase tracking-wider shadow-xs">
-              <th class="py-4 px-4 border-r border-white/20 w-[28%]">TỔ DÂN PHỐ (TDP)</th>
-              <th class="py-4 px-3 border-r border-white/20 w-[34%]">NGÀY THU GOM SẮP TỚI</th>
-              <th class="py-4 px-3 border-r border-white/20 w-[22%]">KHUNG GIỜ XE GOM</th>
-              <th class="py-4 px-3 w-[16%] text-center">LỊCH THÁNG</th>
+              <th class="py-4 px-4 border-r border-white/20 w-[30%]">TỔ DÂN PHỐ (TDP)</th>
+              <th class="py-4 px-3 border-r border-white/20 w-[37%]">NGÀY THU GOM SẮP TỚI</th>
+              <th class="py-4 px-3 border-r border-white/20 w-[19%]">KHUNG GIỜ XE GOM</th>
+              <th class="py-4 px-3 w-[14%] text-center">LỊCH THÁNG</th>
             </tr>
           </thead>
           <tbody id="timetable-matrix-body"
@@ -633,11 +633,11 @@
         return selectedDates
           .map(function (date) { return new Date(date + 'T00:00:00'); })
           .filter(function (date) { return !Number.isNaN(date.getTime()) && date >= today; })
-          .slice(0, count || 2);
+          .slice(0, count || 3);
       }
 
       if (!Array.isArray(days) || days.length === 0) return [];
-      const targetCount = count || (days.length >= 3 ? 3 : 2);
+      const targetCount = count || 3;
       const dates = [];
       for (let offset = 0; offset < 42 && dates.length < targetCount; offset += 1) {
         const candidate = new Date(today);
@@ -676,12 +676,12 @@
         + '<span class="material-symbols-outlined text-xs">all_inclusive</span>Hàng ngày</span>'
         : '';
 
-      const extraCount = totalDays > 3 && !isDaily ? totalDays - dates.length : 0;
+      const extraCount = 0;
       const extraBadge = extraCount > 0
         ? '<span class="inline-flex items-center px-1.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700/80 text-[11px] font-bold shrink-0" title="Còn ' + extraCount + ' ngày thu gom ' + (isRecurringWeekly ? 'khác trong tuần' : 'đã thiết lập') + '">+' + extraCount + '</span>'
         : '';
 
-      return '<div class="flex flex-wrap items-center gap-1.5">' + badgesHtml + dailyBadge + extraBadge + '</div>';
+      return '<div class="flex items-center gap-1.5 flex-wrap sm:flex-nowrap">' + badgesHtml + dailyBadge + '</div>';
     }
 
     function renderTimetableMatrix() {
@@ -705,7 +705,7 @@
         return '<tr class="' + bgClass + ' hover:bg-sky-50/80 dark:hover:bg-slate-800/80 transition-colors">'
           + '<td class="py-3 px-4 border-r border-slate-200 dark:border-slate-800 align-middle"><div class="flex items-center gap-2.5"><span class="w-6 h-6 rounded-md ' + numberClass + ' flex items-center justify-center font-bold text-[11px] shrink-0">' + (index + 1) + '</span><b class="text-slate-900 dark:text-white block font-extrabold text-sm sm:text-base">' + escapeWasteHtml(item.tdp_name) + '</b></div></td>'
           + '<td class="py-3 px-3 border-r border-slate-200 dark:border-slate-800 align-middle">' + renderUpcomingWasteScheduleDates(dates, selectedDates.length || days.length, selectedDates.length === 0) + '</td>'
-          + '<td class="py-3 px-3 border-r border-slate-200 dark:border-slate-800 align-middle"><span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 font-extrabold text-xs whitespace-nowrap"><span class="material-symbols-outlined text-sm">schedule</span>' + escapeWasteHtml(shiftTime) + '</span></td>'
+          + '<td class="py-3 px-3 border-r border-slate-200 dark:border-slate-800 align-middle"><span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/80 font-extrabold text-xs whitespace-nowrap">' + escapeWasteHtml(shiftTime) + '</span></td>'
           + '<td class="py-3 px-3 align-middle text-center"><button type="button" onclick="window.openWasteMonthlySchedule(' + Number(item.id) + ')" class="inline-flex items-center justify-center px-3 py-1.5 rounded-xl text-sky-700 dark:text-sky-300 hover:bg-sky-600 hover:text-white border border-sky-200 dark:border-sky-800 font-extrabold text-xs transition-colors shadow-2xs whitespace-nowrap">Chi tiết</button></td>'
           + '</tr>';
       }).join('');

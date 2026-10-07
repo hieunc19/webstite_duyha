@@ -421,7 +421,7 @@
                     <span>Văn bản Lịch tiếp công dân (Định dạng PDF)</span>
                   </div>
                   <div class="flex items-center gap-2">
-                    <a href="${imgUrl}" target="_blank" class="px-3 py-1.5 bg-[#1d7fe0] hover:bg-blue-600 text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5">
+                    <a href="${imgUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-[#1d7fe0] hover:bg-blue-600 text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5">
                       <span class="material-symbols-outlined text-base">open_in_new</span>
                       <span>Mở tab mới</span>
                     </a>
@@ -431,8 +431,17 @@
                     </a>
                   </div>
                 </div>
-                <!-- PDF Iframe Viewer -->
-                <div class="w-full bg-slate-100 dark:bg-slate-950 flex items-center justify-center min-h-[700px]">
+                <!-- Mobile browsers handle the original PDF URL more reliably than an iframe. -->
+                <div class="md:hidden px-6 py-10 bg-slate-50 dark:bg-slate-950 text-center space-y-4">
+                  <span class="material-symbols-outlined text-red-500 text-5xl">picture_as_pdf</span>
+                  <p class="text-sm font-bold text-slate-700 dark:text-slate-200">Mở lịch tiếp công dân bằng trình xem PDF của điện thoại.</p>
+                  <a href="${imgUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#1d7fe0] hover:bg-blue-600 text-white text-sm font-bold rounded-xl shadow-sm">
+                    <span class="material-symbols-outlined text-lg">open_in_new</span>
+                    <span>Mở PDF</span>
+                  </a>
+                </div>
+                <!-- PDF Iframe Viewer (desktop/tablet) -->
+                <div class="hidden md:flex w-full bg-slate-100 dark:bg-slate-950 items-center justify-center min-h-[700px]">
                   <iframe src="${imgUrl}#toolbar=1&navpanes=0" class="w-full h-[700px] sm:h-[850px] border-none" title="Lịch tiếp công dân PDF"></iframe>
                 </div>
               </div>

@@ -19,6 +19,7 @@ class Policy extends Model
         'summary',
         'highlights',
         'download_url',
+        'public_service_url',
         'is_active',
         'sort_order',
     ];

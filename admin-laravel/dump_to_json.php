@@ -478,13 +478,10 @@ $policies = \App\Models\Policy::where('is_active', true)
     ->orderBy('id', 'desc')
     ->get()
     ->map(function($p) use ($sharedCategoryMap) {
-        $downloadUrl = '#';
-        if (!empty($p->download_url)) {
-            if (str_starts_with($p->download_url, 'http://') || str_starts_with($p->download_url, 'https://') || $p->download_url === '#') {
-                $downloadUrl = $p->download_url;
-            } else {
-                $downloadUrl = '/storage/' . ltrim($p->download_url, '/');
-            }
+        $defaultPortalUrl = 'https://dichvucong.gov.vn/';
+        $portalUrl = trim((string) $p->public_service_url);
+        if (!preg_match('#^https://([a-z0-9-]+\.)?dichvucong\.gov\.vn(?:/|$)#i', $portalUrl)) {
+            $portalUrl = $defaultPortalUrl;
         }
 
         return [
@@ -498,7 +495,8 @@ $policies = \App\Models\Policy::where('is_active', true)
             'status' => $p->status ?? 'Đang có hiệu lực',
             'summary' => $p->summary ?? '',
             'highlights' => $p->highlights ?? [],
-            'downloadUrl' => $downloadUrl,
+            'public_service_url' => $portalUrl,
+            'downloadUrl' => $portalUrl,
             'sort_order' => $p->sort_order,
         ];
     });

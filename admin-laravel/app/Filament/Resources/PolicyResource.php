@@ -8,7 +8,6 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -45,7 +44,7 @@ class PolicyResource extends Resource
         return $schema
             ->components([
                 Section::make('Thông tin Văn bản Chính sách & Quy định')
-                    ->description('Quản lý thông tin văn bản pháp luật, nghị định, quyết định, quy định công khai')
+                    ->description('Quản lý thông tin văn bản và đường dẫn tra cứu chính thức trên Cổng Dịch vụ công Quốc gia.')
                     ->columnSpanFull()
                     ->columns(2)
                     ->components([
@@ -80,17 +79,16 @@ class PolicyResource extends Resource
                             ->default('Đang có hiệu lực')
                             ->required(),
 
-                        FileUpload::make('download_url')
-                            ->label('Tải lên tệp văn bản PDF (Chỉ chấp nhận tệp .pdf)')
-                            ->directory('policy-documents')
-                            ->disk('public')
-                            ->preserveFilenames()
-                            ->downloadable()
-                            ->openable()
-                            ->acceptedFileTypes([
-                                'application/pdf',
+                        TextInput::make('public_service_url')
+                            ->label('Đường dẫn chính thức trên Cổng DVC Quốc gia')
+                            ->helperText('Dán đường dẫn chi tiết tại dichvucong.gov.vn. Nếu chưa có đường dẫn chi tiết, giữ đường dẫn trang chủ để công dân tra cứu.')
+                            ->default('https://dichvucong.gov.vn/')
+                            ->required()
+                            ->url()
+                            ->rule('regex:/^https:\/\/([a-z0-9-]+\.)?dichvucong\.gov\.vn(?:\/|$)/i')
+                            ->validationMessages([
+                                'regex' => 'Đường dẫn phải thuộc tên miền dichvucong.gov.vn.',
                             ])
-                            ->maxSize(51200)
                             ->columnSpanFull(),
 
                         Toggle::make('is_active')
@@ -128,6 +126,11 @@ class PolicyResource extends Resource
 
                 TextColumn::make('agency')
                     ->label('Cơ quan ban hành'),
+
+                TextColumn::make('public_service_url')
+                    ->label('Link DVCQG')
+                    ->limit(35)
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('status')
                     ->label('Trạng thái')

@@ -133,6 +133,22 @@ function isPdfFile(...values: Array<string | null | undefined>): boolean {
   return values.some(value => /\.pdf(?:$|[?#])/i.test(String(value || '').trim()));
 }
 
+const PUBLIC_SERVICE_PORTAL_URL = 'https://dichvucong.gov.vn/';
+
+function getPublicServiceUrl(value: unknown): string {
+  const rawUrl = typeof value === 'string' ? value.trim() : '';
+  try {
+    const url = new URL(rawUrl);
+    const host = url.hostname.toLowerCase();
+    if (url.protocol === 'https:' && (host === 'dichvucong.gov.vn' || host.endsWith('.dichvucong.gov.vn'))) {
+      return url.href;
+    }
+  } catch (_) {
+    // Fallback to the official portal homepage for empty or invalid values.
+  }
+  return PUBLIC_SERVICE_PORTAL_URL;
+}
+
 function escapeHtml(value: any): string {
   return String(value ?? '')
     .replace(/&/g, '&amp;')
@@ -1984,7 +2000,7 @@ class PortalApp {
         <!-- Policy Documents Tab Content (Real DB Data) -->
         <div class="space-y-3.5 pt-2">
           ${displayPolicies.map(doc => {
-        const docLink = doc.downloadUrl && doc.downloadUrl !== '#' ? doc.downloadUrl : '/procedures.html?tab=policies';
+        const docLink = getPublicServiceUrl(doc.public_service_url || doc.downloadUrl || doc.download_url);
         return `
               <div onclick="window.location.href='/procedures.html?tab=policies'"
                 class="p-4 sm:p-5 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl hover:border-[#1d7fe0] hover:shadow-md transition-all cursor-pointer group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -2001,10 +2017,10 @@ class PortalApp {
                     ${doc.title}
                   </h4>
                 </div>
-                <a href="${docLink}" ${docLink.startsWith('http') || docLink.endsWith('.pdf') ? 'target="_blank" rel="noopener noreferrer"' : ''} onclick="event.stopPropagation()"
+                <a href="${docLink}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()"
                   class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-[#1d7fe0] text-slate-700 dark:text-slate-200 hover:text-white text-xs font-extrabold transition-all shrink-0 self-end sm:self-center">
-                  <span class="material-symbols-outlined text-sm">visibility</span>
-                  <span>Xem văn bản</span>
+                  <span class="material-symbols-outlined text-sm">open_in_new</span>
+                  <span>Tra cứu trên Cổng DVC</span>
                 </a>
               </div>
             `;

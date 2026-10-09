@@ -685,15 +685,10 @@ Route::get('/policies', function () {
             ->orderBy('id', 'desc')
             ->get()
             ->map(function($p) use ($categoryMap) {
-                $downloadUrl = '#';
-
-                $downloadUrl = '#';
-                if (!empty($p->download_url)) {
-                    if (str_starts_with($p->download_url, 'http://') || str_starts_with($p->download_url, 'https://') || $p->download_url === '#') {
-                        $downloadUrl = $p->download_url;
-                    } else {
-                        $downloadUrl = '/storage/' . ltrim($p->download_url, '/');
-                    }
+                $defaultPortalUrl = 'https://dichvucong.gov.vn/';
+                $portalUrl = trim((string) $p->public_service_url);
+                if (!preg_match('#^https://([a-z0-9-]+\.)?dichvucong\.gov\.vn(?:/|$)#i', $portalUrl)) {
+                    $portalUrl = $defaultPortalUrl;
                 }
 
                 return [
@@ -707,7 +702,8 @@ Route::get('/policies', function () {
                     'status' => $p->status ?? 'Đang có hiệu lực',
                     'summary' => $p->summary ?? '',
                     'highlights' => $p->highlights ?? [],
-                    'downloadUrl' => $downloadUrl,
+                    'public_service_url' => $portalUrl,
+                    'downloadUrl' => $portalUrl,
                     'sort_order' => $p->sort_order,
                 ];
             })
@@ -1075,13 +1071,10 @@ Route::get('/policies', function () {
             ->orderBy('id', 'desc')
             ->get()
             ->map(function ($pol) use ($categoriesMap) {
-                $downloadUrl = '#';
-                if (!empty($pol->download_url)) {
-                    if (str_starts_with($pol->download_url, 'http://') || str_starts_with($pol->download_url, 'https://') || $pol->download_url === '#') {
-                        $downloadUrl = $pol->download_url;
-                    } else {
-                        $downloadUrl = '/storage/' . ltrim($pol->download_url, '/');
-                    }
+                $defaultPortalUrl = 'https://dichvucong.gov.vn/';
+                $portalUrl = trim((string) $pol->public_service_url);
+                if (!preg_match('#^https://([a-z0-9-]+\.)?dichvucong\.gov\.vn(?:/|$)#i', $portalUrl)) {
+                    $portalUrl = $defaultPortalUrl;
                 }
                 return [
                     'id' => $pol->id,
@@ -1094,8 +1087,9 @@ Route::get('/policies', function () {
                     'status' => $pol->status ?? 'Đang có hiệu lực',
                     'summary' => $pol->summary ?? '',
                     'highlights' => $pol->highlights ?? [],
-                    'downloadUrl' => $downloadUrl,
-                    'download_url' => $downloadUrl,
+                    'public_service_url' => $portalUrl,
+                    'downloadUrl' => $portalUrl,
+                    'download_url' => $portalUrl,
                 ];
             })
     );

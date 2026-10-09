@@ -328,7 +328,7 @@
                 <th class="py-4 px-5 border-r border-white/20 min-w-[320px]">TÊN THỦ TỤC HÀNH CHÍNH</th>
                 <th class="py-4 px-4 border-r border-white/20 w-52 text-center">LĨNH VỰC</th>
                 <th class="py-4 px-4 border-r border-white/20 w-52 text-center">CƠ QUAN TIẾP NHẬN</th>
-                <th class="py-4 px-4 text-center w-52">XEM TẤT CẢ</th>
+                <th class="py-4 px-4 text-center w-52">TRA CỨU</th>
               </tr>
             </thead>
             <tbody id="procedures-table-body"
@@ -571,7 +571,7 @@
                 <th class="py-4 px-5 border-r border-white/20 min-w-[300px]">TÊN CHÍNH SÁCH &amp; VĂN BẢN</th>
                 <th class="py-4 px-4 border-r border-white/20 w-52 text-center">LĨNH VỰC</th>
                 <th class="py-4 px-4 border-r border-white/20 w-48 text-center">CƠ QUAN BAN HÀNH</th>
-                <th class="py-4 px-4 text-center w-52">XEM TẤT CẢ</th>
+                <th class="py-4 px-4 text-center w-52">TRA CỨU</th>
               </tr>
             </thead>
             <tbody id="policies-table-body"
@@ -705,82 +705,6 @@
           class="px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-bold transition-colors">
           Đóng lại
         </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- POLICY DETAIL MODAL (PRO FULL VIEWER) -->
-  <div id="policy-detail-modal"
-    class="fixed inset-0 z-[3500] hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-2 sm:p-4 md:p-6"
-    onclick="closePolicyModal()">
-    <div
-      class="relative w-full max-w-6xl h-[94vh] max-h-[960px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-2xl flex flex-col my-auto"
-      onclick="event.stopPropagation()">
-
-      <!-- Modal Header Bar -->
-      <div
-        class="flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4 bg-gradient-to-r from-[#3399fe] via-[#268df5] to-[#1d7fe0] text-white shrink-0 shadow-md">
-        <div class="flex items-center gap-3 min-w-0 pr-3">
-          <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center shrink-0 shadow-inner">
-            <span class="material-symbols-outlined text-2xl text-white">description</span>
-          </div>
-          <div class="min-w-0 flex-1">
-            <h3 id="modal-policy-title-display" class="text-sm sm:text-base font-black text-white leading-snug truncate" title="">
-              Xem văn bản chính sách &amp; quy định
-            </h3>
-          </div>
-        </div>
-
-        <!-- Action Controls -->
-        <div class="flex items-center gap-2 shrink-0">
-          <button onclick="window.downloadCurrentPolicyFile()"
-            class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
-            title="Tải tệp tin về máy">
-            <span class="material-symbols-outlined text-base">download</span>
-            <span>Tải về</span>
-          </button>
-
-          <button onclick="window.openCurrentPolicyFile()"
-            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer"
-            title="Mở toàn màn hình trong tab mới">
-            <span class="material-symbols-outlined text-base">open_in_new</span>
-            <span class="hidden sm:inline">Mở rộng</span>
-          </button>
-
-          <button onclick="closePolicyModal()"
-            class="w-9 h-9 rounded-xl bg-white/20 hover:bg-red-600 text-white flex items-center justify-center transition-all shadow-sm active:scale-95 cursor-pointer ml-1"
-            title="Đóng văn bản">
-            <span class="material-symbols-outlined text-xl">close</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Modal Body (PDF Viewer & Fallback) -->
-      <div class="flex-1 w-full bg-slate-100 dark:bg-slate-950 overflow-hidden relative flex flex-col">
-        <!-- EMBEDDED PDF VIEWER -->
-        <div id="modal-policy-pdf-container" class="w-full h-full flex-1">
-          <iframe id="modal-policy-pdf-iframe" class="w-full h-full border-0 bg-white" src="about:blank"
-            title="Xem văn bản PDF"></iframe>
-        </div>
-
-        <!-- NOTICE WHEN NO VALID PDF FILE -->
-        <div id="modal-policy-pdf-empty"
-          class="p-10 text-center my-auto mx-auto max-w-md bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-4 hidden">
-          <div class="w-16 h-16 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto text-3xl">
-            <span class="material-symbols-outlined text-4xl">picture_as_pdf</span>
-          </div>
-          <div class="space-y-1">
-            <p class="text-base font-bold text-slate-800 dark:text-slate-200">
-              Văn bản này hiện chưa có tệp PDF đính kèm.
-            </p>
-            <p class="text-xs text-slate-500 dark:text-slate-400">
-              Vui lòng vào trang Quản trị Admin để tải tệp PDF văn bản lên hệ thống.
-            </p>
-          </div>
-          <button onclick="closePolicyModal()" class="px-5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-200 transition-colors">
-            Đóng lại
-          </button>
-        </div>
       </div>
     </div>
   </div>
@@ -1331,6 +1255,22 @@
     }
 
     // --- POLICIES TAB RENDERER ---
+    function getPolicyPortalUrl(item) {
+      const rawUrl = typeof item?.public_service_url === 'string'
+        ? item.public_service_url.trim()
+        : (typeof item?.downloadUrl === 'string' ? item.downloadUrl.trim() : '');
+      try {
+        const url = new URL(rawUrl);
+        const host = url.hostname.toLowerCase();
+        if (url.protocol === 'https:' && (host === 'dichvucong.gov.vn' || host.endsWith('.dichvucong.gov.vn'))) {
+          return url.href;
+        }
+      } catch (_) {
+        // Use the official portal homepage as a safe fallback.
+      }
+      return 'https://dichvucong.gov.vn/';
+    }
+
     function renderPolicies() {
       const tableBody = document.getElementById('policies-table-body');
       const searchInput = document.getElementById('policy-search-input');
@@ -1370,6 +1310,7 @@
       }
 
       tableBody.innerHTML = items.map((p, idx) => {
+        const portalUrl = getPolicyPortalUrl(p);
         let categoryPillClass = "bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-300 border-rose-200 dark:border-rose-900/60";
         if (p.category === 'social') {
           categoryPillClass = "bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-900/60";
@@ -1400,121 +1341,17 @@
             </td>
             <td class="py-4 px-4 text-center">
               <div class="flex items-center justify-center gap-2">
-                <button onclick="openPolicyModal(${p.id})"
+                <a href="${portalUrl}" target="_blank" rel="noopener noreferrer"
                   class="px-3.5 py-2 rounded-xl border border-sky-300 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 hover:bg-[#1d7fe0] hover:text-white text-[#1d7fe0] dark:text-sky-300 text-xs font-bold transition-all shadow-sm active:scale-95 whitespace-nowrap flex items-center gap-1.5">
-                  <span class="material-symbols-outlined text-sm">picture_as_pdf</span>
-                  <span>Đọc tài liệu</span>
-                </button>
+                  <span class="material-symbols-outlined text-sm">open_in_new</span>
+                  <span>Tra cứu / Xem chi tiết</span>
+                </a>
               </div>
             </td>
           </tr>
         `;
       }).join('');
     }
-
-    let currentPolicyFileUrl = '';
-    let currentPolicyTitle = '';
-
-    function openCurrentPolicyFile() {
-      if (!currentPolicyFileUrl || currentPolicyFileUrl === '#' || currentPolicyFileUrl === '/') {
-        alert('Văn bản này hiện chưa có tệp file PDF đính kèm.');
-        return;
-      }
-      if (window.matchMedia('(max-width: 767px)').matches) {
-        window.location.assign(currentPolicyFileUrl);
-        return;
-      }
-      window.open(currentPolicyFileUrl, '_blank', 'noopener,noreferrer');
-    }
-    window.openCurrentPolicyFile = openCurrentPolicyFile;
-
-    function downloadCurrentPolicyFile() {
-      if (!currentPolicyFileUrl || currentPolicyFileUrl === '#' || currentPolicyFileUrl === '/') {
-        alert('Văn bản này hiện chưa có tệp file PDF đính kèm.');
-        return;
-      }
-      const a = document.createElement('a');
-      a.href = currentPolicyFileUrl;
-      a.download = (currentPolicyTitle || 'van-ban-chinh-sach') + '.pdf';
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
-    window.downloadCurrentPolicyFile = downloadCurrentPolicyFile;
-
-    function openPolicyModal(pid) {
-      const item = POLICIES_DATA.find(p => p.id === pid);
-      if (!item) return;
-
-      const titleElem = document.getElementById('modal-policy-title-display');
-      if (titleElem) {
-        titleElem.textContent = item.title || 'Xem văn bản chính sách & quy định';
-        titleElem.title = item.title || '';
-      }
-
-      currentPolicyTitle = item.title || '';
-
-      let fileUrl = item.downloadUrl || item.download_url || '';
-      if (fileUrl && fileUrl !== '#' && fileUrl !== '/') {
-        if (!fileUrl.startsWith('http://') && !fileUrl.startsWith('https://')) {
-          fileUrl = fileUrl.startsWith('/') ? fileUrl : ('/' + fileUrl);
-          if (!fileUrl.startsWith('/storage/')) {
-            fileUrl = '/storage/' + fileUrl.replace(/^\/?storage\//, '');
-          }
-        }
-        // Encode URI to handle spaces and Vietnamese characters
-        fileUrl = encodeURI(fileUrl);
-      }
-
-      currentPolicyFileUrl = fileUrl || '#';
-
-      const pdfIframe = document.getElementById('modal-policy-pdf-iframe');
-      const pdfContainer = document.getElementById('modal-policy-pdf-container');
-      const pdfEmpty = document.getElementById('modal-policy-pdf-empty');
-
-      const hasValidPdf = fileUrl && fileUrl !== '#' && fileUrl !== '/';
-
-      if (hasValidPdf) {
-        // Trình xem PDF nhúng bằng iframe không ổn định trên trình duyệt điện thoại.
-        // Điều hướng trực tiếp từ thao tác bấm của người dùng để trình duyệt mở PDF gốc.
-        if (window.matchMedia('(max-width: 767px)').matches) {
-          window.location.assign(fileUrl);
-          return;
-        }
-        const embedUrl = fileUrl.includes('#') ? fileUrl : (fileUrl + '#toolbar=1&navpanes=0&view=FitH');
-        if (pdfIframe) pdfIframe.src = embedUrl;
-        if (pdfContainer) pdfContainer.style.display = 'block';
-        if (pdfEmpty) pdfEmpty.style.display = 'none';
-      } else {
-        if (pdfIframe) pdfIframe.src = 'about:blank';
-        if (pdfContainer) pdfContainer.style.display = 'none';
-        if (pdfEmpty) pdfEmpty.style.display = 'block';
-      }
-
-      const modal = document.getElementById('policy-detail-modal');
-      if (modal) {
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.body.style.overflow = 'hidden';
-      }
-    }
-    window.openPolicyModal = openPolicyModal;
-
-    function closePolicyModal() {
-      currentPolicyFileUrl = '';
-      currentPolicyTitle = '';
-      const pdfIframe = document.getElementById('modal-policy-pdf-iframe');
-      if (pdfIframe) pdfIframe.src = 'about:blank';
-      const modal = document.getElementById('policy-detail-modal');
-      if (modal) {
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-        document.body.style.overflow = '';
-      }
-    }
-    window.closePolicyModal = closePolicyModal;
 
     async function safeFetchJson(urls) {
       for (const url of urls) {
@@ -2073,7 +1910,6 @@
         if (e.key === 'Escape') {
           closeProcedureModal();
           closeVideoModal();
-          closePolicyModal();
         }
       });
     });

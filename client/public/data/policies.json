@@ -10,7 +10,8 @@
         "status": "Đang có hiệu lực",
         "summary": "Quy định chi tiết về hồ sơ, thủ tục đăng ký thường trú, đăng ký tạm trú, thông báo lưu trú và khai báo tạm vắng.",
         "highlights": [],
-        "downloadUrl": "\/storage\/policy-documents\/demo-policy.pdf",
+        "public_service_url": "https:\/\/dichvucong.gov.vn\/",
+        "downloadUrl": "https:\/\/dichvucong.gov.vn\/",
         "sort_order": 1
     },
     {
@@ -24,7 +25,8 @@
         "status": "Đang có hiệu lực",
         "summary": "Ứng dụng dữ liệu dân cư, định danh và xác thực điện tử phục vụ chuyển đổi số quốc gia giai đoạn 2022 - 2025.",
         "highlights": [],
-        "downloadUrl": "\/storage\/policy-documents\/demo-policy.pdf",
+        "public_service_url": "https:\/\/dichvucong.gov.vn\/",
+        "downloadUrl": "https:\/\/dichvucong.gov.vn\/",
         "sort_order": 2
     },
     {
@@ -38,7 +40,8 @@
         "status": "Đang có hiệu lực",
         "summary": "Quy định mức hỗ trợ quà lễ tết, chi phí khám chữa bệnh định kỳ và trợ cấp khó khăn đột xuất cho gia đình thương binh, liệt sĩ.",
         "highlights": [],
-        "downloadUrl": "\/storage\/policy-documents\/demo-policy.pdf",
+        "public_service_url": "https:\/\/dichvucong.gov.vn\/",
+        "downloadUrl": "https:\/\/dichvucong.gov.vn\/",
         "sort_order": 3
     },
     {
@@ -52,7 +55,8 @@
         "status": "Đang có hiệu lực",
         "summary": "Quy định về chế độ sử dụng đất, quyền và nghĩa vụ của người sử dụng đất, bồi thường giải phóng mặt bằng và cấp Sổ đỏ.",
         "highlights": [],
-        "downloadUrl": "\/storage\/policy-documents\/demo-policy.pdf",
+        "public_service_url": "https:\/\/dichvucong.gov.vn\/",
+        "downloadUrl": "https:\/\/dichvucong.gov.vn\/",
         "sort_order": 4
     }
 ]
